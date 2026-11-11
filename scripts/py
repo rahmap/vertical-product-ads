@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# py <tool.py> <project> … — run a Python tool with the first interpreter that has numpy:
+#   $PYTHON, then <skill>/.venv (created by check_setup.sh), then python3.   `py --which` prints it.
+SKILL="$(cd "$(dirname "$0")/.." && pwd)"
+for c in "${PYTHON:-}" "$SKILL/.venv/bin/python" python3; do
+  if [[ -n "$c" ]] && command -v "$c" >/dev/null 2>&1 && "$c" -c "import numpy" 2>/dev/null; then
+    [[ "${1:-}" == "--which" ]] && { echo "$c"; exit 0; }
+    exec "$c" "$@"
+  fi
+done
+echo "no Python with numpy: run $SKILL/scripts/check_setup.sh" >&2
+exit 1

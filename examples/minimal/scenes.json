@@ -1,0 +1,68 @@
+{
+  "title": "Minimal engine demo — no assets, no voice, no music file (8.5 s)",
+  "duration": 8.5,
+  "format": { "width": 1080, "height": 1920, "safe": { "l": 84, "r": 930, "t": 250, "b": 1460 } },
+  "render": { "fps": 30 },
+  "music": { "bpm": 120 },
+  "audio": { "sfxGain": 0.8 },
+
+  "theme": {
+    "css": { "--accent": "#3B5BDB", "--accent-pressed": "#2F4AB8", "--ink": "#141821" },
+    "pools": [
+      { "color": "rgba(214, 226, 255, 0.8)", "r": 700, "x": [240, 60, 0.4, 0, "sin"], "y": [420, 80, 0.3, 0, "cos"] },
+      { "color": "rgba(255, 228, 214, 0.6)", "r": 760, "x": [880, 50, 0.35, 0, "cos"], "y": [1500, 70, 0.25, 0, "sin"] }
+    ]
+  },
+
+  "anchors": { "SPLIT": "k4-0.12", "MERGE": 3.7, "OPEN": 5.4, "PRESS": "k14" },
+  "shape": { "initial": { "x": 540, "y": 1000, "w": 600, "h": 600, "r": 300 } },
+  "timeline": [
+    { "at": 0.15, "set": { "w": 900, "h": 900, "r": 64 }, "why": "the circle opens into a card" },
+    { "at": "SPLIT", "set": { "h": 960, "gap": 16, "rin": 28 }, "why": "three bands" },
+    { "at": "MERGE", "set": { "gap": 0, "rin": 0, "w": 760, "h": 760, "r": 380 }, "why": "back to one circle" },
+    { "at": "OPEN", "set": "full", "why": "full bleed for the end card" },
+    { "at": 6.2, "set": { "dx": 760, "dy": 1640 }, "sp": "jump" },
+    { "at": 6.45, "set": { "dx": 640, "dy": 1352 }, "sp": "move", "why": "finger travels to the button" }
+  ],
+
+  "layers": [
+    { "id": "card", "kind": "fill", "fill": "linear-gradient(160deg, #EEF2FF 0%, #C7D2FE 100%)", "tout": "SPLIT+0.05" },
+    { "id": "b0", "kind": "fill", "band": 0, "fill": "#FFD8C2", "tin": "k4-0.03", "tout": "MERGE" },
+    { "id": "b1", "kind": "fill", "band": 1, "fill": "#C5F0DC", "tin": "k5-0.03", "tout": "MERGE" },
+    { "id": "b2", "kind": "fill", "band": 2, "fill": "#D4D8FF", "tin": "k6-0.03", "tout": "MERGE" },
+    { "id": "dial", "kind": "fill", "fill": "radial-gradient(circle at 50% 40%, #FFFFFF 0%, #DCE3FF 70%)", "tin": "MERGE", "tout": "OPEN" },
+    { "id": "end", "kind": "fill", "fill": "linear-gradient(180deg, #F7F8FC 0%, #E4E8F7 100%)", "tin": "OPEN" },
+    { "id": "sheen", "kind": "sheen", "t0": "OPEN+0.2", "t1": "OPEN+1.1", "tin": "OPEN+0.1", "tout": "OPEN+1.2" }
+  ],
+
+  "texts": [
+    { "y": 300, "cls": "serif ital h0", "tout": "SPLIT", "lines": [[{ "t": "One ", "at": 0.3 }, { "t": "shape.", "at": "k1", "acc": true, "slam": true }]] },
+    { "y": 300, "cls": "serif ital h0", "tout": "MERGE-0.1", "lines": [[{ "t": "Three ", "at": "k4" }, { "t": "bands.", "at": "k6", "acc": true }]] },
+    { "y": 270, "cls": "sans caps", "tout": "OPEN-0.1", "lines": [[{ "t": "Zero cuts at", "at": "MERGE+0.1" }]] },
+    { "y": 300, "cls": "serif wordmark", "lead": 0.02, "lines": [[{ "t": "Yours", "at": "OPEN+0.3", "slam": true }]] },
+    { "y": 1414, "cls": "sans foot", "lines": [[{ "t": "Rendered from scenes.json — no assets.", "at": 6.0 }]] }
+  ],
+  "odometers": [
+    { "final": 30, "t0": "MERGE+0.2", "t1": "MERGE+1.1", "y": 330, "size": 200, "suffix": "fps", "tout": "OPEN-0.1" }
+  ],
+  "chips": [
+    { "text": "seek(t)", "x": 110, "y": 1280, "side": "left", "tin": "k5", "tout": "MERGE-0.1" },
+    { "text": "springs", "x": 920, "y": 1380, "side": "right", "tin": "k6", "tout": "MERGE-0.1" }
+  ],
+  "pops": [{ "band": 0, "at": "k4" }, { "band": 1, "at": "k5" }, { "band": 2, "at": "k6" }],
+  "touch": { "start": [760, 1640], "windows": [{ "tin": 6.3, "tout": "PRESS+0.35" }] },
+  "cta": { "text": "Make yours", "y": 1345, "h": 104, "half": 220, "tin": 6.1, "textIn": 6.35, "press": "PRESS" },
+
+  "cues": [
+    { "at": 0.2, "kind": "whoosh", "gain": 0.3, "dur": 0.4, "up": true },
+    { "at": "k1", "kind": "sub", "gain": 0.4, "dur": 1.2 },
+    { "at": "k4", "kind": "glass", "gain": 0.36, "note": 0 },
+    { "at": "k5", "kind": "glass", "gain": 0.36, "note": 4 },
+    { "at": "k6", "kind": "glass", "gain": 0.36, "note": 7 },
+    { "at": "MERGE+0.1", "kind": "whoosh", "gain": 0.28, "dur": 0.45, "rev": true },
+    { "at": "OPEN+0.2", "kind": "shimmer", "gain": 0.4, "dur": 1.2, "bright": true },
+    { "at": "OPEN+0.32", "kind": "chime", "gain": 0.28, "notes": [0, 4, 7, 12] },
+    { "at": 6.2, "kind": "pop", "gain": 0.26, "f": 660 },
+    { "at": "PRESS", "kind": "click", "gain": 0.5 }
+  ]
+}

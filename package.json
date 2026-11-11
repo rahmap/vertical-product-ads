@@ -1,0 +1,13 @@
+{
+  "name": "vertical-product-ads",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent skill: 9:16 product ads rendered from a scenes.json with a pure seek(t) engine",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "playwright": "^1.55.0"
+  }
+}
