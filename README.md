@@ -1,33 +1,57 @@
 # vertical-product-ads
 
-Two agent skills for **9:16 product ads** (TikTok, Instagram Reels, YouTube Shorts, e-commerce and
-beauty/skincare promos). Indonesian version: [README.id.md](README.id.md).
+Two agent skills for **vertical 9:16 product ads** (TikTok, Instagram Reels, YouTube Shorts,
+e-commerce promos, beauty/skincare spots): from idea to a delivery-ready MP4 in one prompt.
+Indonesian version: [README.id.md](README.id.md).
 
 | Skill | Does |
 |---|---|
-| `ad-concept` | Reads your brief and assets, researches the product, proposes 3 hooks, writes the script and a beat sheet into `concept.md`, and waits for your approval |
-| `vertical-product-ads` | Builds the approved concept into a mastered, platform-safe MP4: one `scenes.json`, a pure `seek(t)` engine, a measured audio pipeline |
+| `ad-concept` | Reads the brief and assets, researches the product, proposes 3 hooks, writes the script and a beat sheet into `concept.md` |
+| `vertical-product-ads` | Produces the approved concept as an MP4: voice, music, animation, quality gates, render |
 
 Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, Amp, Cline and others.
 
-## Install
+**Contents**
+- Using it: [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Voice and music](#voice-and-music) · [Duration](#duration)
+- Results: [Quality gates](#quality-gates) · [Limits](#limits) · [Measured speed](#measured-speed)
+- Technical: [Requirements](#requirements) · [Repo layout](#repo-layout) · [Licence](#licence)
+
+---
+
+## Quick start
+
+**1. Install the skills**
 ```bash
-npx skills add tomimandalaputra/vertical-product-ads                          # pick skills + agents interactively
 npx skills add tomimandalaputra/vertical-product-ads --skill '*' -y           # both skills, no prompts
-npx skills add tomimandalaputra/vertical-product-ads --skill ad-concept       # one of them
-npx skills add tomimandalaputra/vertical-product-ads --skill vertical-product-ads
-```
-The skills land in your agent's folder: `.claude/skills/` for Claude Code, `.agents/skills/` for
-Codex and most others (the installer prints the path). Run the setup check once from the installed
-production skill folder (it installs Playwright's Chromium and a numpy venv when missing):
-```bash
-.agents/skills/vertical-product-ads/scripts/check_setup.sh                # core
-.agents/skills/vertical-product-ads/scripts/check_setup.sh --with edge    # + free voice-over (edge-tts)
-.agents/skills/vertical-product-ads/scripts/check_setup.sh --with whisper # + local transcription (faster-whisper)
-.agents/skills/vertical-product-ads/scripts/check_setup.sh --with all
+npx skills add tomimandalaputra/vertical-product-ads                          # pick skills + agents interactively
+npx skills add tomimandalaputra/vertical-product-ads --skill ad-concept       # one skill only
 ```
 
-## The flow
+**2. Run the setup check once.** It installs Chromium (Playwright) and Python numpy when missing.
+The skill folder depends on the agent: `.claude/skills/` for Claude Code, `.agents/skills/` for Codex
+and most others (the installer prints the path).
+```bash
+SKILL=.claude/skills/vertical-product-ads        # or .agents/skills/vertical-product-ads
+$SKILL/scripts/check_setup.sh                    # core
+$SKILL/scripts/check_setup.sh --with all         # + free voice (edge-tts) + local transcription (faster-whisper)
+```
+
+**3. Try it with no assets and no API key** (optional, proves everything runs):
+```bash
+cp -r $SKILL/examples/minimal my-ad
+$SKILL/scripts/make.sh my-ad preview              # contact sheet + draft
+$SKILL/scripts/make.sh my-ad final my-ad/out.mp4  # final MP4 + storyboard
+```
+
+**4. Ask your agent for an ad.** Put the material in one folder and prompt, for example:
+> Make an ad from the folder `ads/glowa`. The brief is in `brief.md`.
+
+See [Preparing material](#preparing-material) and [Example prompts](#example-prompts).
+
+---
+
+## How it works
+
 ```mermaid
 flowchart LR
   A[brief.md + assets/] --> B[ad-concept: research, 3 hooks, script, beat sheet]
@@ -38,140 +62,222 @@ flowchart LR
   F -->|review, fix| F
   F --> G[final MP4 + storyboard]
 ```
-`vertical-product-ads` will not start without an approved `concept.md`.
 
-## Checkpoint or autopilot
-- **Checkpoint (default):** the agent asks everything missing in one message, writes the concept,
-  then stops and shows you 3 hooks. You approve (or edit), then it builds.
-- **Autopilot:** it assumes what is missing, picks the hook, and builds in one run. Every
-  assumption and decision is logged in `concept.md` and the report.
+Production does not start without an approved `concept.md`. Two modes:
+
+| Mode | Behaviour | How |
+|---|---|---|
+| **Checkpoint** (default) | Asks everything missing in one message, writes the concept, then stops and shows 3 hooks. Builds after you approve (or edit) | Default |
+| **Autopilot** | Assumes what is missing, picks the hook and runs to the MP4. Every assumption (`ASSUMPTION:`) and decision (`DECISION:`) is logged in `concept.md` and the report | Start the prompt with "Autopilot", or set `mode: autopilot` in `brief.md` |
+
+---
+
+## Preparing material
+
+**Brief.** Copy [`templates/brief.md`](skills/ad-concept/templates/brief.md) to `ads/<name>/brief.md`
+and fill it in. Or skip it: put the details in the prompt and the agent writes `brief.md` itself.
+Filled briefs, one fictional product in three styles:
+[motion](skills/ad-concept/examples/brief-motion.md) ·
+[ugc](skills/ad-concept/examples/brief-ugc.md) ·
+[hybrid](skills/ad-concept/examples/brief-hybrid.md).
+
+**The 5 essentials** for a prompt or brief: product (name, variants, price), claims + sources, the
+exact CTA, audience + platform, where the assets are.
+
+**Assets per style.** Put files in `ads/<name>/assets/`.
+
+| | `motion` | `ugc` | `hybrid` |
+|---|---|---|---|
+| **Required** | Product photos: ≥ 3 angles, ≥ 2000 px short side, white/transparent, no baked-in text | Creator footage 9:16 1080×1920, 30 fps, talking to camera, clean audio, no music | Creator footage (at least hook + testimonial) **and** product photos |
+| **Recommended** | Logo, brand colours (hex), texture close-ups ≥ 1600 px, one photo per shade | 2–4 b-roll clips of 3–6 s (product turn, application, texture), 1 packshot for the end card | b-roll, texture, shade photos |
+| **Speech** | Voice-over: ElevenLabs or free (edge-tts) | The creator's voice | The creator's voice |
+| **Release** | Model photos, if any | Creator release | Both |
+
+Before/after, ratings and testimonials only if real.
+
+**For `ugc` and `hybrid`:** send the [creator shot list](skills/ad-concept/templates/creator-shot-list.md)
+before the shoot: lines per take, phone settings, light, pauses between sentences.
+
+Full specs: [`references/intake.md`](skills/ad-concept/references/intake.md).
+
+---
 
 ## Example prompts
-Copy-paste prompts for every style and mode, with and without `brief.md`:
-[`skills/ad-concept/examples/prompts.md`](skills/ad-concept/examples/prompts.md) (written in
-Indonesian; prompts work in any language). In short:
 
-| Style | Short prompt (details in `brief.md`) |
+The full list (every style × mode, with and without `brief.md`, plus revision prompts) is in
+[`examples/prompts.md`](skills/ad-concept/examples/prompts.md), written in Indonesian; prompts work in
+any language.
+
+**With `brief.md`** (details in the file):
+
+| Style | Prompt |
 |---|---|
 | `motion` | *Make an ad from the folder `ads/glowa`. The brief is in `brief.md`.* |
 | `ugc` | *Make a UGC ad from `ads/glowa`. Brief in `brief.md`, creator footage in `assets/`.* |
 | `hybrid` | *Autopilot: make an ad from `ads/glowa`, brief in `brief.md`.* |
 
-No `brief.md` is needed if the prompt carries the details; the agent writes `brief.md` from it:
+**Without `brief.md`** (everything in the prompt; motion, checkpoint, free audio):
 > Make a 30-second TikTok ad, motion style, for **Glowa Lip Serum**, a sheer tinted lip serum
 > (3 shades: Rose, Peach, Berry; IDR 89,000 on TikTok Shop). Photos in `ads/glowa/assets/`: white
 > packshots from 3 angles, 1 texture close-up, 3 shade photos. Audience: women 20–30 whose lips dry
 > out fast. Claim: "moisturised for up to 24 hours" (Glowa internal test, 30 respondents). Brand
 > colour #C2416B. CTA: "Cek keranjang kuning". Female Indonesian voice-over; free voice and music.
 
-Give the prompt or brief the **5 essentials**: product, claims + sources, exact CTA, audience +
-platform, where the assets are. Start the prompt with "Autopilot" (or set `mode: autopilot` in
-`brief.md`) to skip the approval stop.
+**Once the concept is shown:**
 
-## What to prepare
-Copy [`skills/ad-concept/templates/brief.md`](skills/ad-concept/templates/brief.md) to
-`ads/<name>/brief.md`, fill it in, and put files in `ads/<name>/assets/`. Filled briefs (one
-fictional product, three styles): [motion](skills/ad-concept/examples/brief-motion.md),
-[ugc](skills/ad-concept/examples/brief-ugc.md), [hybrid](skills/ad-concept/examples/brief-hybrid.md).
+| To | Prompt |
+|---|---|
+| Approve | *Hook #2 is good, go ahead.* |
+| Change | *Hook #1 but shorter, and don't show the price.* |
+| Revise the video | *The claim text at 18 s is too small; fix it and render again.* |
 
-| | `motion` | `ugc` | `hybrid` |
-|---|---|---|---|
-| **Required** | Product photos: ≥ 3 angles, ≥ 2000 px short side, white/transparent, no baked-in text | Creator footage 9:16 1080×1920, 30 fps, talking to camera, clean audio, no music | Creator footage (at least hook + testimonial) **and** product photos |
-| **Required (all)** | Product (name, variants, price), claims + sources, exact CTA, audience + platform | same | same |
-| **Recommended** | Logo, brand colours (hex), texture close-ups ≥ 1600 px, one photo per shade | 2–4 b-roll clips of 3–6 s (product turn, application, texture), 1 packshot for the end card | b-roll, texture, shade photos |
-| **Speech** | Voice-over: ElevenLabs or free (edge-tts) | The creator's voice | The creator's voice |
-| **Release** | Model photos, if any | Creator release | Both |
+---
 
-For `ugc`/`hybrid`, send the [creator shot list](skills/ad-concept/templates/creator-shot-list.md)
-before the shoot: what to say per take, phone settings, light, pauses between sentences. Before/after
-and reviews only if real. Full specs:
-[`skills/ad-concept/references/intake.md`](skills/ad-concept/references/intake.md).
+## Video styles
 
-## Styles
 | Style | Looks like | Needs |
 |---|---|---|
-| `motion` (default) | One rounded shape morphing between photos, cards, text and CTA | Product photos |
-| `ugc` | A creator talks; footage leads; word-by-word captions | Footage with speech |
-| `hybrid` | Creator hook, then product cards, proof and CTA in the motion look | Footage + photos |
+| `motion` (default) | One rounded shape morphing between photos, cards, text and CTA on the beat | Product photos |
+| `ugc` | A creator talks to camera; footage leads; word-by-word captions | Footage with speech |
+| `hybrid` | Creator hook and testimonial, with product cards, proof and CTA in the motion look between them | Footage + photos |
 
-**Switch** by setting `style:` in `brief.md` or saying it in the prompt ("make it hybrid"). The
-agent updates `concept.md`, and in checkpoint mode asks you to approve again. Not supported:
-avatar or AI-generated presenters, live-action direction. B-roll (footage without speech) is
-muted. The agent cannot watch videos; it works from transcripts and stills. Details:
-[`skills/ad-concept/references/styles.md`](skills/ad-concept/references/styles.md).
+**Switching styles:** set `style:` in `brief.md`, or say it in the prompt (*"Make `ads/glowa`
+hybrid, use `review.mp4` for the hook."*). The agent updates `concept.md`; in checkpoint mode it asks
+you to approve again.
 
-## Free vs ElevenLabs
+Plain-language guide to each style: [`references/styles.md`](skills/ad-concept/references/styles.md).
+
+---
+
+## Voice and music
+
+A full ad needs **no ElevenLabs key**. To use ElevenLabs, set `ELEVENLABS_API_KEY` in the
+environment or in a `.env` in the project folder (or any parent).
+
 | Part | ElevenLabs | Free | Licence note |
 |---|---|---|---|
-| Voice-over | `vo.engine: "elevenlabs"` | `vo.engine: "edge"` (edge-tts) | edge-tts is an unofficial client of Microsoft's Edge read-aloud service; terms for paid ads are unclear: drafts, or accept the risk. ElevenLabs: per your plan's terms |
-| Music | `music.prompt` | `music.synth` (local procedural bed) | Synth is generated on your machine: yours. A licensed file also works |
-| Transcription (footage) | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Local, no upload |
+| Voice-over | `vo.engine: "elevenlabs"` | `vo.engine: "edge"` (edge-tts, needs network) | edge-tts is an unofficial client of Microsoft's Edge read-aloud service; terms for paid ads are unclear: use it for drafts, or accept the risk |
+| Music | `music.prompt` | `music.synth` (local procedural bed) or a licensed file | The synth bed is generated on your machine: yours |
+| Footage transcription | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Local, no upload. `"auto"` uses ElevenLabs when it can, else whisper |
 
-No ElevenLabs key is needed for a full ad. Put a key in `ELEVENLABS_API_KEY` or a `.env` in the
-project or a parent folder to use it.
+ElevenLabs output follows your plan's terms.
+
+---
 
 ## Duration
-Default 30 s; 15–60 s allowed; over 34 s warns and needs a reason; over 60 s is refused. The hook is
-inside the first 3 s; the CTA holds 3–5 s. TikTok 30 s, Reels 30 s plus an optional 15 s cutdown
-built as its own project, Shorts 30 s. The 21–34 s (TikTok) and under-15 s (Meta) figures come from
-secondary sources, see
-[`skills/ad-concept/references/duration-and-platforms.md`](skills/ad-concept/references/duration-and-platforms.md).
 
-## What you get
-- **One shape, never cut** in motion scenes: it morphs into cards, circles, three bands, full bleed.
-- **Voice and music locked together:** per-word timings; each sentence placed so its key word lands
-  on the music's measured beat; text appears on the word that names it.
-- **Synthesized sound design** in the song's key; music ducks under speech; mastered −14 LUFS / −1 dBTP.
-- **Platform safe zones and layout enforced:** every visible word, caption, chip and the CTA inside
-  x 84–930, y 250–1460; no overlapping text; no empty band. Checked at every frame; the build
-  fails otherwise.
-- **Real motion blur:** 4 subframes per frame at a 180° shutter, 30 fps by default.
-- **A review step built in:** beat contact sheet and a half-size draft with sound before the final.
+| Rule | Value |
+|---|---|
+| Default | 30 s |
+| Allowed | 15–60 s |
+| Over 34 s | Warning; the concept must state why |
+| Over 60 s | Refused |
+| Hook | Inside the first 3 s |
+| CTA | Held 3–5 s |
+| Per platform | TikTok 30 s · Reels 30 s (+ optional 15 s cutdown as its own project) · Shorts 30 s |
 
-## Try it without any API key
-```bash
-SKILL=.agents/skills/vertical-product-ads
-cp -r $SKILL/examples/minimal my-ad
-$SKILL/scripts/make.sh my-ad preview              # contact sheet + draft
-$SKILL/scripts/make.sh my-ad final my-ad/out.mp4  # mastered MP4 + storyboard
-```
+The 21–34 s (TikTok) and under-15 s (Meta) figures come from secondary sources:
+[`references/duration-and-platforms.md`](skills/ad-concept/references/duration-and-platforms.md).
+
+---
+
+## Quality gates
+
+Every ad passes automatic checks. A failure stops the build and the agent must fix the scenes; no
+gate can be skipped.
+
+| Gate | Guards |
+|---|---|
+| Safe zone | Every word, caption, chip and the CTA inside x 84–930, y 250–1460 (clear of app buttons), checked at **every frame** |
+| Layout | No overlapping text; no empty band (a shape on screen showing no image or fill) |
+| Footage dialogue | No cut inside a word; segments don't overlap |
+| Format | `scenes.json`, assets, style and duration follow the rules |
+| Audio | Master −14 LUFS (±0.6), peak ≤ −0.5 dBFS in the delivered file |
+| Render | No glitch at the seams between render chunks |
+
+Plus two review steps before the final: a **contact sheet** (one frame per beat, time-stamped) and a
+**half-size draft with sound**.
+
+What the result looks like:
+- **Real motion blur:** 4 subframes per frame, 180° shutter, 30 fps.
+- **Voice and music locked together:** every word timed; key words land on the music's beat; text
+  appears on the word that names it.
+- **Synthesized sound design** in the song's key; music ducks under speech.
+- **Motion scenes without cuts:** one shape morphs into cards, circles, three bands or full bleed.
+
+---
+
+## Limits
+
+- **No avatar or AI presenters**, no live-action direction. Creator footage must be shot by you.
+- **B-roll (footage without speech) is muted.**
+- **The agent cannot watch videos.** It works from transcripts, snapshots and your descriptions,
+  including for reference ads.
+- **Speech recognition can mishear brand names;** the agent fixes captions with `captions.fix` and
+  asks you to check.
+- **The agent measures audio but cannot hear it.** Listen before publishing.
+- **Product claims come only from the brief or official sources**, always with a footnote. Check
+  the local advertising rules for your category (e.g. BPOM for cosmetics in Indonesia).
+
+---
 
 ## Measured speed
-Apple M3 Pro, 31 s film at 1080×1920. The "Before" column is the same film built with a
-hand-written HTML film and a 60 fps renderer.
+
+Apple M3 Pro, 31 s `motion` film at 1080×1920. "Before" is the same film built as a hand-written
+HTML film with a 60 fps renderer.
 
 | | Before | This skill |
 |---|---|---|
 | Picture render | 219 s (7,440 subframes) | 71 s (3,720 subframes, 30 fps / 180°) |
-| Master | 35 s (re-encodes video) | ~5 s (audio only) |
+| Audio master | 35 s (re-encodes video) | ~5 s (audio only) |
 | Draft with sound | none | 12 s |
 | Writing the film | a ~600-line JS file per ad | a `scenes.json` per ad |
 
-How each number is obtained: `skills/vertical-product-ads/references/render-and-qa.md`. These were
-measured on `motion` films; footage styles have not been timed.
+Fresh agents (skills installed with `npx skills add`, no help):
+
+| Mode | Result | Prompt → MP4 |
+|---|---|---|
+| Checkpoint | motion 30 s, free audio | 10 min 52 s (concept ready at 1 min 13 s) |
+| Autopilot | hybrid 24 s, footage + ElevenLabs music | 13 min 28 s |
+
+How each number was obtained: [`references/render-and-qa.md`](skills/vertical-product-ads/references/render-and-qa.md)
+and [`CHANGELOG.md`](CHANGELOG.md).
+
+---
 
 ## Requirements
-| Need | For |
-|---|---|
-| Node ≥ 20 (+ `npm install` in the skill: Playwright, Ajv) | engine, render, gates |
-| ffmpeg / ffprobe | motion blur, encode, loudness, footage frames |
-| Python 3.9+ with numpy | beat grid, SFX and music synthesis, mix |
-| `edge-tts` (`--with edge`) | free voice-over; needs network |
-| `faster-whisper` (`--with whisper`) | offline transcription of footage |
-| `ELEVENLABS_API_KEY` (optional) | ElevenLabs voice-over, music, transcription |
 
-## Layout
-| Path | |
+| Need | For | Installed by |
+|---|---|---|
+| Node ≥ 20 | engine, render, gates | you |
+| ffmpeg / ffprobe | motion blur, encode, loudness, footage frames | you (`brew install ffmpeg` / `apt install ffmpeg`) |
+| Python 3.9+ | beat grid, SFX and music synthesis, mix | you |
+| Playwright + Chromium, numpy | render, audio | `check_setup.sh` |
+| `edge-tts` | free voice-over (needs network) | `check_setup.sh --with edge` |
+| `faster-whisper` | offline footage transcription | `check_setup.sh --with whisper` |
+| `ELEVENLABS_API_KEY` (optional) | ElevenLabs voice, music, transcription | you |
+
+---
+
+## Repo layout
+
+| Path | Contents |
 |---|---|
-| `skills/ad-concept/` | `SKILL.md`, `references/` (intake, hooks, styles, scene menu, durations), `templates/` (`brief.md`, `concept.md`, `creator-shot-list.md`), `examples/` (prompts, filled briefs per style) |
-| `skills/vertical-product-ads/SKILL.md` | what the production agent follows |
-| `skills/vertical-product-ads/references/` | direction, styles, `scenes.json` format, VO/beat sync, safe zones, render + QA |
+| `skills/ad-concept/SKILL.md` | What the concept agent follows |
+| `skills/ad-concept/references/` | Asset intake, hooks and angles, styles, scene menu, durations |
+| `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
+| `skills/ad-concept/examples/` | Example prompts and filled briefs per style |
+| `skills/vertical-product-ads/SKILL.md` | What the production agent follows |
+| `skills/vertical-product-ads/references/` | Direction, styles, `scenes.json` format, VO/beat sync, safe zones, render + QA |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: the pure `seek(t)` renderer |
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) and every step it runs |
-| `skills/vertical-product-ads/schemas/scenes.schema.json` | the contract `validate.mjs` enforces |
-| `skills/vertical-product-ads/examples/minimal/` | an asset-free 8.5 s film |
+| `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, the contract `validate.mjs` enforces |
+| `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
+
+---
 
 ## Licence
+
 MIT, see `LICENSE`. Portions are derived from
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); see `NOTICE`.
 Product images, footage, voices and music you put into a film keep their own licences.

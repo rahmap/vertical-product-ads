@@ -12,6 +12,9 @@
   result, CTA, b-roll), phone settings, light, pauses, delivery and release.
 - Assets-per-style table in `references/intake.md` and both READMEs; `ad-concept` hands out the
   shot list when a user wants `ugc`/`hybrid` without footage.
+- READMEs reorganised by topic with a table of contents: using it (quick start, how it works,
+  material, prompts, styles, voice and music, duration), results (quality gates, limits, measured
+  speed), technical (requirements, layout, licence). Limits that were scattered now sit in one section.
 
 ## 0.2.0
 
