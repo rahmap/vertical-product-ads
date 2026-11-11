@@ -1,5 +1,67 @@
 # Changelog
 
+## 0.2.0
+
+**Two skills**
+- Repo split into `skills/ad-concept` and `skills/vertical-product-ads`; one `npx skills add` installs both.
+- New `ad-concept` skill: intake from `brief.md` and assets, research, 3 hooks with different angles,
+  script, beat sheet, claims table and audio plan, written to `concept.md`. Checkpoint mode (default)
+  waits for approval; autopilot continues and logs `ASSUMPTION:`/`DECISION:`.
+- `vertical-product-ads` now starts from an approved `concept.md` (new step 0).
+
+**Styles**
+- `style`: `motion` (unchanged), `ugc` (creator footage leads, captions) and `hybrid` (footage plus
+  motion scenes in the same shape).
+- New scenes fields: `footage`, `dialogue`, `captions`, video layers (`clip`, `dialogue`, `cut`).
+- New scripts: `footage.py`, `transcribe.py`, `place_dialogue.py`.
+
+**Free options**
+- Voice-over with edge-tts (`vo.engine: "edge"`); licence caveat documented.
+- Music from a local synth (`music.synth`).
+- Footage transcription with faster-whisper; `check_setup.sh --with edge|whisper|all`.
+
+**Rules**
+- Duration: default 30 s, 15–60 s allowed, over 34 s warns, over 60 s refused; hook inside 3 s,
+  CTA held 3–5 s.
+- New gates: style checks, dialogue cuts that fall inside a word, duration.
+- The layout gate (`qa_safe.mjs`) now checks every output frame instead of every 0.05 s, and adds
+  two checks: overlapping text/UI blocks (double-printed text) and empty bands (bare surface or a gap
+  between footage segments). The per-frame check found a footnote in the Dior film rising 4 px past
+  the safe zone for a frame during its entry; footnotes now sit at `y` ≈ 1404.
+
+**Fixes**
+- Captions: a chunk leaves before the next one enters (they overlapped for 40 ms), the pop-in no
+  longer overshoots past full size, and the widest chunk stays symmetric about the frame centre
+  inside the asymmetric safe zone.
+- `render.mjs` gives each tab whole frames, so a footage frame loads once per output frame.
+- `"set": "full"` now also merges the bands (`gap` 0, `rin` 0). Opening full bleed straight from
+  split bands used to leave the gaps as thin lines across the end card (found in the black-box
+  checkpoint run). The Dior film is pixel-identical (it always merged first).
+- Hard cuts (`cut: true`) snap to the boundary between two output frames, so a cut no longer renders
+  one 50/50 double-exposure frame, and a clip starting at 0 s no longer half-fades its first frame.
+- Synth music regenerates when its parameters change; `tempo.py` takes a synth bed's key from
+  `music.key` (detection confused C major with A minor). `theme.fontFaces[].weight` accepts a
+  variable-font range (`"300 700"`). `vo.py`'s speed hint names `settings.rate` for edge voices.
+- Mastering: `finish.sh` now raises the mix into a −1 dBFS limiter and repeats until the master is
+  within 0.2 LU of the target. `loudnorm`'s linear mode could not add gain on a dense mix (true peak
+  already near −1 dBTP), and the gate failed at −14.8 LUFS until the mix was tuned by hand.
+- `transcriber: "auto"` falls back to faster-whisper when the ElevenLabs key lacks speech-to-text
+  permission (401/403), and reuses that transcript from cache. Every ElevenLabs call retries 429/5xx.
+- `footage.py` defaults to 1080×1920 when `format` is not written yet.
+
+**Black-box tests** (fresh agents, skills installed with `npx skills add`, only the installed docs)
+- Checkpoint: a 30 s `motion` ad with free voice and music. The concept with 3 hooks was written
+  and approval requested after 1 min 13 s; the final MP4 came 10 min 52 s after the prompt.
+- Autopilot: a 24 s `hybrid` ad from creator footage (retake cut out), a b-roll and photos, with
+  ElevenLabs music. Prompt to final MP4 took 13 min 28 s.
+- Their reports drove the fixes above and the doc changes: intake rules (a failing asset counts
+  as missing, a blank brief field means the agent decides, conflicts between sources), measured
+  edge-tts rates, synth `end`, chip `y`, `musicDb` scope, text scrims, and font downloads.
+
+**Docs**
+- `README.id.md` (Indonesian), brief and concept templates, styles reference.
+- Limits stated: agents cannot watch videos, b-roll is muted, avatar UGC is not supported.
+
 ## 0.1.0
 
 First release, extracted from a 31 s Dior Addict Lip Glow ad built by hand.

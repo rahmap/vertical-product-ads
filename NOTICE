@@ -4,8 +4,7 @@ NOTICE — derived work and third-party material
 Derived from product-launch-motion
 ----------------------------------
 The motion technique in engine/engine.js (closed-form spring step response, the Track sum-of-springs,
-blur content swaps, odometer digit math, subframe motion blur) and the two-pass loudness master in
-scripts/finish.sh are adapted from product-launch-motion
+blur content swaps, odometer digit math, subframe motion blur) is adapted from product-launch-motion
 (https://github.com/AbubakrChan/product-launch-motion), used under its MIT licence:
 
   MIT License

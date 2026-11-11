@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vertical-product-ads/scenes.schema.json",
+  "title": "vertical-product-ads scenes.json",
+  "type": "object",
+  "required": ["duration", "format"],
+  "additionalProperties": false,
+  "$defs": {
+    "time": {
+      "description": "Seconds, or an expression: w<i> (word start), we<i> (word end), k<beat> (kick peak, fractions allowed), an anchor name, joined with + / - offsets. Or {cross, value, from, to}.",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^\\s*(we\\d+|w\\d+|k\\d+(\\.\\d+)?|\\d+(\\.\\d+)?|[A-Za-z_][A-Za-z0-9_]*)(\\s*[+-]\\s*(we\\d+|w\\d+|k\\d+(\\.\\d+)?|\\d+(\\.\\d+)?|[A-Za-z_][A-Za-z0-9_]*))*\\s*$" },
+        { "type": "object", "required": ["cross", "value", "from", "to"], "additionalProperties": false,
+          "properties": { "cross": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "cx", "cy", "dx", "dy"] },
+            "value": { "type": "number" }, "from": { "$ref": "#/$defs/time" }, "to": { "$ref": "#/$defs/time" }, "step": { "type": "number" } } }
+      ]
+    },
+    "spring": {
+      "oneOf": [
+        { "enum": ["morph", "snap", "settle", "drift", "slow", "drag", "move", "lead", "trail", "jump"] },
+        { "type": "object", "required": ["w", "z"], "additionalProperties": false,
+          "properties": { "w": { "type": "number", "exclusiveMinimum": 0 }, "z": { "type": "number", "exclusiveMinimum": 0 } } }
+      ]
+    },
+    "springTo": {
+      "type": "object", "required": ["to", "at"], "additionalProperties": false,
+      "properties": { "to": { "type": "number" }, "at": { "$ref": "#/$defs/time" }, "sp": { "$ref": "#/$defs/spring" } }
+    },
+    "word": {
+      "type": "object", "required": ["t", "at"], "additionalProperties": false,
+      "properties": { "t": { "type": "string" }, "at": { "$ref": "#/$defs/time" }, "acc": { "type": "boolean" }, "slam": { "type": "boolean" } }
+    },
+    "why": { "type": "string", "description": "Free note; ignored by the engine." }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "title": { "type": "string" },
+    "duration": { "type": "number", "exclusiveMinimum": 0 },
+    "style": { "enum": ["motion", "ugc", "hybrid"] },
+    "footage": { "type": "object", "additionalProperties": {
+      "type": "object", "required": ["file"], "additionalProperties": false,
+      "properties": { "file": { "type": "string" }, "speech": { "type": "boolean" }, "why": { "$ref": "#/$defs/why" } } } },
+    "dialogue": {
+      "type": "object", "required": ["segments"], "additionalProperties": false,
+      "properties": {
+        "transcriber": { "enum": ["auto", "elevenlabs", "whisper"] },
+        "whisperModel": { "type": "string" }, "language": { "type": "string" },
+        "segments": { "type": "array", "minItems": 1, "items": {
+          "type": "object", "required": ["footage", "in", "out", "at"], "additionalProperties": false,
+          "properties": { "footage": { "type": "string" }, "in": { "type": "number", "minimum": 0 }, "out": { "type": "number" },
+            "at": { "type": "number", "minimum": 0 }, "why": { "$ref": "#/$defs/why" } } } }
+      }
+    },
+    "captions": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "y": { "type": "number" }, "size": { "type": "number", "exclusiveMinimum": 0 },
+        "maxWords": { "type": "integer", "minimum": 1 }, "maxGap": { "type": "number", "minimum": 0 },
+        "case": { "enum": ["upper", "none"] }, "style": { "enum": ["pill", "plain"] },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "fix": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "format": {
+      "type": "object", "required": ["width", "height", "safe"], "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer" }, "height": { "type": "integer" },
+        "safe": { "type": "object", "required": ["l", "r", "t", "b"], "additionalProperties": false,
+          "properties": { "l": { "type": "number" }, "r": { "type": "number" }, "t": { "type": "number" }, "b": { "type": "number" } } }
+      }
+    },
+    "render": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "fps": { "enum": [24, 25, 30, 60] }, "crf": { "type": "integer", "minimum": 10, "maximum": 30 } }
+    },
+    "vo": {
+      "type": "object", "required": ["voice", "script"], "additionalProperties": false,
+      "properties": {
+        "provider": { "const": "elevenlabs" },
+        "engine": { "enum": ["elevenlabs", "edge"] },
+        "voice": { "type": "string" }, "model": { "type": "string" }, "language": { "type": "string" },
+        "format": { "type": "string" },
+        "settings": { "type": "object", "description": "elevenlabs: voice settings numbers; edge: { rate: \"+10%\", pitch: \"+0Hz\", volume: \"+0%\" }" },
+        "script": { "type": "string" },
+        "place": { "type": "array", "items": {
+          "type": "object", "required": ["words", "anchor", "at"], "additionalProperties": false,
+          "properties": { "words": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 },
+            "anchor": { "type": "integer" }, "at": { "type": "number" }, "why": { "$ref": "#/$defs/why" } } } }
+      }
+    },
+    "music": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "file": { "type": "string" }, "bpm": { "type": "number" }, "key": { "type": "string" },
+        "prompt": { "type": "string" }, "length_ms": { "type": "integer" },
+        "synth": { "type": "object", "additionalProperties": false,
+          "properties": { "style": { "enum": ["pop", "minimal", "chill"] }, "drop": { "type": "number", "minimum": 0 },
+            "end": { "type": "number", "minimum": 0 }, "seed": { "type": "integer" } } } }
+    },
+    "audio": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "duckSpeechDb": { "type": "number" }, "duckGapDb": { "type": "number" }, "sfxGain": { "type": "number" },
+        "fadeOut": { "type": "number" }, "musicDb": { "type": "number" }, "lufs": { "type": "number" } }
+    },
+    "theme": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "css": { "type": "object", "propertyNames": { "pattern": "^--[a-z0-9-]+$" }, "additionalProperties": { "type": "string" } },
+        "fonts": { "type": "array", "items": { "type": "string" } },
+        "fontFaces": { "type": "array", "items": {
+          "type": "object", "required": ["family", "src"], "additionalProperties": false,
+          "properties": { "family": { "type": "string" }, "src": { "type": "string" },
+            "style": { "enum": ["normal", "italic"] },
+            "weight": { "oneOf": [{ "type": "integer" }, { "type": "string", "pattern": "^[0-9]{3}( [0-9]{3})?$", "description": "\"300 700\" declares a variable font's weight range" }] } } } },
+        "pools": { "type": "array", "items": {
+          "type": "object", "required": ["color", "r", "x", "y"], "additionalProperties": false,
+          "properties": { "color": { "type": "string" }, "r": { "type": "number" },
+            "x": { "type": "array", "minItems": 3, "maxItems": 5 }, "y": { "type": "array", "minItems": 3, "maxItems": 5 } } } }
+      }
+    },
+    "assets": { "type": "object", "additionalProperties": { "type": "string" } },
+    "icons": { "type": "object", "additionalProperties": { "type": "string" } },
+    "anchors": { "type": "object", "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" }, "additionalProperties": { "$ref": "#/$defs/time" } },
+    "shape": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "initial": { "type": "object", "additionalProperties": { "type": "number" } } }
+    },
+    "timeline": { "type": "array", "items": {
+      "type": "object", "required": ["at", "set"], "additionalProperties": false,
+      "properties": {
+        "at": { "$ref": "#/$defs/time" },
+        "set": { "oneOf": [{ "const": "full" }, { "type": "object", "minProperties": 1, "additionalProperties": { "type": "number" },
+          "propertyNames": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "zoom", "cx", "cy", "dx", "dy"] } }] },
+        "sp": { "$ref": "#/$defs/spring" }, "why": { "$ref": "#/$defs/why" } } } },
+    "layers": { "type": "array", "items": {
+      "type": "object", "required": ["id"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["img", "sheen", "fill", "video"] },
+        "src": { "type": "string" }, "fill": { "type": "string" },
+        "band": { "enum": [0, 1, 2] },
+        "mode": { "enum": ["cover", "world"] },
+        "fx": { "type": "number" }, "fy": { "type": "number" },
+        "zoom": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/springTo" }, { "type": "array", "items": { "$ref": "#/$defs/springTo" } }] },
+        "shift": { "type": "object", "additionalProperties": false,
+          "properties": { "dx": { "$ref": "#/$defs/springTo" }, "dy": { "$ref": "#/$defs/springTo" } } },
+        "place": { "type": "object", "required": ["size", "srcSize", "imagePoint", "at"], "additionalProperties": false,
+          "properties": { "size": { "type": "number" }, "srcSize": { "type": "number" }, "srcAspect": { "type": "number" },
+            "imagePoint": { "type": "array", "minItems": 2, "maxItems": 2 }, "at": { "type": "array", "minItems": 2, "maxItems": 2 } } },
+        "pivot": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "blend": { "type": "string" },
+        "clipX": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "wipe": { "type": "boolean" },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" }, "dOut": { "type": "number" },
+        "toutBand": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/time" } },
+        "t0": { "$ref": "#/$defs/time" }, "t1": { "$ref": "#/$defs/time" },
+        "clip": { "type": "object", "required": ["in", "at"], "additionalProperties": false,
+          "properties": { "in": { "type": "number", "minimum": 0 }, "at": { "$ref": "#/$defs/time" } } },
+        "dialogue": { "type": "integer", "minimum": 0 },
+        "cut": { "type": "boolean" },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
+    "texts": { "type": "array", "items": {
+      "type": "object", "required": ["y", "cls", "lines"], "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" }, "y": { "type": "number" }, "w": { "type": "number" },
+        "align": { "enum": ["left", "center", "right"] },
+        "cls": { "type": "string", "pattern": "^(serif|sans|ital|h0|h1|sub|wordmark|caps|foot)( (serif|sans|ital|h0|h1|sub|wordmark|caps|foot))*$" },
+        "lines": { "type": "array", "items": { "type": "array", "items": { "$ref": "#/$defs/word" } } },
+        "tout": { "$ref": "#/$defs/time" }, "lead": { "type": "number" }, "dOut": { "type": "number" }
+      } } },
+    "chips": { "type": "array", "items": {
+      "type": "object", "required": ["text", "x", "y", "side", "tin"], "additionalProperties": false,
+      "properties": { "text": { "type": "string" }, "icon": { "type": "string" }, "x": { "type": "number" }, "y": { "type": "number" },
+        "side": { "enum": ["left", "right"] }, "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" } } } },
+    "labels": { "type": "array", "items": {
+      "type": "object", "required": ["text", "side", "tin"], "additionalProperties": false,
+      "properties": { "text": { "type": "string" }, "side": { "enum": ["left", "right"] },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" } } } },
+    "odometers": { "type": "array", "items": {
+      "type": "object", "required": ["final", "t0", "t1", "y", "size"], "additionalProperties": false,
+      "properties": { "final": { "type": "integer", "minimum": 1 }, "t0": { "$ref": "#/$defs/time" }, "t1": { "$ref": "#/$defs/time" },
+        "y": { "type": "number" }, "size": { "type": "number" }, "suffix": { "type": "string" }, "tout": { "$ref": "#/$defs/time" } } } },
+    "arcs": { "type": "array", "items": {
+      "type": "object", "required": ["layer", "t0", "t1", "tout", "path"], "additionalProperties": false,
+      "properties": { "layer": { "type": "string" }, "t0": { "$ref": "#/$defs/time" }, "t1": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "path": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } } } } } },
+    "pops": { "type": "array", "items": {
+      "type": "object", "required": ["band", "at"], "additionalProperties": false,
+      "properties": { "band": { "enum": [0, 1, 2] }, "at": { "$ref": "#/$defs/time" } } } },
+    "touch": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "start": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "windows": { "type": "array", "items": { "type": "object", "required": ["tin", "tout"], "additionalProperties": false,
+          "properties": { "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" }, "dOut": { "type": "number" } } } },
+        "presses": { "type": "array", "items": { "$ref": "#/$defs/time" } },
+        "holds": { "type": "array", "items": { "type": "object", "required": ["from", "to"], "additionalProperties": false,
+          "properties": { "from": { "$ref": "#/$defs/time" }, "to": { "$ref": "#/$defs/time" }, "wiper": { "type": "boolean" } } } }
+      }
+    },
+    "cta": {
+      "type": "object", "required": ["text", "y", "h", "half", "tin", "textIn", "press"], "additionalProperties": false,
+      "properties": { "text": { "type": "string" }, "y": { "type": "number" }, "h": { "type": "number" }, "half": { "type": "number" },
+        "tin": { "$ref": "#/$defs/time" }, "textIn": { "$ref": "#/$defs/time" }, "press": { "$ref": "#/$defs/time" } }
+    },
+    "cues": { "type": "array", "items": {
+      "type": "object", "required": ["at", "kind", "gain"],
+      "properties": { "at": { "$ref": "#/$defs/time" },
+        "kind": { "enum": ["tap", "click", "tick", "pop", "glass", "pluck", "chime", "sub", "swish", "whoosh", "shimmer"] },
+        "gain": { "type": "number", "minimum": 0, "maximum": 1 },
+        "f": { "type": "number" }, "dur": { "type": "number" }, "note": { "type": "number" },
+        "notes": { "type": "array", "items": { "type": "number" } },
+        "up": { "type": "boolean" }, "rev": { "type": "boolean" }, "soft": { "type": "boolean" }, "bright": { "type": "boolean" } },
+      "additionalProperties": false } }
+  }
+}

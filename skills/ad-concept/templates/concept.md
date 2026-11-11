@@ -1,0 +1,85 @@
+---
+status: awaiting-approval   # awaiting-approval | approved
+mode: checkpoint            # checkpoint | autopilot
+platform: tiktok            # tiktok | reels | shorts
+duration: 30                # seconds; 15–60; > 34 needs a justification below
+style: motion               # motion | ugc | hybrid
+language: id
+---
+
+# Concept: <product>
+
+## Objective and CTA
+- Objective:
+- CTA (exact words and what is shown):
+
+## Audience and insight
+- Audience:
+- Insight (the one reason they care, with the review wording it comes from):
+
+## Style and reason
+- Style: <motion | ugc | hybrid>
+- Why (which assets make it possible):
+- Duration reason (only if > 34 s):
+
+## Asset inventory
+| File | Shows | Meets spec? | Use |
+|---|---|---|---|
+| assets/… | | yes / no: why | |
+
+Missing recommended items and what the film loses:
+
+## Research sources
+| Source (URL) | Date read | Taken from it |
+|---|---|---|
+| | | |
+
+Blocked sources (login etc.):
+
+## Hooks
+| # | Type | Angle | Line | First 3 s |
+|---|---|---|---|---|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+
+## Chosen hook
+- Hook #: — why:
+
+## Script
+Voice-over (motion/hybrid) or dialogue edit plan (ugc/hybrid: clip, in–out seconds or the words
+to keep, order):
+
+```
+```
+
+Pronunciation / spelling notes (brand words, caption fixes):
+
+## Beat sheet
+Recipes only from the scene menu (`skills/ad-concept/references/scene-menu.md`).
+
+| Time | Function | Visual recipe | On-screen text | Line | Asset |
+|---|---|---|---|---|---|
+| 0.0–3.0 | Hook | | | | |
+| | | | | | |
+| 26.0–30.0 | CTA | | | | |
+
+## Claims
+| Claim | Source | On-screen footnote | Confirmed by brand? | Conflict with another source? |
+|---|---|---|---|---|
+| | | | | |
+
+## Audio plan
+- Voice: ElevenLabs (voice, model) | edge-tts (voice, rate) | voice in footage
+- Music: ElevenLabs prompt | synth (style, bpm, key) | licensed file (path, licence)
+- Licence notes:
+
+## Risks and permissions
+- People on camera / likeness release:
+- Third-party marks or music:
+- Regulated claims (cosmetics, food, health) and who must confirm:
+- Invented vs real data:
+
+## DECISIONS / ASSUMPTIONS
+- DECISION:
+- ASSUMPTION:
