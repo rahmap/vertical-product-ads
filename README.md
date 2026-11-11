@@ -151,8 +151,8 @@ Plain-language guide to each style: [`references/styles.md`](skills/ad-concept/r
 
 ## Voice and music
 
-A full ad needs **no ElevenLabs key**. To use ElevenLabs, set `ELEVENLABS_API_KEY` in the
-environment or in a `.env` in the project folder (or any parent).
+A full ad needs **no ElevenLabs key**. To use ElevenLabs, see [ElevenLabs API key](#elevenlabs-api-key)
+below.
 
 | Part | ElevenLabs | Free | Licence note |
 |---|---|---|---|
@@ -161,6 +161,27 @@ environment or in a `.env` in the project folder (or any parent).
 | Footage transcription | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Local, no upload. `"auto"` uses ElevenLabs when it can, else whisper |
 
 ElevenLabs output follows your plan's terms.
+
+### ElevenLabs API key
+
+**Never paste an API key into an agent chat or prompt.** The chat is sent to the model provider and
+kept in the conversation history.
+
+1. Create a key in the ElevenLabs dashboard with the permissions you need: Text to Speech
+   (voice-over), Music, Speech to Text (footage transcription; without it, `auto` uses whisper).
+2. Run this **yourself, in your own terminal**, from your workspace root:
+   ```bash
+   $SKILL/scripts/set_key.sh
+   ```
+   The key is typed with hidden input and saved to `.env`, readable by you only (`chmod 600`).
+   `.env` is added to `.gitignore`.
+3. Check: `$SKILL/scripts/check_setup.sh` shows **where** the key is, never its value, and warns if
+   the file is readable by others or not git-ignored.
+
+Alternative: `export ELEVENLABS_API_KEY=...` in your shell profile (`~/.zshrc`). The skills forbid the
+agent to ask for, read or print the key; the tools read it themselves from the environment or the
+nearest `.env`. If a key was ever pasted into a chat, revoke it in the ElevenLabs dashboard and
+create a new one.
 
 ---
 

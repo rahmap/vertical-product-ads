@@ -76,6 +76,8 @@ Speed choices:
       words, `captions.fix`), no caption leaves the safe zone, b-roll covers the line it illustrates.
 - [ ] Duration: hook inside 3 s; CTA held 3–5 s; total within the concept's duration.
 - [ ] Claims have their footnote; colours of the product are not filtered away.
+- [ ] Zoom in on every number and claim at rest (odometers, prices, percentages): one clean glyph per
+      digit, no stray marks above or below. Snap the frame just after each odometer's `t1`.
 
 ## Troubleshooting
 - **`engine failed: …`:** the message names the scenes key (unknown asset, anchor, track, or a time

@@ -152,8 +152,8 @@ Penjelasan tiap gaya untuk pemula: [`references/styles.md`](skills/ad-concept/re
 
 ## Suara dan musik
 
-Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, isi
-`ELEVENLABS_API_KEY` di environment atau di file `.env` pada folder proyek (atau folder induknya).
+Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, lihat
+[API key ElevenLabs](#api-key-elevenlabs) di bawah.
 
 | Bagian | ElevenLabs | Gratis | Catatan lisensi |
 |---|---|---|---|
@@ -162,6 +162,26 @@ Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, 
 | Transkripsi footage | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Lokal, tanpa unggah. `"auto"` memakai ElevenLabs bila bisa, selain itu whisper |
 
 Lisensi ElevenLabs mengikuti ketentuan paket Anda.
+
+### API key ElevenLabs
+
+**Jangan pernah tempel API key ke chat atau prompt agen.** Isi chat dikirim ke penyedia model AI dan
+tersimpan di riwayat percakapan.
+
+1. Buat key di dashboard ElevenLabs. Beri izin sesuai kebutuhan: Text to Speech (voice-over), Music
+   (musik), Speech to Text (transkripsi footage; tanpa izin ini, `auto` memakai whisper).
+2. Jalankan **sendiri di terminal Anda**, dari folder kerja (root workspace):
+   ```bash
+   $SKILL/scripts/set_key.sh
+   ```
+   Key diketik tanpa tampil di layar, lalu disimpan ke `.env` dengan izin baca hanya untuk Anda
+   (`chmod 600`). `.env` juga otomatis dimasukkan ke `.gitignore`.
+3. Cek: `$SKILL/scripts/check_setup.sh` hanya menampilkan **lokasi** key, bukan isinya, dan memberi
+   peringatan bila file bisa dibaca orang lain atau belum di-gitignore.
+
+Alternatif: `export ELEVENLABS_API_KEY=...` di profil shell Anda (`~/.zshrc`). Skill melarang agen
+meminta, membaca, atau menampilkan key; tool membacanya sendiri dari environment atau `.env` terdekat.
+Jika key sempat tertempel di chat, cabut (revoke) di dashboard ElevenLabs lalu buat yang baru.
 
 ---
 

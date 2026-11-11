@@ -19,18 +19,23 @@ def scenes(p):
 
 
 def api_key(p, name="ELEVENLABS_API_KEY", required=True):
-    """Environment first, then the nearest .env walking up from the project. None when absent and not required."""
+    """Environment first, then the nearest .env walking up from the project. None when absent and not required.
+    The value is never printed: error messages name the variable, not its content."""
     if os.environ.get(name):
         return os.environ[name]
     for d in [p, *p.parents]:
         env = d / ".env"
         if env.exists():
             for line in env.read_text().splitlines():
-                if line.strip().startswith(name + "="):
+                line = line.strip()
+                if line.startswith("export "):
+                    line = line[7:].lstrip()
+                if line.startswith(name + "="):
                     return line.split("=", 1)[1].strip().strip('"').strip("'")
     if not required:
         return None
-    sys.exit(f"{name} not set (environment or a .env in the project or a parent folder)")
+    sys.exit(f"{name} not set. Run scripts/set_key.sh in your own terminal (never paste the key into a chat), "
+             f"or set it in the environment")
 
 
 def fetch(req, timeout=300, tries=4):

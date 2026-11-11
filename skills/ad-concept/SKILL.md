@@ -68,6 +68,8 @@ and refuses to start without it.
      and stop after step 5.
 
 ## Rules
+- Never ask for an API key in the chat, never read or print `.env`. Keys are set by the user in their
+  own terminal with the production skill's `scripts/set_key.sh`; without one, plan the free options.
 - Never invent product facts, numbers, ratings, testimonials or before/after results. Use what the
   brief and official sources give; label anything else as invented in the concept.
 - Do not write medical or cure claims for cosmetics. Check the local advertising rules for the

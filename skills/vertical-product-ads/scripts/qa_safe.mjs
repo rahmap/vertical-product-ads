@@ -32,26 +32,42 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
     const name = e => (e.textContent || e.id).trim().replace(/\s+/g, ' ').slice(0, 32);
     const safe = [], overlap = [], empty = [];
 
+    // odometer slots: measure the visible window (the cell minus its clip inset, i.e. 1 em at `y`), not the padded
+    // rolling cell or the font's content box; the suffix is measured as text
+    const rectOf = e => {
+      const r = e.getBoundingClientRect();
+      if (!e.classList.contains('slot')) return r;
+      const pad = (r.height - parseFloat(getComputedStyle(e).fontSize)) / 2;
+      return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad, width: r.width };
+    };
     for (const e of document.querySelectorAll('#hud .w, #hud .chip, #hud .label, #hud .odo > *, #hud .cap, #cta')) {
       if (alpha(e, 'hud') < 0.05) continue;
-      const r = e.getBoundingClientRect();
+      const r = rectOf(e);
       if (r.width < 1) continue;
-      if (r.left < Z.l - 0.5 || r.right > Z.r + 0.5 || r.top < Z.t - 0.5 || r.bottom > Z.b + 0.5) safe.push([name(e), box(r)]);
+      if (r.left < Z.l - 0.5 || r.right > Z.r + 0.5 || r.top < Z.t - 0.5 || r.bottom > Z.b + 0.5)
+        safe.push([e.classList.contains('slot') ? e.firstChild.textContent : name(e), box(r)]);
     }
 
-    // a text block is the union of its visible words; the others are one box each
+    // a text block or odometer is the union of its visible glyph boxes; the others are one box each
     const blocks = [];
-    for (const tb of document.querySelectorAll('#hud .tb')) {
+    const union = (parts, min) => {
       let r = null;
-      for (const w of tb.querySelectorAll('.w')) {
-        if (alpha(w, 'hud') < 0.25) continue;
-        const b = w.getBoundingClientRect();
+      for (const w of parts) {
+        if (alpha(w, 'hud') < min) continue;
+        const b = rectOf(w);
         if (b.width < 1) continue;
         r = r ? { left: Math.min(r.left, b.left), top: Math.min(r.top, b.top), right: Math.max(r.right, b.right), bottom: Math.max(r.bottom, b.bottom) } : { left: b.left, top: b.top, right: b.right, bottom: b.bottom };
       }
-      if (r) blocks.push([name(tb), r]);
+      return r;
+    };
+    for (const tb of document.querySelectorAll('#hud .tb')) { const r = union(tb.querySelectorAll('.w'), 0.25); if (r) blocks.push([name(tb), r]); }
+    for (const od of document.querySelectorAll('#hud .odo')) {
+      if (alpha(od, 'hud') < 0.25) continue;
+      const parts = [...od.children];
+      const r = union(parts, 0);
+      if (r) blocks.push([parts.map(p => (p.classList.contains('slot') ? p.firstChild.textContent : p.textContent)).join('').trim(), r]);
     }
-    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .odo, #hud .cap, #cta')) {
+    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .cap, #cta')) {
       if (alpha(e, 'hud') < 0.25) continue;
       const r = e.getBoundingClientRect();
       if (r.width >= 1) blocks.push([name(e), r]);

@@ -54,7 +54,21 @@ extra() { # <flag> <module> <package> <what it gives>
 extra edge edge_tts edge-tts "free voice-over, vo.engine edge"
 extra whisper faster_whisper faster-whisper "local transcription for dialogue footage"
 
-if [[ -n "${ELEVENLABS_API_KEY:-}" ]]; then ok "ELEVENLABS_API_KEY set (voice-over + music generation)"
-else printf '  · ELEVENLABS_API_KEY not in the environment: the tools also read it from a .env in the project or any parent folder (only needed for vo.engine elevenlabs and music.prompt)\n'; fi
+# ElevenLabs key: report WHERE it is and whether the file is safe, never the value
+keyfile=""; d="$PWD"
+while :; do
+  if [[ -f "$d/.env" ]] && grep -qE '^(export[[:space:]]+)?ELEVENLABS_API_KEY=.' "$d/.env"; then keyfile="$d/.env"; break; fi
+  [[ "$d" == "/" ]] && break; d="$(dirname "$d")"
+done
+if [[ -n "${ELEVENLABS_API_KEY:-}" ]]; then ok "ELEVENLABS_API_KEY set in the environment (value not shown)"
+elif [[ -n "$keyfile" ]]; then
+  ok "ELEVENLABS_API_KEY found in $keyfile (value not shown)"
+  perm=$(stat -f %Lp "$keyfile" 2>/dev/null || stat -c %a "$keyfile")
+  [[ "$perm" == 600 || "$perm" == 400 ]] || printf '  ! %s is readable by others (mode %s): chmod 600 "%s"\n' "$keyfile" "$perm" "$keyfile"
+  kd="$(dirname "$keyfile")"
+  if git -C "$kd" rev-parse --is-inside-work-tree >/dev/null 2>&1 && ! git -C "$kd" check-ignore -q "$keyfile"; then
+    printf '  ! %s is not git-ignored: add .env to .gitignore before committing\n' "$keyfile"
+  fi
+else printf '  · no ElevenLabs key (optional: free voice/music/transcription work without it). To add one, run in YOUR terminal: %s/scripts/set_key.sh\n' "$SKILL"; fi
 
 [[ $FAIL -eq 0 ]] && echo "ready" || { echo "fix the ✗ items above"; exit 1; }

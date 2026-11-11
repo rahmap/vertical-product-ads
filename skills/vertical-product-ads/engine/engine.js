@@ -311,19 +311,30 @@ async function main() {
     if (c.side === 'left') c.e.style.left = c.x + 'px'; else c.e.style.right = W - c.x + 'px';
   }
   for (const l of LABELS) { l.e = el('div', 'label sans', hud); l.e.textContent = l.text; }
+  // Odometer cells are 1.4× the font size and use lining figures: glyphs overflow their em box (old-style
+  // figures in Georgia/Cormorant descend), and with 1-em cells the neighbouring digit's tail showed inside the
+  // window, even at rest. The block is shifted up by the padding so the digits sit where `y` puts them.
   for (const o of ODOS) {
+    o.cell = Math.round(o.size * 1.4);
     o.e = el('div', 'odo serif', hud);
-    o.e.style.left = '0px'; o.e.style.width = W + 'px'; o.e.style.top = o.y + 'px';
-    o.e.style.fontSize = o.size + 'px'; o.e.style.lineHeight = '1';
+    o.e.style.left = '0px'; o.e.style.width = W + 'px'; o.e.style.top = o.y - (o.cell - o.size) / 2 + 'px';
+    o.e.style.fontSize = o.size + 'px'; o.e.style.lineHeight = o.cell + 'px';
     const digits = String(o.final).split('');
     o.slots = digits.map((dch, i) => {
       const slot = el('div', 'slot', o.e);
+      // the window is the middle 1 em of the cell: rolling digits stay in the number's own band, and a neighbour
+      // (0.4 em further out) never reaches it
+      slot.style.height = o.cell + 'px';
+      slot.style.clipPath = `inset(${(o.cell - o.size) / 2}px -80px)`;
       const probe = el('span', null, slot); probe.textContent = dch; probe.style.visibility = 'hidden';
       const strip = el('div', 'strip', slot);
-      for (const n of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]) el('span', null, strip).textContent = n;
+      for (const n of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]) { const s = el('span', null, strip); s.textContent = n; s.style.height = o.cell + 'px'; }
       return { slot, strip, p: digits.length - 1 - i };
     });
-    if (o.suffix) { o.suf = el('span', 'ital', o.e); o.suf.textContent = '\u2009' + o.suffix; o.suf.style.fontSize = o.size * 0.48 + 'px'; }
+    if (o.suffix) {   // line-height 1 as before: the padded cell height is for the digits only
+      o.suf = el('span', 'ital', o.e); o.suf.textContent = '\u2009' + o.suffix;
+      o.suf.style.fontSize = o.size * 0.48 + 'px'; o.suf.style.lineHeight = '1';
+    }
   }
   for (const c of CAPS) {
     c.e = el('div', `cap ${CAPCFG.style}`, hud);
@@ -520,12 +531,11 @@ async function main() {
     for (const o of ODOS) {
       const v = vis(t, o.t0 - 0.08, o.tout, 0.14); show(o.e, v.o > 0.003); if (v.o <= 0.003) continue;
       o.e.style.opacity = v.o.toFixed(3); o.e.style.filter = blurOf(v);
-      const val = odoValue(o, t), lh = o.size;
+      const val = odoValue(o, t);
       for (const s of o.slots) {
         const P = Math.pow(10, s.p);
         const d = Math.floor(val / P) % 10 + Math.max(0, (val % P) - (P - 1));
-        s.strip.style.transform = `translateY(${px(-d * lh)})`;
-        s.slot.style.height = lh + 'px';
+        s.strip.style.transform = `translateY(${px(-d * o.cell)})`;
         s.slot.style.opacity = (s.p === 0 ? 1 : clamp((val - P + 1) / 1.5)).toFixed(3);
       }
     }

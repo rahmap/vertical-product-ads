@@ -48,8 +48,10 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 ## Workflow
 1. **Project folder:** create `<project>/assets/` and `<project>/scenes.json`, copied from
    `examples/minimal/scenes.json` (format: `references/scenes-format.md`). `ELEVENLABS_API_KEY` is read
-   from the environment or a `.env` in the project or any parent folder; it is needed only for
-   ElevenLabs voice, music or transcription. `.gitignore` for the project: `build/`, `renders/`, `snaps/`.
+   by the tools from the environment or a `.env` in the project or any parent folder; it is needed only
+   for ElevenLabs voice, music or transcription. If it is missing, tell the user to run
+   `scripts/set_key.sh` **in their own terminal**, or use the free options. `.gitignore` for the
+   project: `build/`, `renders/`, `snaps/`, `.env`.
 2. **Speech first.**
    - **`vo` (motion, hybrid with narration):** pick a voice
      (`scripts/py scripts/voices.py <project> --lang <xx> --gender female` for ElevenLabs; an edge voice
@@ -93,6 +95,11 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 - **No gate is optional.** A failing gate means fix the scenes, not bypass the gate.
 - **Limits:** you cannot watch footage, only read its transcript and snaps; b-roll sound is muted;
   avatars and generated presenters are not supported.
+- **Credentials stay out of the chat.** Never ask the user to paste an API key into the conversation,
+  never put one in a prompt, a command line or a file you write, and never read, print, `cat`,
+  `grep` or echo `.env` or the key. The tools read it themselves; `check_setup.sh` reports only where
+  it is. If a user pastes a key anyway, do not repeat it, and tell them to revoke it in the
+  ElevenLabs dashboard and store a new one with `scripts/set_key.sh`.
 
 ## References
 | File | Read when |

@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.2
+
+**Fix: stray marks on odometer numbers**
+- Reported from the black-box films: a sliver of the neighbouring digit showed above "48 jam" and
+  "8 jam", even after the number stopped. Cause: each rolling cell was exactly 1 em tall, and serif
+  fonts with old-style figures (Georgia, Cormorant) draw digits past their em box, so the digit above
+  reached into the window.
+- Odometers now use lining figures, cells 1.4 em tall, and a window clipped to the middle 1 em: at
+  rest no neighbour can reach the window, and while rolling the digits stay in the number's band
+  (they used to rise into the label above). Digit positions on screen are unchanged.
+- The layout gate measures odometer glyphs instead of the padded cells; the review checklist adds a
+  zoom-in on every number at rest.
+
+**API key safety**
+- `scripts/set_key.sh`: the user stores `ELEVENLABS_API_KEY` in `.env` from their own terminal
+  (hidden input, `chmod 600`, added to `.gitignore`); it refuses piped input.
+- `check_setup.sh` reports where the key is (environment or which `.env`), never its value, and warns
+  when the file is readable by others or not git-ignored. `.env` lines may use `export`.
+- Both skills forbid the agent to ask for a key in chat or to read, print or echo `.env`.
+
 ## 0.2.1
 
 **Examples for users** (in `skills/ad-concept/`, so they install with the skill)
