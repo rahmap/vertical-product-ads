@@ -25,6 +25,11 @@ and refuses to start without it.
    - Required item missing: **checkpoint** → collect all of them and ask in ONE message, with the
      exact spec of each. **Autopilot** → assume a reasonable value, log `ASSUMPTION:`.
    - Recommended items missing: say what the film loses; do not block.
+   - The user wants `ugc`/`hybrid` but has no creator footage yet: give them
+     `templates/creator-shot-list.md` (fill in the product and CTA) and stop until the footage
+     arrives, or offer `motion` now.
+   - The user asks how to start or what to write: point them to `examples/prompts.md` and the
+     filled briefs in `examples/`.
 2. **Research** (time-box: about 10 searches/pages; only if you have web tools). Skip and say so if you
    have none.
    - Official product page: name, variants, ingredients/specs, official claims, price.
@@ -83,3 +88,6 @@ and refuses to start without it.
 | `references/duration-and-platforms.md` | Choosing platform and length |
 | `templates/brief.md` | What users fill in |
 | `templates/concept.md` | The file you write |
+| `templates/creator-shot-list.md` | What a creator must record for `ugc`/`hybrid` |
+| `examples/prompts.md` | Copy-paste prompts per style and mode, with and without `brief.md` |
+| `examples/brief-motion.md`, `brief-ugc.md`, `brief-hybrid.md` | Filled briefs for one fictional product |

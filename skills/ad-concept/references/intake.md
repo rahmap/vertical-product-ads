@@ -50,7 +50,19 @@ lost if absent. **Optional** items add authenticity.
 
 Limits to tell the user: b-roll (clips without speech) is muted in the mix; the engine does not
 generate presenters or avatars; the transcript comes from speech recognition and may need
-proofreading (the production skill does this with the user's help).
+proofreading (the production skill does this with the user's help). What to ask a creator to
+record, take by take: `templates/creator-shot-list.md`.
+
+## Assets per style (summary)
+| | `motion` | `ugc` | `hybrid` |
+|---|---|---|---|
+| Required | Product photos (spec above) | Creator footage (spec above) | Creator footage (at least hook + testimonial) **and** product photos |
+| Recommended | Logo, brand colours, texture close-ups, one photo per shade/variant | 2–4 b-roll clips of 3–6 s (product turn, application, texture), 1 packshot for the end card | b-roll, texture, shade photos |
+| Speech | Voice-over: ElevenLabs or edge-tts | The creator's voice | The creator's voice |
+| Release | Model photos, if any | Creator release | Both |
+
+Filled examples for one fictional product: `examples/brief-motion.md`, `brief-ugc.md`,
+`brief-hybrid.md`.
 
 ## Asking in one message (checkpoint)
 Group the missing items by Required / Recommended, one line each with its spec, and end with the

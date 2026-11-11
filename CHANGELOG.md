@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1
+
+**Examples for users** (in `skills/ad-concept/`, so they install with the skill)
+- `examples/prompts.md`: copy-paste prompts for `motion`, `ugc` and `hybrid`, in checkpoint and
+  autopilot, with a `brief.md` and fully self-contained without one, plus follow-up prompts
+  (concept only, approve, switch style, revise, 15 s cutdown, ask for a shot list).
+- `examples/brief-motion.md`, `brief-ugc.md`, `brief-hybrid.md`: one fictional product (Glowa Lip
+  Serum) briefed three ways, so the asset differences between styles are visible side by side.
+- `templates/creator-shot-list.md`: what a creator records per take (3 hook variants, intro, demo,
+  result, CTA, b-roll), phone settings, light, pauses, delivery and release.
+- Assets-per-style table in `references/intake.md` and both READMEs; `ad-concept` hands out the
+  shot list when a user wants `ugc`/`hybrid` without footage.
+
 ## 0.2.0
 
 **Two skills**

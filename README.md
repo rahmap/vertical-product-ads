@@ -46,26 +46,46 @@ flowchart LR
 - **Autopilot:** it assumes what is missing, picks the hook, and builds in one run. Every
   assumption and decision is logged in `concept.md` and the report.
 
-Example prompts:
-> Make a 30-second TikTok ad for this serum. Brief: `my-ad/brief.md`, photos in `my-ad/assets/`.
-> Female Indonesian voice-over.
+## Example prompts
+Copy-paste prompts for every style and mode, with and without `brief.md`:
+[`skills/ad-concept/examples/prompts.md`](skills/ad-concept/examples/prompts.md) (written in
+Indonesian; prompts work in any language). In short:
 
-> Autopilot: make a Reels ad for `my-ad/`, ugc style with my footage, free voice and music.
+| Style | Short prompt (details in `brief.md`) |
+|---|---|
+| `motion` | *Make an ad from the folder `ads/glowa`. The brief is in `brief.md`.* |
+| `ugc` | *Make a UGC ad from `ads/glowa`. Brief in `brief.md`, creator footage in `assets/`.* |
+| `hybrid` | *Autopilot: make an ad from `ads/glowa`, brief in `brief.md`.* |
 
-Set `mode: autopilot` in `brief.md` instead of saying it in the prompt if you prefer.
+No `brief.md` is needed if the prompt carries the details; the agent writes `brief.md` from it:
+> Make a 30-second TikTok ad, motion style, for **Glowa Lip Serum**, a sheer tinted lip serum
+> (3 shades: Rose, Peach, Berry; IDR 89,000 on TikTok Shop). Photos in `ads/glowa/assets/`: white
+> packshots from 3 angles, 1 texture close-up, 3 shade photos. Audience: women 20–30 whose lips dry
+> out fast. Claim: "moisturised for up to 24 hours" (Glowa internal test, 30 respondents). Brand
+> colour #C2416B. CTA: "Cek keranjang kuning". Female Indonesian voice-over; free voice and music.
+
+Give the prompt or brief the **5 essentials**: product, claims + sources, exact CTA, audience +
+platform, where the assets are. Start the prompt with "Autopilot" (or set `mode: autopilot` in
+`brief.md`) to skip the approval stop.
 
 ## What to prepare
 Copy [`skills/ad-concept/templates/brief.md`](skills/ad-concept/templates/brief.md) to
-`my-ad/brief.md`, fill it in, and put files in `my-ad/assets/`. Checklist (full specs:
-[`skills/ad-concept/references/intake.md`](skills/ad-concept/references/intake.md)):
-- [ ] Product photos: ≥ 3 angles, ≥ 2000 px short side, white or transparent, no baked-in text
-- [ ] Product name, variants, price, where to buy
-- [ ] Claims, each with its source
-- [ ] Objective and the exact CTA
-- [ ] Audience and platform
-- [ ] Logo, brand colours, font (recommended)
-- [ ] Texture/application close-ups (recommended); real before/after and real reviews, only if real
-- [ ] For `ugc`/`hybrid`: creator footage 9:16 1080×1920, 30 fps, clean audio, no music, talent release
+`ads/<name>/brief.md`, fill it in, and put files in `ads/<name>/assets/`. Filled briefs (one
+fictional product, three styles): [motion](skills/ad-concept/examples/brief-motion.md),
+[ugc](skills/ad-concept/examples/brief-ugc.md), [hybrid](skills/ad-concept/examples/brief-hybrid.md).
+
+| | `motion` | `ugc` | `hybrid` |
+|---|---|---|---|
+| **Required** | Product photos: ≥ 3 angles, ≥ 2000 px short side, white/transparent, no baked-in text | Creator footage 9:16 1080×1920, 30 fps, talking to camera, clean audio, no music | Creator footage (at least hook + testimonial) **and** product photos |
+| **Required (all)** | Product (name, variants, price), claims + sources, exact CTA, audience + platform | same | same |
+| **Recommended** | Logo, brand colours (hex), texture close-ups ≥ 1600 px, one photo per shade | 2–4 b-roll clips of 3–6 s (product turn, application, texture), 1 packshot for the end card | b-roll, texture, shade photos |
+| **Speech** | Voice-over: ElevenLabs or free (edge-tts) | The creator's voice | The creator's voice |
+| **Release** | Model photos, if any | Creator release | Both |
+
+For `ugc`/`hybrid`, send the [creator shot list](skills/ad-concept/templates/creator-shot-list.md)
+before the shoot: what to say per take, phone settings, light, pauses between sentences. Before/after
+and reviews only if real. Full specs:
+[`skills/ad-concept/references/intake.md`](skills/ad-concept/references/intake.md).
 
 ## Styles
 | Style | Looks like | Needs |
@@ -143,7 +163,7 @@ measured on `motion` films; footage styles have not been timed.
 ## Layout
 | Path | |
 |---|---|
-| `skills/ad-concept/` | `SKILL.md`, `references/` (intake, hooks, styles, scene menu, durations), `templates/` (`brief.md`, `concept.md`) |
+| `skills/ad-concept/` | `SKILL.md`, `references/` (intake, hooks, styles, scene menu, durations), `templates/` (`brief.md`, `concept.md`, `creator-shot-list.md`), `examples/` (prompts, filled briefs per style) |
 | `skills/vertical-product-ads/SKILL.md` | what the production agent follows |
 | `skills/vertical-product-ads/references/` | direction, styles, `scenes.json` format, VO/beat sync, safe zones, render + QA |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: the pure `seek(t)` renderer |

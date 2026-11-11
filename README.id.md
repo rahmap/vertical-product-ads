@@ -46,26 +46,47 @@ flowchart LR
 - **Autopilot:** agen mengasumsikan yang kurang, memilih hook, dan membangun dalam satu kali jalan.
   Semua asumsi dan keputusan dicatat di `concept.md` dan di laporan.
 
-Contoh prompt:
-> Buat iklan TikTok 30 detik untuk serum ini. Brief: `my-ad/brief.md`, foto di `my-ad/assets/`.
-> Voice-over perempuan bahasa Indonesia.
+## Contoh prompt
+Prompt siap salin untuk setiap gaya dan mode, dengan dan tanpa `brief.md`:
+[`skills/ad-concept/examples/prompts.md`](skills/ad-concept/examples/prompts.md). Ringkasnya:
 
-> Autopilot: buat iklan Reels dari folder `my-ad/`, gaya ugc dengan footage saya, suara dan musik gratis.
+| Gaya | Prompt pendek (detail di `brief.md`) |
+|---|---|
+| `motion` | *Buatkan iklan dari folder `iklan/glowa`. Brief ada di `brief.md`.* |
+| `ugc` | *Buatkan iklan UGC dari folder `iklan/glowa`. Brief di `brief.md`, footage kreator di `assets/`.* |
+| `hybrid` | *Autopilot: buat iklan dari folder `iklan/glowa`, brief di `brief.md`.* |
 
-Atau tulis `mode: autopilot` di `brief.md`.
+Tanpa `brief.md` juga bisa: tulis semua detail di prompt, agen membuat `brief.md` sendiri. Contoh
+(gaya motion, checkpoint, audio gratis):
+> Buatkan iklan TikTok 30 detik gaya motion untuk **Glowa Lip Serum**, serum bibir berwarna tipis
+> (3 shade: Rose, Peach, Berry; Rp89.000 di TikTok Shop). Foto ada di `iklan/glowa/assets/`:
+> packshot putih 3 sudut, 1 close-up tekstur, 3 foto shade. Target: perempuan 20–30 tahun yang
+> bibirnya cepat kering. Klaim: "lembap hingga 24 jam" (uji internal Glowa, 30 responden). Warna
+> brand #C2416B. CTA: "Cek keranjang kuning". Voice-over perempuan bahasa Indonesia; suara dan
+> musik gratis.
+
+Prompt atau brief sebaiknya memuat **5 hal wajib**: produk, klaim + sumber, CTA persis, target +
+platform, lokasi aset. Tulis "Autopilot" di awal prompt (atau `mode: autopilot` di `brief.md`) agar
+agen tidak berhenti untuk persetujuan.
 
 ## Yang perlu disiapkan
 Salin [`skills/ad-concept/templates/brief.md`](skills/ad-concept/templates/brief.md) ke
-`my-ad/brief.md`, isi, lalu taruh file di `my-ad/assets/`. Daftar cek (spesifikasi lengkap:
-[`skills/ad-concept/references/intake.md`](skills/ad-concept/references/intake.md)):
-- [ ] Foto produk: minimal 3 sudut, sisi terpendek ≥ 2000 px, latar putih atau transparan, tanpa teks di dalam gambar
-- [ ] Nama produk, varian, harga, tempat membeli
-- [ ] Klaim, masing-masing dengan sumbernya
-- [ ] Tujuan iklan dan ajakan (CTA) yang persis
-- [ ] Target audiens dan platform
-- [ ] Logo, warna merek, font (disarankan)
-- [ ] Close-up tekstur/pemakaian (disarankan); before/after dan ulasan asli, hanya jika memang asli
-- [ ] Untuk `ugc`/`hybrid`: footage kreator 9:16 1080×1920, 30 fps, audio bersih, tanpa musik, izin tampil dari talent
+`iklan/<nama>/brief.md`, isi, lalu taruh file di `iklan/<nama>/assets/`. Contoh brief terisi
+(produk fiktif yang sama, tiga gaya): [motion](skills/ad-concept/examples/brief-motion.md),
+[ugc](skills/ad-concept/examples/brief-ugc.md), [hybrid](skills/ad-concept/examples/brief-hybrid.md).
+
+| | `motion` | `ugc` | `hybrid` |
+|---|---|---|---|
+| **Wajib** | Foto produk ≥ 3 sudut, sisi terpendek ≥ 2000 px, latar putih/transparan, tanpa teks | Footage kreator 9:16 1080×1920, 30 fps, bicara ke kamera, audio bersih tanpa musik | Footage kreator (min. hook + testimoni) **dan** foto produk |
+| **Wajib (semua)** | Produk (nama, varian, harga), klaim + sumber, CTA persis, target + platform | sama | sama |
+| **Disarankan** | Logo, warna brand (hex), close-up tekstur ≥ 1600 px, satu foto per shade | 2–4 b-roll 3–6 dtk (putar produk, cara pakai, tekstur), 1 packshot untuk end card | b-roll, tekstur, foto shade |
+| **Suara** | VO: ElevenLabs atau gratis (edge-tts) | Suara kreator | Suara kreator |
+| **Izin** | Foto model, jika ada | Izin tampil kreator | Keduanya |
+
+Untuk `ugc`/`hybrid`, kirim [shot list kreator](skills/ad-concept/templates/creator-shot-list.md) ke
+kreator sebelum rekaman: apa yang diucapkan per take, setelan HP, cahaya, jeda antar kalimat.
+Before/after dan ulasan hanya dipakai jika asli. Spesifikasi lengkap:
+[`skills/ad-concept/references/intake.md`](skills/ad-concept/references/intake.md).
 
 ## Gaya (style)
 | Style | Tampilan | Butuh |
@@ -143,7 +164,7 @@ diukur pada film `motion`; style footage belum diukur waktunya.
 ## Struktur folder
 | Path | |
 |---|---|
-| `skills/ad-concept/` | `SKILL.md`, `references/` (intake, hook, style, menu adegan, durasi), `templates/` (`brief.md`, `concept.md`) |
+| `skills/ad-concept/` | `SKILL.md`, `references/` (intake, hook, style, menu adegan, durasi), `templates/` (`brief.md`, `concept.md`, `creator-shot-list.md`), `examples/` (contoh prompt, brief terisi per gaya) |
 | `skills/vertical-product-ads/SKILL.md` | panduan agen produksi |
 | `skills/vertical-product-ads/references/` | arahan, style, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: renderer `seek(t)` |
