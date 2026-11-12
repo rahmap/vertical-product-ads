@@ -1,445 +1,87 @@
 # vertical-product-ads
 
-Dua skill agen untuk **iklan produk vertikal 9:16** (TikTok, Instagram Reels, YouTube Shorts, promo
-e-commerce, iklan kecantikan/skincare): dari ide sampai MP4 siap tayang dalam satu prompt.
-Versi Inggris: [README.md](README.md).
+Buat iklan produk 9:16 untuk TikTok, Reels, dan Shorts dari foto atau footage kreator melalui coding agent Anda.
 
-| Skill | Tugasnya |
-|---|---|
-| `ad-concept` | Membaca brief dan aset, meriset produk, mengusulkan 3 hook, memilih gaya, look, dan layout tiap beat, menulis naskah dan beat sheet ke `concept.md` |
-| `vertical-product-ads` | Memproduksi konsep yang disetujui menjadi MP4 dalam salah satu dari delapan look, dengan split screen, grid, picture-in-picture, callout, dan lainnya: suara, musik, animasi, pengecekan kualitas, render |
+Skill ini menangani konsep, naskah, suara, musik, animasi, dan render MP4.
+Skill berjalan di dalam agen, bukan aplikasi editor video terpisah.
 
-Bisa dipakai di agen apa pun yang membaca skill `SKILL.md`: Claude Code, Codex, Cursor, Amp, Cline,
-dan lainnya.
+[English](README.md) · [Galeri](docs/showcase.id.md) · [Panduan penggunaan](docs/guide.id.md)
+
+## Dua skill, dua tugas
+
+- `ad-concept` menyusun hook, naskah, dan adegan untuk Anda setujui.
+- `vertical-product-ads` membuat konsep yang disetujui menjadi video, memeriksa pratinjau, dan mengekspor MP4 final.
+
+Pakai keduanya atau pasang salah satu. Skill ini bekerja di agen yang mendukung `SKILL.md`,
+termasuk Claude Code, Codex, Cursor, Amp, dan Cline.
 
 ## Contoh hasil
 
-| Motion: Dior Addict Lip Glow (spec ad tidak resmi) | Hybrid: b-roll sampo jahe |
-|---|---|
-| <a href="media/dior-lip-glow.mp4"><img src="media/dior-lip-glow.gif" width="252" alt="Iklan lip balm vertikal 31 detik: satu bentuk membulat berubah melalui wipe sebelum/sesudah, packshot, tiga panel warna bibir, chip bahan, angka 48 jam yang berputar, dan end card"></a> | <a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="Iklan sampo vertikal 20 detik: b-roll produk dengan caption, kartu bahan, chip manfaat, layar terbelah tiga, dan end card dengan tombol CTA"></a> |
-| 31 detik. Semua gambar buatan AI (model, bibir, produk); satu bentuk berubah melalui wipe sebelum/sesudah, packshot parallax, tiga panel warna bibir, chip bahan, odometer, dan end card. Voice dan musik ElevenLabs. [MP4 dengan suara](media/dior-lip-glow.mp4) | Iklan TikTok 20 detik dari b-roll produk tanpa suara: voice, musik dan efek suara ElevenLabs, kartu bahan, chip manfaat, tiga panel yang muncul pada katanya, end card. [MP4 dengan suara](media/ginger-shampoo.mp4) |
+Footage kreator yang sama, dirender dalam delapan look dengan picture-in-picture, split screen,
+kolase, dan callout produk. Klik pratinjau untuk video lengkap dengan suara.
 
-**Satu film, delapan look.** `scenes.json` yang sama dirender delapan kali; yang berubah hanya
-`"look"`. Serum bibir fiktif dengan audio gratis (suara edge-tts, musik synth lokal), tanpa gambar.
-Proyeknya: [`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/).
+<a href="media/ugc-layouts.mp4"><img src="media/ugc-layouts.gif" width="720" height="696" alt="Delapan versi iklan sampo jahe yang memperlihatkan perbedaan font, warna, caption, dan tampilan layout pada tiap look"></a>
 
-<a href="media/looks.mp4"><img src="media/looks.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look: classic, luxe-editorial, clean-clinical, bold-streetwear, warm-organic, tech-neon, pop-playful, dan ugc-native. Semua memakai adegan yang sama (kartu hook, merek, angka 24 jam yang berputar dengan chip, tiga panel shade, end card dengan CTA) dengan font, warna, dan cara teks muncul masing-masing"></a>
-
-**Satu film, semua layout, delapan look.** Iklan serum fiktif 20 detik yang memperlihatkan teks
-kinetik, split screen yang keluar dari kartu, teks berisi gambar, callout, daftar perbandingan, grid
-yang berubah jadi kolase di bawah teks berjalan, dan ponsel berisi halaman toko; lagi-lagi yang
-berubah hanya `"look"`. Proyeknya: [`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/).
-
-<a href="media/layouts.mp4"><img src="media/layouts.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look, masing-masing menampilkan layout yang sama dengan gayanya sendiri: split screen kartu kusam dan kartu bercahaya, huruf bergradasi bertuliskan GLOWA, botol serum dengan callout ke vitamin C, niacinamide, dan hyaluronic, daftar perbandingan dengan tanda centang, empat polaroid di bawah teks promo berjalan yang miring, dan ponsel berisi halaman toko di atas tombol CTA"></a>
-
-**Footage kreator, delapan look.** Footage sampo jahe berizin mendapat edit baru 20,2 detik:
-picture-in-picture, split screen, kolase polaroid dengan teks berjalan, dan callout volume pada
-end card. Yang berubah antardelapan versi hanya `"look"`. Gaya ini **hybrid** (b-roll kreator
-dibisukan dan diberi voice-over ElevenLabs), bukan demo kreator berbicara atau lip-sync.
-Identitas produk dan klaim yang bersumber dari label tetap dipertahankan. GIF menampilkan layout
-mulai detik ke-5; tautan MP4 berisi film lengkap dengan suara.
-
-<a href="media/ugc-layouts.mp4"><img src="media/ugc-layouts.gif" width="720" height="696" alt="Delapan iklan sampo jahe yang diputar bersamaan dengan label look: detail produk dalam picture-in-picture, dua panel footage, kolase polaroid di bawah teks tekstur berjalan, dan callout volume botol 300 ml pada end card"></a>
-
-Semua film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. Grid dengan suara: [look](media/looks.mp4), [layout](media/layouts.mp4), [footage kreator + layout](media/ugc-layouts.mp4).
-
-- **Dior Addict Lip Glow** adalah spec ad tidak resmi, dibuat untuk memperlihatkan kemampuan skill:
-  tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
-  Lip Glow adalah merek dagang pemiliknya. Klaim hidrasi 48 jam dan catatan kakinya diambil dari
-  halaman produk Dior.
-- **Sampo jahe**: footage [@hanie.ugc.creator di TikTok](https://www.tiktok.com/@hanie.ugc.creator/video/7467561053971369223),
-  dipakai dengan izin. Produk dan mereknya milik pemiliknya; klaim dibaca dari label kemasan. Film
-  yang sama sebagai proyek siap pakai dengan merek fiktif:
-  [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
-
-**Daftar isi**
-- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Look](#look) · [Layout](#layout) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
-- Hasil: [Jaminan kualitas](#jaminan-kualitas) · [Batasan](#batasan) · [Kecepatan terukur](#kecepatan-terukur)
-- Teknis: [Kebutuhan sistem](#kebutuhan-sistem) · [Struktur repo](#struktur-repo) · [Lisensi](#lisensi)
-
----
+Footage oleh [@hanie.ugc.creator](https://www.tiktok.com/@hanie.ugc.creator/video/7467561053971369223),
+dipakai dengan izin. Video memakai b-roll dengan voice-over, bukan dialog kreator.
+[Lihat semua contoh, look, dan layout](docs/showcase.id.md).
 
 ## Mulai cepat
 
-**1. Pasang skill**
+Siapkan Node.js 20+, Python 3.9+, dan FFmpeg. [Detail setup](docs/guide.id.md#instalasi).
+
+**1. Pasang kedua skill.**
+
 ```bash
-npx skills add tomimandalaputra/vertical-product-ads --skill '*' -y           # kedua skill, tanpa pertanyaan
-npx skills add tomimandalaputra/vertical-product-ads                          # pilih skill + agen secara interaktif
-npx skills add tomimandalaputra/vertical-product-ads --skill ad-concept       # hanya satu skill
+npx skills add tomimandalaputra/vertical-product-ads --skill '*' -y
 ```
 
-**2. Jalankan pengecekan setup sekali.** Skrip ini memasang Chromium (Playwright) dan Python numpy bila
-belum ada. Folder skill tergantung agen: `.claude/skills/` untuk Claude Code, `.agents/skills/` untuk
-Codex dan sebagian besar agen lain (installer mencetak path-nya).
+**2. Jalankan setup sekali.** Gunakan lokasi skill yang dicetak installer:
+
 ```bash
-SKILL=.claude/skills/vertical-product-ads        # atau .agents/skills/vertical-product-ads
-$SKILL/scripts/check_setup.sh                    # inti
-$SKILL/scripts/check_setup.sh --with all         # + suara gratis (edge-tts) + transkripsi lokal (faster-whisper)
+SKILL=".claude/skills/vertical-product-ads"  # Codex: .agents/skills/vertical-product-ads
+"$SKILL/scripts/check_setup.sh" --with all
 ```
 
-**3. Coba tanpa aset dan tanpa kunci API** (opsional, memastikan semuanya jalan):
-```bash
-cp -r $SKILL/examples/minimal my-ad
-$SKILL/scripts/make.sh my-ad preview              # contact sheet + draf
-$SKILL/scripts/make.sh my-ad final my-ad/out.mp4  # MP4 final + storyboard
-```
+**3. Taruh brief dan aset dalam satu folder proyek, lalu minta agen:**
 
-**4. Minta agen membuat iklan.** Taruh bahan di satu folder, lalu tulis prompt, misalnya:
-> Buatkan iklan dari folder `iklan/glowa`. Brief ada di `brief.md`.
+> Buatkan iklan produk TikTok 30 detik dari folder `ads/my-product`.
+> Data produk dan klaim yang boleh dipakai ada di `brief.md`; foto ada di `assets/`.
+> Pakai look warm-organic dan audio gratis untuk draf.
+> Tampilkan konsep sebelum mulai produksi.
 
-Lihat [Menyiapkan bahan](#menyiapkan-bahan) dan [Contoh prompt](#contoh-prompt).
+Agen menyiapkan konsep, lalu membuat pratinjau dan MP4 final setelah Anda setuju.
+Untuk produksi tanpa menunggu persetujuan, awali prompt dengan **Autopilot**.
 
----
+[Template brief](skills/ad-concept/templates/brief.md) ·
+[Contoh prompt lain](skills/ad-concept/examples/prompts.md)
 
-## Cara kerja
+## Jenis video
 
-```mermaid
-flowchart LR
-  A[brief.md + assets/] --> B[ad-concept: riset, 3 hook, naskah, beat sheet]
-  B --> C[concept.md awaiting-approval]
-  C -->|Anda setuju, atau autopilot| D[concept.md approved]
-  D --> E[vertical-product-ads: suara atau dialog, musik, scenes.json]
-  E --> F[preview: contact sheet + draft]
-  F -->|tinjau, perbaiki| F
-  F --> G[MP4 final + storyboard]
-```
-
-Produksi tidak dimulai tanpa `concept.md` yang sudah disetujui. Ada dua mode:
-
-| Mode | Perilaku | Cara memakai |
-|---|---|---|
-| **Checkpoint** (bawaan) | Agen menanyakan semua yang kurang dalam satu pesan, menulis konsep, lalu berhenti dan menampilkan 3 hook. Setelah Anda setuju (atau mengedit), baru videonya dibuat | Default |
-| **Autopilot** | Agen mengasumsikan yang kurang, memilih hook sendiri, dan jalan sampai MP4. Semua asumsi (`ASSUMPTION:`) dan keputusan (`DECISION:`) dicatat di `concept.md` dan di laporan | Tulis "Autopilot" di awal prompt, atau `mode: autopilot` di `brief.md` |
-
----
-
-## Menyiapkan bahan
-
-**Brief.** Salin [`templates/brief.md`](skills/ad-concept/templates/brief.md) ke
-`iklan/<nama>/brief.md` lalu isi. Bisa juga tanpa brief: tulis detailnya di prompt dan agen membuat
-`brief.md` sendiri. Contoh brief terisi, satu produk fiktif dengan tiga gaya:
-[motion](skills/ad-concept/examples/brief-motion.md) ·
-[ugc](skills/ad-concept/examples/brief-ugc.md) ·
-[hybrid](skills/ad-concept/examples/brief-hybrid.md).
-
-**5 hal wajib** di prompt atau brief: produk (nama, varian, harga), klaim + sumbernya, CTA persis,
-target + platform, lokasi aset.
-
-**Aset per gaya.** Taruh file di `iklan/<nama>/assets/`.
-
-| | `motion` | `ugc` | `hybrid` |
-|---|---|---|---|
-| **Wajib** | Foto produk ≥ 3 sudut, sisi terpendek ≥ 2000 px, latar putih/transparan, tanpa teks | Footage kreator 9:16 1080×1920, 30 fps, bicara ke kamera, audio bersih tanpa musik | Footage kreator (min. hook + testimoni) **dan** foto produk |
-| **Disarankan** | Logo, warna brand (hex), close-up tekstur ≥ 1600 px, satu foto per shade | 2–4 b-roll 3–6 dtk (putar produk, cara pakai, tekstur), 1 packshot untuk end card | b-roll, tekstur, foto shade |
-| **Suara** | VO: ElevenLabs atau gratis (edge-tts) | Suara kreator | Suara kreator |
-| **Izin** | Foto model, jika ada | Izin tampil kreator | Keduanya |
-
-Before/after, rating, dan testimoni hanya dipakai jika asli.
-
-**Untuk `ugc` dan `hybrid`:** kirim [shot list kreator](skills/ad-concept/templates/creator-shot-list.md)
-sebelum rekaman. Isinya kalimat per take, setelan HP, cahaya, dan jeda antar kalimat.
-
-Spesifikasi lengkap: [`references/intake.md`](skills/ad-concept/references/intake.md).
-
----
-
-## Contoh prompt
-
-Daftar lengkap (setiap gaya × mode, dengan dan tanpa `brief.md`, plus prompt revisi):
-[`examples/prompts.md`](skills/ad-concept/examples/prompts.md).
-
-**Dengan `brief.md`** (detail ada di file):
-
-| Gaya | Prompt |
+| Gaya | Bahan awal |
 |---|---|
-| `motion` | *Buatkan iklan dari folder `iklan/glowa`. Brief ada di `brief.md`.* |
-| `ugc` | *Buatkan iklan UGC dari folder `iklan/glowa`. Brief di `brief.md`, footage kreator di `assets/`.* |
-| `hybrid` | *Autopilot: buat iklan dari folder `iklan/glowa`, brief di `brief.md`.* |
+| Motion | Foto produk, teks animasi, dan grafis |
+| UGC | Footage kreator dengan suara bicara asli dan caption |
+| Hybrid | Footage dengan motion graphics, memakai suara kreator atau voice-over |
 
-**Tanpa `brief.md`** (semua detail di prompt; gaya motion, checkpoint, audio gratis):
-> Buatkan iklan TikTok 30 detik gaya motion untuk **Glowa Lip Serum**, serum bibir berwarna tipis
-> (3 shade: Rose, Peach, Berry; Rp89.000 di TikTok Shop). Foto ada di `iklan/glowa/assets/`:
-> packshot putih 3 sudut, 1 close-up tekstur, 3 foto shade. Target: perempuan 20–30 tahun yang
-> bibirnya cepat kering. Klaim: "lembap hingga 24 jam" (uji internal Glowa, 30 responden). Warna
-> brand #C2416B. CTA: "Cek keranjang kuning". Voice-over perempuan bahasa Indonesia; suara dan
-> musik gratis.
+Ada delapan look, mulai dari editorial hingga creator-native. Layout mencakup split screen,
+grid, kolase, picture-in-picture, bingkai ponsel, dan callout.
+[Lihat perbedaannya di galeri](docs/showcase.id.md#look-dan-layout).
 
-**Setelah konsep muncul:**
+ElevenLabs bersifat opsional. Musik dan efek suara bisa dibuat lokal; suara gratis memakai
+edge-tts, yang ketentuan penggunaan komersialnya belum jelas.
+Lihat [pilihan audio](docs/guide.id.md#suara-dan-musik).
 
-| Untuk | Prompt |
+## Dokumentasi
+
+| Halaman | Isinya |
 |---|---|
-| Menyetujui | *Setuju hook #2, lanjut produksi.* |
-| Mengubah | *Hook #1 tapi kalimatnya lebih pendek, dan jangan tampilkan harga.* |
-| Revisi video | *Teks klaim di detik 18 terlalu kecil, perbaiki lalu render ulang.* |
-
----
-
-## Gaya video
-
-| Gaya | Tampilannya | Butuh |
-|---|---|---|
-| `motion` (bawaan) | Satu bentuk membulat yang berubah antar foto, kartu, teks, dan CTA, mengikuti ketukan musik | Foto produk |
-| `ugc` | Kreator berbicara ke kamera; footage memimpin; caption muncul kata demi kata | Footage dengan suara bicara |
-| `hybrid` | Hook dan testimoni dari kreator, diselingi kartu produk, bukti, dan CTA bergaya motion | Footage + foto |
-
-**Cara ganti gaya:** isi `style:` di `brief.md`, atau tulis di prompt (*"Ubah iklan `iklan/glowa`
-jadi hybrid, pakai `review.mp4` untuk hook."*). Agen memperbarui `concept.md`; pada mode
-checkpoint ia meminta persetujuan ulang.
-
-Penjelasan tiap gaya untuk pemula: [`references/styles.md`](skills/ad-concept/references/styles.md).
-
----
-
-## Look
-
-`style` menentukan cara film diproduksi; `look` menentukan tampilannya: font, warna, bentuk chip dan
-tombol, caption, dan cara teks muncul. Ada delapan look bawaan, lengkap dengan fontnya (SIL Open Font
-License, tanpa unduh). Semua look bisa dipakai dengan gaya mana pun.
-
-| Look | Cocok untuk | Font | Cara teks muncul |
-|---|---|---|---|
-| `classic` (bawaan) | Apa saja; film Dior di atas | Georgia + sans sistem | blur lembut |
-| `luxe-editorial` | Parfum, perhiasan, kecantikan premium, fashion | Bodoni Moda + Jost | naik dari balik masker |
-| `clean-clinical` | Skincare aktif, apotek, suplemen | Plus Jakarta Sans | wipe |
-| `bold-streetwear` | Sneakers, streetwear, minuman energi, fitness | Anton kapital + Archivo | potong keras dan slam |
-| `warm-organic` | Herbal, jamu, kopi, makanan, perawatan rambut dan tubuh | Fraunces + DM Sans | blur lembut |
-| `tech-neon` | Gadget, audio, aplikasi | Space Grotesk + JetBrains Mono | diketik |
-| `pop-playful` | Snack, minuman, mainan, kecantikan Gen-Z | Bricolage Grotesque + Rubik | pop memantul |
-| `ugc-native` | Footage kreator (`ugc`, `hybrid`) | TikTok Sans | potong, caption bergaris tepi |
-
-Tiap look juga membawa arahan untuk agen: sudut bentuk, tempo, pilihan musik dan efek suara
-([`references/looks.md`](skills/vertical-product-ads/references/looks.md)). Warna brand ditimpakan di
-atas look mana pun.
-
-**Memilih look:** isi `look:` di `brief.md`, atau tulis di prompt (*"Pakai look tech-neon, warna
-brand tetap."*). Kalau kosong, agen memilih dari kategori produk dan menuliskan alasannya di
-`concept.md`. Ganti look belakangan cukup mengubah satu baris di `scenes.json`; suara dan musik
-dipakai ulang. Panduan untuk pemula: [`references/looks.md`](skills/ad-concept/references/looks.md).
-
----
-
-## Layout
-
-Tiap beat bisa memakai layout sendiri, dan look yang mengatur gayanya. Panel keluar dari bentuk yang
-berubah-ubah lalu menyatu kembali ke dalamnya, jadi film tetap tanpa potongan; footage juga bisa
-tampil di dalam panel.
-
-| Layout | Cocok untuk |
-|---|---|
-| Split screen | Sebelum/sesudah, produk kita vs biasa, hari ke-1 vs hari ke-7 |
-| Grid, kolase | Shade, ukuran, paket; momen keseharian sebagai polaroid miring |
-| Picture-in-picture | Kreator tetap bicara di jendela kecil di atas b-roll |
-| Tumpukan kartu | Ulasan atau fitur, satu kartu masing-masing |
-| Ponsel | Halaman toko atau rekaman layar, CTA di bawahnya |
-| Teks berisi gambar | Produk atau footage di dalam nama merek |
-| Callout | Bahan atau fitur yang ditunjuk langsung di produk |
-| Daftar perbandingan | Baris ✓/✗ yang muncul pada katanya |
-| Teks berjalan | Pita promo yang terus bergerak |
-| Teks kinetik, grid editorial | Kata-kata saja; satu gambar besar dan satu kecil dengan huruf besar |
-
-Agen konsep memilih 2–4 layout per film dari menu adegan dan menuliskannya di beat sheet; minta yang
-tertentu dengan menyebut namanya (*"Pakai split screen untuk sebelum/sesudah dan ponsel untuk CTA."*).
-Resep dan aturannya: [`references/layouts.md`](skills/vertical-product-ads/references/layouts.md).
-
----
-
-## Suara dan musik
-
-Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, lihat
-[API key ElevenLabs](#api-key-elevenlabs) di bawah.
-
-| Bagian | ElevenLabs | Gratis | Catatan lisensi |
-|---|---|---|---|
-| Voice-over | `vo.engine: "elevenlabs"` | `vo.engine: "edge"` (edge-tts, perlu internet) | edge-tts adalah klien tidak resmi layanan baca-teks Edge milik Microsoft. Ketentuannya untuk iklan berbayar tidak jelas: pakai untuk draf, atau terima risikonya |
-| Musik | `music.prompt` | `music.synth` (musik prosedural lokal) atau file musik berlisensi | Musik synth dibuat di komputer Anda, sepenuhnya milik Anda |
-| Efek suara | prompt `sfx` (ElevenLabs Sound Effects) | cue sintesis bawaan (`tap`, `whoosh`, `chime`…) atau file Anda sendiri | Cue sintesis dibuat di komputer Anda, sepenuhnya milik Anda |
-| Transkripsi footage | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Lokal, tanpa unggah. `"auto"` memakai ElevenLabs bila bisa, selain itu whisper |
-
-Lisensi ElevenLabs mengikuti ketentuan paket Anda.
-
-### API key ElevenLabs
-
-**Jangan pernah tempel API key ke chat atau prompt agen.** Isi chat dikirim ke penyedia model AI dan
-tersimpan di riwayat percakapan.
-
-1. Buat key di dashboard ElevenLabs. Beri izin sesuai kebutuhan: Text to Speech (voice-over), Music
-   (musik), Speech to Text (transkripsi footage; tanpa izin ini, `auto` memakai whisper).
-2. Jalankan **sendiri di terminal Anda**, dari folder kerja (root workspace):
-   ```bash
-   $SKILL/scripts/set_key.sh
-   ```
-   Key diketik tanpa tampil di layar, lalu disimpan ke `.env` dengan izin baca hanya untuk Anda
-   (`chmod 600`). `.env` juga otomatis dimasukkan ke `.gitignore`.
-3. Cek: `$SKILL/scripts/check_setup.sh` hanya menampilkan **lokasi** key, bukan isinya, dan memberi
-   peringatan bila file bisa dibaca orang lain atau belum di-gitignore.
-
-Alternatif: `export ELEVENLABS_API_KEY=...` di profil shell Anda (`~/.zshrc`). Skill melarang agen
-meminta, membaca, atau menampilkan key; tool membacanya sendiri dari environment atau `.env` terdekat.
-Jika key sempat tertempel di chat, cabut (revoke) di dashboard ElevenLabs lalu buat yang baru.
-
----
-
-## Durasi
-
-| Aturan | Nilai |
-|---|---|
-| Bawaan | 30 detik |
-| Diizinkan | 15–60 detik |
-| Di atas 34 detik | Peringatan; konsep wajib menulis alasannya |
-| Di atas 60 detik | Ditolak |
-| Hook | Dalam 3 detik pertama |
-| CTA | Ditahan 3–5 detik |
-| Per platform | TikTok 30 dtk · Reels 30 dtk (+ versi 15 dtk opsional sebagai proyek terpisah) · Shorts 30 dtk |
-
-Angka 21–34 detik (TikTok) dan di bawah 15 detik (Meta) berasal dari sumber sekunder:
-[`references/duration-and-platforms.md`](skills/ad-concept/references/duration-and-platforms.md).
-
----
-
-## Jaminan kualitas
-
-Setiap iklan melewati pengecekan otomatis. Kalau ada yang gagal, build berhenti dan agen harus
-memperbaiki adegannya; tidak ada pengecekan yang boleh dilewati.
-
-| Pengecekan | Yang dijaga |
-|---|---|
-| Safe zone | Setiap kata, caption, chip, callout, baris daftar, teks berisi gambar, dan CTA berada di x 84–930, y 250–1460 (tidak tertutup tombol aplikasi), dicek di **setiap frame** |
-| Tata letak | Tidak ada teks yang bertumpuk; tidak ada band atau panel kosong (bingkai yang tampil tanpa gambar atau isi) |
-| Dialog footage | Potongan tidak jatuh di tengah kata; segmen tidak saling tumpang |
-| Format | Isi `scenes.json`, aset, gaya, dan durasi sesuai aturan; teks tombol, chip, dan teks berjalan terbaca di atas warnanya (≥ 3:1) setelah look dan warna brand digabung |
-| Audio | Master −14 LUFS (±0,6), puncak ≤ −0,5 dBFS pada file akhir |
-| Render | Tidak ada patahan di sambungan antar potongan render |
-
-Ditambah dua tahap tinjau sebelum final: **contact sheet** (satu gambar per ketukan, diberi cap waktu)
-dan **draf setengah ukuran dengan suara**.
-
-Ciri hasilnya:
-- **Motion blur nyata:** 4 subframe per frame, shutter 180°, 30 fps.
-- **Suara dan musik terkunci:** waktu tiap kata diukur; kata kunci jatuh di ketukan musik; teks muncul
-  pada kata yang menyebutnya.
-- **Sound design sintetis** sesuai nada lagu; musik mengecil saat ada suara.
-- **Adegan motion tanpa potongan:** satu bentuk berubah menjadi kartu, lingkaran, tiga pita, atau layar penuh,
-  lalu menyerahkan layar ke panel (split screen, grid, kolase, ponsel) yang keluar darinya.
-
----
-
-## Batasan
-
-- **Tidak membuat presenter avatar/AI** dan tidak menyutradarai live action. Footage kreator harus direkam sendiri.
-- **B-roll (footage tanpa bicara) dibisukan.**
-- **Agen tidak bisa menonton video.** Ia bekerja dari transkrip, snapshot, dan deskripsi Anda,
-  termasuk untuk iklan referensi.
-- **Transkrip dari pengenalan suara bisa salah** pada nama merek; agen mengoreksi caption lewat
-  `captions.fix` dan meminta Anda memeriksa.
-- **Audio hanya diukur oleh agen, tidak didengar.** Dengarkan sebelum tayang.
-- **Klaim produk hanya dari brief atau sumber resmi**, selalu dengan footnote. Untuk kosmetik di
-  Indonesia, periksa aturan iklan BPOM.
-
----
-
-## Kecepatan terukur
-
-Apple M3 Pro, film `motion` 31 detik, 1080×1920. Kolom "Sebelum" adalah film yang sama yang dibuat
-dengan HTML tulisan tangan dan renderer 60 fps.
-
-| | Sebelum | Skill ini |
-|---|---|---|
-| Render gambar | 219 dtk (7.440 subframe) | 71 dtk (3.720 subframe, 30 fps / 180°) |
-| Master audio | 35 dtk (encode ulang video) | ~5 dtk (hanya audio) |
-| Draf dengan suara | tidak ada | 12 dtk |
-| Menulis film | file JS ~600 baris per iklan | satu `scenes.json` per iklan |
-
-Waktu render gambar per look, film 17 detik yang sama ([`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/)),
-30 fps dengan motion blur:
-
-| Look | Render gambar |
-|---|---|
-| `classic` | 39,8 dtk |
-| `luxe-editorial` | 39,2 dtk |
-| `clean-clinical` | 19,4 dtk |
-| `bold-streetwear` | 39,6 dtk |
-| `warm-organic` | 40,4 dtk |
-| `tech-neon` | 36,4 dtk |
-| `pop-playful` | 19,5 dtk |
-| `ugc-native` | 16,2 dtk |
-
-Yang memakan waktu adalah grain film: tiga look tanpa grain selesai dalam separuh waktu, sisanya
-selisih paling banyak 2 % dari `classic`. Memilih look tidak menambah langkah kerja: fontnya sudah
-ikut terpasang bersama skill.
-
-Layout hampir tidak menambah waktu. Layout sampler 20 detik
-([`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/)), berisi panel,
-callout, daftar perbandingan, teks berjalan, teks berisi gambar, dan ponsel, dibandingkan per detik
-film dengan look sampler:
-
-| Look | Layout sampler (20 dtk) | Per detik film | Look sampler, per detik film |
-|---|---|---|---|
-| `classic` | 45,4 dtk | 2,27 dtk | 2,31 dtk |
-| `luxe-editorial` | 43,9 dtk | 2,20 dtk | 2,31 dtk |
-| `clean-clinical` | 23,7 dtk | 1,19 dtk | 1,14 dtk |
-| `bold-streetwear` | 43,4 dtk | 2,17 dtk | 2,33 dtk |
-| `warm-organic` | 45,5 dtk | 2,28 dtk | 2,38 dtk |
-| `tech-neon` | 40,6 dtk | 2,03 dtk | 2,14 dtk |
-| `pop-playful` | 24,9 dtk | 1,25 dtk | 1,15 dtk |
-| `ugc-native` | 19,8 dtk | 0,99 dtk | 0,95 dtk |
-
-Tiga aliran footage tambahan di layar sepanjang film 20 detik (grid video 2×2) menambah +1,8 %.
-
-Uji dengan agen baru (skill dipasang lewat `npx skills add`, tanpa bantuan):
-
-| Mode | Hasil | Prompt → MP4 |
-|---|---|---|
-| Checkpoint | motion 30 dtk, audio gratis | 10 m 52 d (konsep siap 1 m 13 d) |
-| Autopilot | hybrid 24 dtk, footage + musik ElevenLabs | 13 m 28 d |
-
-Cara tiap angka diperoleh: [`references/render-and-qa.md`](skills/vertical-product-ads/references/render-and-qa.md)
-dan [`CHANGELOG.md`](CHANGELOG.md).
-
----
-
-## Kebutuhan sistem
-
-| Butuh | Untuk | Dipasang oleh |
-|---|---|---|
-| Node ≥ 20 | engine, render, pengecekan | Anda |
-| ffmpeg / ffprobe | motion blur, encode, loudness, frame footage | Anda (`brew install ffmpeg` / `apt install ffmpeg`) |
-| Python 3.9+ | beat grid, sintesis SFX dan musik, mix | Anda |
-| Playwright + Chromium, numpy | render, audio | `check_setup.sh` |
-| `edge-tts` | voice-over gratis (perlu internet) | `check_setup.sh --with edge` |
-| `faster-whisper` | transkripsi footage offline | `check_setup.sh --with whisper` |
-| `ELEVENLABS_API_KEY` (opsional) | voice-over, musik, transkripsi ElevenLabs | Anda |
-
----
-
-## Struktur repo
-
-| Path | Isi |
-|---|---|
-| `skills/ad-concept/SKILL.md` | Panduan agen konsep |
-| `skills/ad-concept/references/` | Intake aset, hook dan angle, gaya, look, menu adegan, durasi |
-| `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
-| `skills/ad-concept/examples/` | Contoh prompt dan brief terisi per gaya |
-| `skills/vertical-product-ads/SKILL.md` | Panduan agen produksi |
-| `skills/vertical-product-ads/references/` | Arahan, gaya, look, layout, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
-| `skills/vertical-product-ads/looks/` | Delapan look (`<nama>.json`) beserta fontnya (OFL, `fonts/`) |
-| `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: renderer `seek(t)` |
-| `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) dan semua langkahnya |
-| `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, kontrak yang dicek `validate.mjs` |
-| `skills/vertical-product-ads/examples/minimal/` | Film 8,5 detik tanpa aset |
-| `skills/vertical-product-ads/examples/product-broll/` | Iklan hybrid 20 detik (sampo fiktif): b-roll produk yang Anda rekam sendiri, voice, musik dan efek suara ElevenLabs, kartu bahan, layar terbelah tiga, end card |
-| `skills/vertical-product-ads/examples/look-sampler/` | Iklan 17 detik tanpa aset yang ditulis agar cocok di semua look; suara dan musik gratis |
-| `skills/vertical-product-ads/examples/layout-sampler/` | Iklan 20 detik berisi semua bagian layout (dua gambar SVG disertakan); suara dan musik gratis |
-| `media/` | Film contoh hasil (MP4 + pratinjau GIF); tidak ikut terpasang bersama skill |
-
----
+| [Panduan penggunaan](docs/guide.id.md) | Setup, persiapan aset, persetujuan konsep, audio, dan render |
+| [Galeri](docs/showcase.id.md) | Contoh iklan, perbandingan look, demo layout, dan kredit |
+| [Referensi teknis](docs/technical.id.md) | Pengecekan kualitas, batasan, waktu render, dan struktur repo |
 
 ## Lisensi
 
-MIT, lihat `LICENSE`. Sebagian diturunkan dari
-[product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); lihat `NOTICE`.
-Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisensinya masing-masing.
-Font di `looks/fonts/` berlisensi SIL Open Font License 1.1 (teks lisensinya ada di samping tiap
-keluarga font).
-Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
-milik pemiliknya; kedua edit sampo memakai footage @hanie.ugc.creator dengan izin dan audio
-ElevenLabs. Grid `looks.*` dan `layouts.*` memakai suara edge-tts (lihat `NOTICE`).
+Skill berlisensi [MIT](LICENSE); font bawaan memakai SIL Open Font License.
+Media contoh dan aset pihak ketiga memiliki ketentuan terpisah. Atribusi, termasuk teknik motion
+yang diadaptasi dari product-launch-motion: [NOTICE](NOTICE).

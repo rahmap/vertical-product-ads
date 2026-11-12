@@ -22,6 +22,7 @@ An agent skill for producing 9:16 product ads from a declarative `scenes.json`, 
 - `examples/product-broll/`: hybrid example (b-roll + VO + motion); the footage is not included, its README lists the shots.
 - `examples/look-sampler/`: asset-free film whose fills use only look tones; render it per look to check a look change.
 - `examples/layout-sampler/`: every layout piece in one film (SVG assets included); render it per look to check a layout or look change.
+- `docs/`: English and Indonesian user guides, showcase galleries and technical references. Keep `README.md` and `README.id.md` as concise introductions; put detailed instructions, media catalogues and benchmarks in these pages, updating both languages together.
 
 ## Development Commands
 

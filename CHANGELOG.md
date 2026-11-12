@@ -32,6 +32,8 @@
   ink (2.6:1).
 
 **Docs**
+- Shorter English and Indonesian README landing pages. Full gallery, user guide and technical
+  reference live in `docs/`, with language links and the existing benchmarks and media credits.
 - `references/layouts.md`: catalogue, rules, recipes, per-style and per-look use, sound, variables.
   `direction.md`, `styles.md` (picture-in-picture, split of two clips, footage collage and masks),
   `looks.md`, `scenes-format.md` and `render-and-qa.md` updated.
