@@ -11,8 +11,21 @@ Indonesian version: [README.id.md](README.id.md).
 
 Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, Amp, Cline and others.
 
+## Showcase
+
+<a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="20-second vertical shampoo ad: product b-roll with captions, an ingredient card, benefit chips, three split bands and an end card with a CTA button"></a>
+
+A 20 s TikTok ad (Indonesian voice-over) made with both skills from muted product b-roll:
+ElevenLabs voice, music and sound effects, an ingredient card, benefit chips, three bands that pop on
+their words, and an end card. The GIF is silent: [MP4 with sound](media/ginger-shampoo.mp4).
+
+Footage: [@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used
+with permission. The product and brand belong to their owner; the claims are read from the product
+label. The same film as a reusable project with a fictional brand:
+[`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
+
 **Contents**
-- Using it: [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Voice and music](#voice-and-music) · [Duration](#duration)
+- Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Voice and music](#voice-and-music) · [Duration](#duration)
 - Results: [Quality gates](#quality-gates) · [Limits](#limits) · [Measured speed](#measured-speed)
 - Technical: [Requirements](#requirements) · [Repo layout](#repo-layout) · [Licence](#licence)
 
@@ -296,6 +309,7 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, the contract `validate.mjs` enforces |
 | `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
 | `skills/vertical-product-ads/examples/product-broll/` | A 20 s hybrid ad (fictional shampoo): product b-roll you shoot, ElevenLabs voice, music and sound effects, ingredient card, split bands, end card |
+| `media/` | The showcase film (MP4 + GIF preview); not part of the installed skills |
 
 ---
 
@@ -304,3 +318,5 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 MIT, see `LICENSE`. Portions are derived from
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); see `NOTICE`.
 Product images, footage, voices and music you put into a film keep their own licences.
+The showcase film in `media/` is not under the MIT licence: footage by @shin.ugc, used with
+permission (see `NOTICE`).

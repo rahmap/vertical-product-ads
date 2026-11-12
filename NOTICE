@@ -31,10 +31,23 @@ blur content swaps, odometer digit math, subframe motion blur) is adapted from p
 
 None of product-launch-motion's sample films, stills or third-party marks are included here.
 
+Showcase film (media/) — not under the MIT licence
+--------------------------------------------------
+media/ginger-shampoo.mp4 and media/ginger-shampoo.gif are shown to demonstrate the skills only.
+Footage by @shin.ugc (https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used with
+permission; the product and brand marks belong to their owner. Voice, music and sound effects were
+generated with ElevenLabs under the repository owner's plan. Do not reuse these files.
+
+Font in examples/product-broll/
+-------------------------------
+assets/fonts/nunito-800.woff2 is Nunito (Copyright 2014 The Nunito Project Authors), under the SIL
+Open Font License 1.1; the licence text is beside it in OFL.txt.
+
 What this repository does not ship
 ----------------------------------
-No product photography, brand marks, voices or music. Films you make carry the licences of the
-images, voice (e.g. ElevenLabs plan terms) and music you put into them; record them in your report.
+Outside media/: no product photography, brand marks, voices or music. Films you make carry the
+licences of the images, voice (e.g. ElevenLabs plan terms) and music you put into them; record them
+in your report.
 
 Tools the skill uses (installed by you, under their own terms)
 --------------------------------------------------------------

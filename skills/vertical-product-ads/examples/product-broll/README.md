@@ -6,8 +6,9 @@ between. The footage is not included: you shoot it (list below). The project is 
 `concept.md` (approved), `scenes.json`, and the headline font.
 
 **Source.** The shot list, shot order and pacing follow a product UGC video by
-[@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086). That video, its
-footage and the brand shown in it belong to their owners and are not included here.
+[@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used with
+permission. The film this example was taken from, rendered on that footage, is the repository's
+showcase (`media/ginger-shampoo.mp4` at the repository root); the footage itself is not included here.
 
 | Time | What happens | Fields |
 |---|---|---|

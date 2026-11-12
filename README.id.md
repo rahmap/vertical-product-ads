@@ -12,8 +12,21 @@ Versi Inggris: [README.md](README.md).
 Bisa dipakai di agen apa pun yang membaca skill `SKILL.md`: Claude Code, Codex, Cursor, Amp, Cline,
 dan lainnya.
 
+## Contoh hasil
+
+<a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="Iklan sampo vertikal 20 detik: b-roll produk dengan caption, kartu bahan, chip manfaat, layar terbelah tiga, dan end card dengan tombol CTA"></a>
+
+Iklan TikTok 20 detik (voice-over bahasa Indonesia) yang dibuat dengan kedua skill dari b-roll produk
+tanpa suara: voice, musik dan efek suara ElevenLabs, kartu bahan, chip manfaat, tiga panel yang muncul
+pada katanya, dan end card. GIF-nya tanpa suara: [MP4 dengan suara](media/ginger-shampoo.mp4).
+
+Footage: [@shin.ugc di TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086), dipakai
+dengan izin. Produk dan mereknya milik pemiliknya; klaim dibaca dari label kemasan. Film yang sama
+sebagai proyek siap pakai dengan merek fiktif:
+[`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
+
 **Daftar isi**
-- Memakai: [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
+- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
 - Hasil: [Jaminan kualitas](#jaminan-kualitas) · [Batasan](#batasan) · [Kecepatan terukur](#kecepatan-terukur)
 - Teknis: [Kebutuhan sistem](#kebutuhan-sistem) · [Struktur repo](#struktur-repo) · [Lisensi](#lisensi)
 
@@ -296,6 +309,7 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, kontrak yang dicek `validate.mjs` |
 | `skills/vertical-product-ads/examples/minimal/` | Film 8,5 detik tanpa aset |
 | `skills/vertical-product-ads/examples/product-broll/` | Iklan hybrid 20 detik (sampo fiktif): b-roll produk yang Anda rekam sendiri, voice, musik dan efek suara ElevenLabs, kartu bahan, layar terbelah tiga, end card |
+| `media/` | Film contoh hasil (MP4 + pratinjau GIF); tidak ikut terpasang bersama skill |
 
 ---
 
@@ -304,3 +318,5 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 MIT, lihat `LICENSE`. Sebagian diturunkan dari
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); lihat `NOTICE`.
 Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisensinya masing-masing.
+Film contoh di `media/` tidak berlisensi MIT: footage milik @shin.ugc, dipakai dengan izin (lihat
+`NOTICE`).
