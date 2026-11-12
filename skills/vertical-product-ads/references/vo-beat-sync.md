@@ -82,6 +82,9 @@ slightly.
 - **Choosing a voice:** `scripts/py scripts/voices.py <project> --lang id --gender female` lists the
   voices this key can use, with their ids. A voice labelled with your language sounds most native;
   `eleven_multilingual_v2` with `language` set speaks it either way.
+- **Free plan:** only `premade` voices work through the API; a library voice (most voices labelled with
+  a language other than English) answers `402 paid_plan_required`. The quota is about 10,000 characters
+  a month: a 60 s script is roughly 700. Check the plan's licence before using its output commercially.
 - `mp3_44100_128` works on every plan; 192 kbps needs Creator or above (`vo.format`).
 - `vo.py` caches: it skips the API when `audio/vo.mp3` matches the script and voice. Use `--force`
   to regenerate.

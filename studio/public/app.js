@@ -90,7 +90,7 @@ function icon(name, cls = 'size-4') {
 async function api(method, path, data) {
   const res = await fetch(path, { method, headers: data ? { 'content-type': 'application/json' } : {}, body: data ? JSON.stringify(data) : undefined });
   const out = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-  if (!res.ok) throw new Error(out.error || `HTTP ${res.status}`);
+  if (!res.ok) throw Object.assign(new Error(out.error || `HTTP ${res.status}`), { fields: out.fields });
   return out;
 }
 // upload with progress (fetch cannot report it)
@@ -133,6 +133,37 @@ function ago(s) {
   return `${Math.round(m / 1440)} hari lalu`;
 }
 const num = (n) => (n == null ? '–' : Number(n).toLocaleString('id-ID'));
+const rupiah = (n) => (n == null || n === '' ? '' : 'Rp' + Number(n).toLocaleString('id-ID'));
+const group = (digits) => (digits ? Number(digits).toLocaleString('id-ID') : '');
+// A number field that formats while typing. Whole numbers get Indonesian thousands dots (79000 → "79.000"), with the
+// caret kept after the same digit; `decimal` allows one comma and two decimals instead. get() returns a number or null,
+// so what is sent and stored is the number, never the formatted text.
+function numberInput(value, { prefix, suffix, decimal = false, digits = 10, ...attrs } = {}) {
+  const input = h('input', { class: `input tabular-nums ${prefix ? 'pl-10' : ''} ${suffix ? 'pr-9' : ''}`, inputmode: decimal ? 'decimal' : 'numeric', autocomplete: 'off', ...attrs });
+  const clean = (raw) => {
+    if (!decimal) return group(raw.replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, digits));
+    const [a, ...rest] = raw.replace(/[^\d,.]/g, '').replace(/\./g, ',').split(',');
+    return a.slice(0, 3) + (rest.length ? ',' + rest.join('').slice(0, 2) : '');
+  };
+  const set = (v) => { input.value = v == null || v === '' ? '' : decimal ? clean(String(v)) : group(String(v).replace(/\D/g, '')); };
+  set(value);
+  input.addEventListener('input', () => {
+    const before = input.value.slice(0, input.selectionStart ?? input.value.length).replace(decimal ? /[^\d,.]/g : /\D/g, '').length;
+    input.value = clean(input.value);
+    let pos = 0, seen = 0;
+    while (pos < input.value.length && seen < before) { if ((decimal ? /[\d,]/ : /\d/).test(input.value[pos])) seen++; pos++; }
+    input.setSelectionRange(pos, pos);
+  });
+  const side = (text, cls) => (text ? h('span', { class: `pointer-events-none absolute inset-y-0 ${cls} flex items-center text-sm font-semibold text-muted` }, text) : null);
+  return { wrap: h('div', { class: 'relative' }, side(prefix, 'left-3'), input, side(suffix, 'right-3')), input, set,
+    get: () => { const s = input.value; if (!s) return null; return decimal ? Number(s.replace(',', '.')) : Number(s.replace(/\D/g, '')); } };
+}
+// server-side field errors, shown under their inputs
+function clearError(el) { el.removeAttribute('aria-invalid'); (el.closest('label') || el.parentNode)?.querySelector(':scope > [data-err]')?.remove(); }
+function showError(el, msg) {
+  clearError(el); el.setAttribute('aria-invalid', 'true');
+  (el.closest('label') || el.parentNode).append(h('span', { class: 'field-error', 'data-err': '' }, msg));
+}
 const field = (label, input, hint, cls = '') => h('label', { class: `field ${cls}` }, h('span', { class: 'field-label' }, label, hint ? h('span', { class: 'field-hint' }, hint) : null), input);
 const pageHead = (title, sub, ...actions) => h('div', { class: 'mb-6 flex flex-wrap items-start justify-between gap-3' },
   h('div', { class: 'min-w-0' }, h('h1', { class: 'text-2xl font-bold tracking-tight' }, title), sub ? h('p', { class: 'mt-0.5 text-muted' }, sub) : null),
@@ -234,7 +265,7 @@ async function products() {
       h('div', { class: 'aspect-[4/3] bg-subtle bg-cover bg-center', style: p.thumb ? `background-image:url("${p.thumb}")` : null },
         p.thumb ? null : h('div', { class: 'grid h-full place-items-center text-muted' }, icon('image', 'size-8'))),
       h('div', { class: 'p-4' }, h('div', { class: 'truncate font-semibold' }, p.name),
-        h('div', { class: 'mt-0.5 text-sm text-muted' }, [p.price, `${p.asset_count} aset`, `${p.video_count} video`].filter(Boolean).join(' · ')))))
+        h('div', { class: 'mt-0.5 text-sm text-muted' }, [rupiah(p.price), `${p.asset_count} aset`, `${p.video_count} video`].filter(Boolean).join(' · ')))))
       : h('p', { class: 'col-span-full py-10 text-center text-muted' }, `Tidak ada produk dengan nama "${q}".`));
   };
   draw();
@@ -245,14 +276,25 @@ async function products() {
 }
 
 function productForm(p, onSaved) {
-  const f = {}, claims = (p.claims || []).map((c) => ({ ...c }));
-  const touch = () => { dirty = true; bar.classList.remove('hidden'); };
+  const f = {}, N = {}, claims = (p.claims || []).map((c) => ({ ...c }));   // f: inputs by field; N: the number fields
+  const touch = (e) => { dirty = true; bar.classList.remove('hidden'); if (e?.target) clearError(e.target); };
   const inp = (k, attrs = {}) => (f[k] = h('input', { class: 'input', value: p[k] ?? '', oninput: touch, ...attrs }));
   const area = (k, attrs = {}) => (f[k] = h('textarea', { class: 'input', oninput: touch, ...attrs }, p[k] ?? ''));
+  const number = (k, opts = {}) => { N[k] = numberInput(p[k], { oninput: touch, ...opts }); f[k] = N[k].input; return N[k].wrap; };
+  const priceNote = h('p', { class: 'text-sm text-muted' });
+  const drawPrice = () => {
+    const now = N.price?.get(), was = N.was_price?.get();
+    priceNote.textContent = now && was > now ? `Diskon ${Math.round((1 - now / was) * 100)}% dari ${rupiah(was)}. Angka ini yang boleh muncul di stiker harga.`
+      : now && was && was <= now ? 'Harga coret harus lebih besar dari harga.' : now ? `Tampil di video sebagai ${rupiah(now)}.` : '';
+    priceNote.className = `text-sm ${now && was && was <= now ? 'text-red-600 dark:text-red-400' : 'text-muted'}`;
+  };
+  const endNote = h('p', { class: 'text-sm text-amber-700 dark:text-amber-300' });
+  const drawEnd = () => { const d = f.promo_end?.value; endNote.textContent = d && d < new Date().toLocaleDateString('sv-SE') ? 'Tanggal ini sudah lewat: promo tidak akan ditampilkan di video.' : ''; };
   const picks = h('div', {});
   const importMsg = h('p', { class: 'mt-2 hidden text-sm' });
   const say = (text, tone) => { importMsg.textContent = text; importMsg.className = `mt-2 text-sm ${tone === 'bad' ? 'text-amber-700 dark:text-amber-300' : tone === 'ok' ? 'text-emerald-700 dark:text-emerald-300' : 'text-muted'}`; };
-  const urlIn = inp('url', { placeholder: 'https://… link produk TikTok Shop atau marketplace', type: 'url', inputmode: 'url' });
+  const urlIn = inp('url', { placeholder: 'https://… link produk TikTok Shop atau marketplace', type: 'url', inputmode: 'url', maxlength: 2000,
+    onblur: (e) => { const s = e.target.value.trim(); e.target.value = s && !/^[a-z][a-z0-9+.-]*:/i.test(s) ? `https://${s}` : s; } });
 
   const doImport = guard(async (ev) => {
     if (!urlIn.value.trim()) { urlIn.focus(); return toast('Tempel link produknya dulu.', true); }
@@ -261,7 +303,8 @@ function productForm(p, onSaved) {
       const r = await api('POST', '/api/import', { url: urlIn.value.trim() });
       if (!r.ok) return say('Halaman ini tidak bisa dibaca otomatis (toko sering memblokirnya). Isi form di bawah secara manual, lalu tempel deskripsi produknya.', 'bad');
       let n = 0;
-      for (const [k, v] of Object.entries(r.fields)) if (f[k] && !f[k].value.trim()) { f[k].value = v; n++; }
+      for (const [k, v] of Object.entries(r.fields)) if (f[k] && !f[k].value.trim()) { N[k] ? N[k].set(v) : (f[k].value = v); n++; }
+      drawPrice();
       fill(picks, r.images.length ? h('div', { class: 'mt-4' },
         h('div', { class: 'field-label' }, 'Foto dari listing', h('span', { class: 'field-hint' }, 'centang yang mau disimpan sebagai aset')),
         h('div', { class: 'grid grid-cols-4 gap-2 sm:grid-cols-6' }, r.images.map((u, i) => h('label', { class: 'relative cursor-pointer' },
@@ -274,16 +317,16 @@ function productForm(p, onSaved) {
 
   const claimsBox = h('div', { class: 'grid gap-2' });
   const drawClaims = () => fill(claimsBox, claims.map((c, i) => h('div', { class: 'flex gap-2' },
-    h('input', { class: 'input', value: c.claim || '', placeholder: 'Klaim, mis. "Muat 5 kabel"', 'aria-label': 'Klaim', oninput: (e) => { c.claim = e.target.value; touch(); } }),
-    h('input', { class: 'input', value: c.source || '', placeholder: 'Sumber: deskripsi penjual, label, tes sendiri', 'aria-label': 'Sumber klaim', oninput: (e) => { c.source = e.target.value; touch(); } }),
+    h('input', { class: 'input', value: c.claim || '', maxlength: 200, placeholder: 'Klaim, mis. "Muat 5 kabel"', 'aria-label': 'Klaim', oninput: (e) => { c.claim = e.target.value; touch(); clearError(claimsBox); } }),
+    h('input', { class: 'input', value: c.source || '', maxlength: 200, placeholder: 'Sumber: deskripsi penjual, label, tes sendiri', 'aria-label': 'Sumber klaim', oninput: (e) => { c.source = e.target.value; touch(); } }),
     h('button', { class: 'btn btn-ghost px-2', type: 'button', title: 'Hapus klaim', 'aria-label': 'Hapus klaim', onclick: () => { claims.splice(i, 1); drawClaims(); touch(); } }, icon('x')))),
     h('div', {}, h('button', { class: 'btn btn-sm', type: 'button', onclick: () => { claims.push({ claim: '', source: '' }); drawClaims(); claimsBox.querySelector('div:nth-last-child(2) input')?.focus(); } }, icon('plus', 'size-3.5'), 'Tambah klaim')));
-  drawClaims();
+  drawClaims(); drawPrice(); drawEnd();
 
   const save = guard(async () => {
-    if (!f.name.value.trim()) { f.name.focus(); return toast('Nama produk wajib diisi.', true); }
-    const data = { claims: claims.filter((c) => (c.claim || '').trim()) };
-    for (const [k, el] of Object.entries(f)) data[k] = el.value.trim();
+    if (!f.name.value.trim()) { showError(f.name, 'Nama produk wajib diisi.'); f.name.focus(); return toast('Nama produk wajib diisi.', true); }
+    const data = { claims: claims.filter((c) => (c.claim || '').trim() || (c.source || '').trim()) };
+    for (const [k, el] of Object.entries(f)) data[k] = N[k] ? N[k].get() : el.value.trim();
     saveBtn.disabled = true;
     try {
       const saved = p.id ? await api('PUT', `/api/products/${p.id}`, data) : await api('POST', '/api/products', data);
@@ -296,6 +339,13 @@ function productForm(p, onSaved) {
         if (r.failed.length) toast(`${r.saved.length} foto tersimpan, ${r.failed.length} gagal diunduh.`, true);
       }
       dirty = false; toast('Produk tersimpan.'); onSaved(out);
+    } catch (e) {
+      if (!e.fields) throw e;
+      const bad = Object.entries(e.fields);
+      for (const [k, msg] of bad) showError(k === 'claims' ? claimsBox : f[k] || saveBtn, msg);
+      toast(bad.length > 1 ? `${bad.length} kolom perlu diperbaiki.` : bad[0][1], true);
+      const first = app.querySelector('[aria-invalid="true"]');
+      first?.scrollIntoView({ block: 'center', behavior: 'smooth' }); first?.focus?.({ preventScroll: true });
     } finally { saveBtn.disabled = false; }
   });
   const saveBtn = h('button', { class: 'btn btn-primary btn-lg', type: 'button', onclick: save }, p.id ? 'Simpan perubahan' : 'Simpan dan lanjut ke aset');
@@ -308,20 +358,24 @@ function productForm(p, onSaved) {
     section('Link produk', 'Tempel link untuk mengisi form otomatis. Kalau tidak terbaca, isi manual di bawah.',
       h('div', { class: 'flex gap-2' }, urlIn, h('button', { class: 'btn shrink-0', type: 'button', onclick: doImport }, icon('link'), 'Ambil data')), importMsg, picks),
     section('Produk', null, h('div', { class: 'grid gap-4' },
-      field('Nama produk', inp('name', { required: true, placeholder: 'Rak Kabel Meja Lipat' })),
-      field('Apa ini', inp('what', { placeholder: 'Rak kecil untuk merapikan kabel charger di meja' }), 'satu kalimat'),
-      two(field('Toko atau merek', inp('shop')), field('Varian', inp('variants', { placeholder: 'warna, ukuran' }))))),
+      field('Nama produk', inp('name', { required: true, maxlength: 150, placeholder: 'Rak Kabel Meja Lipat' }), 'wajib'),
+      field('Apa ini', inp('what', { maxlength: 200, placeholder: 'Rak kecil untuk merapikan kabel charger di meja' }), 'satu kalimat'),
+      two(field('Toko atau merek', inp('shop', { maxlength: 100 })), field('Varian', inp('variants', { maxlength: 200, placeholder: 'warna, ukuran' }))))),
     section('Harga dan promo', 'Hanya angka di sini yang boleh muncul di video. Cek lagi di hari posting.', h('div', { class: 'grid gap-4' },
-      two(field('Harga', inp('price', { placeholder: 'Rp79.000' })), field('Harga coret', inp('was_price', { placeholder: 'Rp129.000' }), 'opsional')),
-      two(field('Promo', inp('promo', { placeholder: 'Diskon 11.11, gratis ongkir' }), 'opsional'), field('Promo berakhir', inp('promo_end', { type: 'date' }))),
-      two(field('Komisi', inp('commission', { placeholder: '10%' }), 'catatan pribadi, tidak masuk video')))),
+      two(field('Harga', number('price', { prefix: 'Rp', placeholder: '79.000', oninput: (e) => { touch(e); drawPrice(); } })),
+        field('Harga coret', number('was_price', { prefix: 'Rp', placeholder: '129.000', oninput: (e) => { touch(e); drawPrice(); } }), 'opsional')),
+      priceNote,
+      two(field('Promo', inp('promo', { maxlength: 150, placeholder: 'Diskon 11.11, gratis ongkir' }), 'opsional'),
+        field('Promo berakhir', inp('promo_end', { type: 'date', oninput: (e) => { touch(e); drawEnd(); } }), 'opsional')),
+      endNote,
+      two(field('Komisi', number('commission', { suffix: '%', decimal: true, placeholder: '10' }), 'catatan pribadi, tidak masuk video')))),
     section('Bahan naskah', 'Makin jujur dan spesifik, makin natural hasilnya.', h('div', { class: 'grid gap-4' },
-      two(field('Sudah pakai sendiri?', inp('used_it', { placeholder: 'Ya, 2 minggu / Belum' }), 'menentukan gaya bicara'),
-        field('Satu kekurangan jujur', inp('honest_note', { placeholder: 'Perekatnya butuh 24 jam' }))),
-      field('Poin jual', area('selling_points', { placeholder: 'Satu poin per baris, yang benar-benar kamu lihat atau rasakan' })),
-      two(field('Target penonton', inp('audience', { placeholder: 'Pekerja WFH dengan meja sempit' })), field('Masalah mereka', inp('problem', { placeholder: 'Kabel charger berantakan' }))),
-      field('Deskripsi penjual', area('description', { placeholder: 'Tempel deskripsi dari halaman produk' }), 'jadi sumber klaim'),
-      field('Catatan lain', area('notes'), 'opsional'))),
+      two(field('Sudah pakai sendiri?', inp('used_it', { maxlength: 100, placeholder: 'Ya, 2 minggu / Belum' }), 'menentukan gaya bicara'),
+        field('Satu kekurangan jujur', inp('honest_note', { maxlength: 300, placeholder: 'Perekatnya butuh 24 jam' }))),
+      field('Poin jual', area('selling_points', { maxlength: 2000, placeholder: 'Satu poin per baris, yang benar-benar kamu lihat atau rasakan' })),
+      two(field('Target penonton', inp('audience', { maxlength: 200, placeholder: 'Pekerja WFH dengan meja sempit' })), field('Masalah mereka', inp('problem', { maxlength: 200, placeholder: 'Kabel charger berantakan' }))),
+      field('Deskripsi penjual', area('description', { maxlength: 8000, placeholder: 'Tempel deskripsi dari halaman produk' }), 'jadi sumber klaim'),
+      field('Catatan lain', area('notes', { maxlength: 2000 }), 'opsional'))),
     section('Klaim dan sumbernya', 'Tiap klaim tampil dengan catatan kaki di video. Klaim tanpa sumber tidak dipakai.', claimsBox),
     bar);
 }
@@ -372,7 +426,7 @@ function assetsTab(p, redraw) {
         h('div', { class: 'truncate text-xs text-muted', title: a.file }, a.file),
         h('select', { class: 'input px-2 py-1 text-[13px]', 'aria-label': 'Asal file', onchange: (e) => patch(a, () => ({ origin: e.target.value }))() },
           h('option', { value: 'own', selected: a.origin === 'own' }, 'Rekaman sendiri'), h('option', { value: 'listing', selected: a.origin === 'listing' }, 'Dari listing')),
-        h('input', { class: `input px-2 py-1 text-[13px] ${a.kind === 'video' && !(a.shows || '').trim() ? 'border-amber-500' : ''}`, value: a.shows || '', 'aria-label': 'Isi klip',
+        h('input', { class: `input px-2 py-1 text-[13px] ${a.kind === 'video' && !(a.shows || '').trim() ? 'border-amber-500' : ''}`, value: a.shows || '', maxlength: 200, 'aria-label': 'Isi klip',
           placeholder: a.kind === 'video' ? 'Isinya apa? (wajib untuk video)' : 'Isinya apa?', onchange: (e) => { patch(a, () => ({ shows: e.target.value }))(); e.target.classList.toggle('border-amber-500', a.kind === 'video' && !e.target.value.trim()); } }),
         h('button', { class: 'btn btn-sm btn-ghost btn-danger justify-self-start', type: 'button', onclick: guard(async () => {
           if (await confirmDialog({ title: `Hapus ${a.file}?`, text: 'File dihapus dari studio. Video yang sudah jadi tidak berubah.' })) redraw(await api('DELETE', `/api/assets/${a.id}`), 'aset');
@@ -389,8 +443,8 @@ function videoTab(p, checks) {
   drawSeg();
   const lookNote = h('p', { class: 'mt-2 text-sm text-muted' }, LOOK_NOTE['ugc-native']);
   const look = h('select', { class: 'input', onchange: (e) => { lookNote.textContent = LOOK_NOTE[e.target.value] || ''; } }, META.looks.map((l) => h('option', { value: l }, l)));
-  const angle = h('input', { class: 'input', placeholder: 'mis. "murah tapi awet". Kosongkan supaya dipilihkan.' });
-  const notes = h('textarea', { class: 'input', placeholder: 'Permintaan khusus: nada bicara, shot yang wajib ada, hal yang jangan disebut…' });
+  const angle = h('input', { class: 'input', maxlength: 200, placeholder: 'mis. "murah tapi awet". Kosongkan supaya dipilihkan.' });
+  const notes = h('textarea', { class: 'input', maxlength: 2000, placeholder: 'Permintaan khusus: nada bicara, shot yang wajib ada, hal yang jangan disebut…' });
   const review = h('input', { type: 'checkbox', class: 'size-4 accent-brand' });
   const missing = checks.filter((c) => !c.ok);
   const create = guard(async () => {
@@ -428,7 +482,7 @@ async function productPage(id, tabArg) {
       h('div', { class: 'mb-5 flex flex-wrap items-center gap-4' },
         h('div', { class: 'size-16 shrink-0 rounded-2xl border border-line bg-subtle bg-cover bg-center', style: thumb ? `background-image:url("${thumb.url}")` : null }),
         h('div', { class: 'min-w-0 flex-1 basis-3/5 sm:basis-0' }, h('h1', { class: 'text-2xl font-bold tracking-tight sm:truncate' }, p.name),
-          h('p', { class: 'text-muted' }, [p.price, p.was_price ? `dari ${p.was_price}` : null, p.shop].filter(Boolean).join(' · ') || 'Harga belum diisi')),
+          h('p', { class: 'text-muted' }, [rupiah(p.price), p.was_price ? `dari ${rupiah(p.was_price)}` : null, p.shop].filter(Boolean).join(' · ') || 'Harga belum diisi')),
         p.url ? h('a', { class: 'btn', href: p.url, target: '_blank', rel: 'noopener noreferrer' }, icon('link'), 'Buka listing') : null,
         h('button', { class: 'btn btn-ghost btn-danger', type: 'button', onclick: guard(async () => {
           if (await confirmDialog({ title: `Hapus "${p.name}"?`, text: `Semua aset (${p.assets.length}) dan video (${p.videos.length}) produk ini ikut terhapus dan tidak bisa dikembalikan.` })) { await api('DELETE', `/api/products/${p.id}`); location.hash = '#/produk'; }
@@ -469,12 +523,12 @@ async function videoPage(id) {
   const set = (fresh) => { v = fresh; draw(); api('GET', '/api/videos').then(shell).catch(() => {}); };
   function draw() {
     const s = v.status, st = STATUS[s];
-    const note = h('textarea', { class: 'input', placeholder: 'Tulis apa yang perlu diubah, sespesifik mungkin. mis. "Ganti shot pertama dengan klip unboxing, dan pelankan musik."' });
+    const note = h('textarea', { class: 'input', maxlength: 2000, placeholder: 'Tulis apa yang perlu diubah, sespesifik mungkin. mis. "Ganti shot pertama dengan klip unboxing, dan pelankan musik."' });
     const chips = h('div', { class: 'mb-2 flex flex-wrap gap-1.5' }, REVISION_CHIPS.map((c) => h('button', { class: 'chip', type: 'button', onclick: () => { note.value = (note.value.trim() ? note.value.trim().replace(/[.;]?$/, '; ') : '') + c.toLowerCase(); note.focus(); } }, c)));
     const revise = (label = 'Kirim revisi') => h('div', {}, h('div', { class: 'field-label' }, 'Minta revisi'), chips, note,
       h('button', { class: 'btn mt-3', type: 'button', onclick: act('revise', () => ({ note: note.value })) }, label));
-    const postUrl = h('input', { class: 'input', type: 'url', value: v.posted_url || '', placeholder: 'https://www.tiktok.com/@kamu/video/…' });
-    const views = h('input', { class: 'input', type: 'number', min: 0, inputmode: 'numeric', value: v.views ?? '' }), orders = h('input', { class: 'input', type: 'number', min: 0, inputmode: 'numeric', value: v.orders ?? '' });
+    const postUrl = h('input', { class: 'input', type: 'url', inputmode: 'url', maxlength: 2000, value: v.posted_url || '', placeholder: 'https://www.tiktok.com/@kamu/video/…' });
+    const views = numberInput(v.views, { placeholder: '0', digits: 12 }), orders = numberInput(v.orders, { placeholder: '0', digits: 9 });
     const copyText = [v.caption, v.hashtags].filter(Boolean).join('\n\n');
     const src = v.final_url || v.draft_url;
     const card = (title, ...kids) => h('section', { class: 'card card-pad' }, title ? h('h2', { class: 'card-title mb-3' }, title) : null, kids);
@@ -503,10 +557,10 @@ async function videoPage(id) {
         h('ul', { class: 'grid gap-1.5 text-sm' }, ['Harga dan promo masih sama dengan yang di video', 'Produk ditautkan di keranjang kuning', 'Label konten AI dinyalakan bila diwajibkan (suaranya sintetis)', 'Punya izin memakai foto/video dari listing penjual']
           .map((t) => h('li', {}, h('label', { class: 'flex cursor-pointer items-start gap-2' }, h('input', { type: 'checkbox', class: 'mt-0.5 size-4 accent-brand' }), t))))) : null,
       field('Link video TikTok', postUrl, s === 'final' ? 'isi setelah diposting' : null),
-      s === 'diposting' ? h('div', { class: 'mt-4 grid grid-cols-2 gap-4' }, field('Views', views), field('Pesanan', orders)) : null,
+      s === 'diposting' ? h('div', { class: 'mt-4 grid grid-cols-2 gap-4' }, field('Views', views.wrap), field('Pesanan', orders.wrap)) : null,
       h('div', { class: 'mt-4 flex flex-wrap gap-2' },
         h('button', { class: 'btn btn-primary', type: 'button', onclick: act('posted', () => ({ posted_url: postUrl.value.trim() })) }, s === 'diposting' ? 'Simpan link' : 'Tandai sudah diposting'),
-        s === 'diposting' ? h('button', { class: 'btn', type: 'button', onclick: guard(async () => { set(await api('PATCH', `/api/videos/${id}`, { views: views.value === '' ? null : +views.value, orders: orders.value === '' ? null : +orders.value })); toast('Angka tersimpan.'); }) }, 'Simpan angka') : null,
+        s === 'diposting' ? h('button', { class: 'btn', type: 'button', onclick: guard(async () => { set(await api('PATCH', `/api/videos/${id}`, { views: views.get(), orders: orders.get() })); toast('Angka tersimpan.'); }) }, 'Simpan angka') : null,
         v.posted_url ? h('a', { class: 'btn btn-ghost', href: v.posted_url, target: '_blank', rel: 'noopener noreferrer' }, icon('link'), 'Buka di TikTok') : null)) : null;
 
     const sheet = v.storyboard_url || v.sheet_url;

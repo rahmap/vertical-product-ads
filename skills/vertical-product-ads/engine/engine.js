@@ -525,7 +525,7 @@ async function main() {
     }
   }
   for (const c of CAPS) {
-    c.e = el('div', `cap ${CAPCFG.style}`, hud);
+    c.e = el('div', `cap ${CAPCFG.style}${CAPCFG.anim === 'pop' ? ' pop' : ''}`, hud);
     // centred on the frame, so the widest box is symmetric about CX inside the (asymmetric) safe zone
     // pop: the spoken word grows a little, so the box keeps that much room to the safe edge
     const capW = 2 * Math.min(CX - SAFE.l, SAFE.r - CX) * (CAPCFG.anim === 'pop' ? 0.95 : 1);
@@ -970,7 +970,7 @@ async function main() {
         const act = t >= w.start && t < w.end + 0.05;
         if (c.spans[k]._act !== act) { c.spans[k]._act = act; c.spans[k].style.color = act ? 'var(--caption-active)' : ''; }
         if (CAPCFG.anim === 'pop') {   // the spoken word punches up and settles back when the next one starts
-          const u = t - w.start, sc = u <= 0 ? 1 : 1 + 0.09 * stepR(u, POP) * (1 - clamp((t - w.end - 0.05) / 0.08));
+          const u = t - w.start, sc = u <= 0 ? 1 : 1 + 0.08 * stepR(u, POP) * (1 - clamp((t - w.end - 0.05) / 0.08));
           c.spans[k].style.transform = Math.abs(sc - 1) > 0.0005 ? `scale(${sc.toFixed(4)})` : '';
         }
       });

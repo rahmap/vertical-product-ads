@@ -12,6 +12,7 @@ const { basename, extname, join, resolve, sep } = await import('node:path');
 const D = await import('./db.mjs');
 const { writeProject } = await import('./brief.mjs');
 const { importProduct, downloadImage } = await import('./import.mjs');
+const V = await import('./validate.mjs');
 const { db } = D;
 
 const PORT = Number(process.argv[process.argv.indexOf('--port') + 1]) || Number(D.setting('STUDIO_PORT')) || 4173;
@@ -100,20 +101,15 @@ on('GET', '/api/products', () => db.prepare(`SELECT p.*, (SELECT COUNT(*) FROM a
   (SELECT file FROM assets a WHERE a.product_id = p.id AND a.kind = 'image' ORDER BY a.id LIMIT 1) AS thumb
   FROM products p ORDER BY p.updated_at DESC`).all().map((p) => ({ ...p, thumb: p.thumb ? `/media/products/${p.slug}/assets/${encodeURIComponent(p.thumb)}` : null })));
 on('POST', '/api/products', async (req) => {
-  const b = await body(req);
-  if (!String(b.name || '').trim()) throw new HttpError(400, 'Nama produk wajib diisi.');
-  const row = { slug: D.uniqueSlug('products', D.slugify(b.name)) };
-  for (const k of D.PRODUCT_FIELDS) if (k in b) row[k] = b[k];
-  const id = D.insert('products', row);
+  const data = V.product(await body(req));
+  const id = D.insert('products', { slug: D.uniqueSlug('products', D.slugify(data.name)), ...data });
   fs.mkdirSync(join(D.productDir(D.product(id)), 'assets'), { recursive: true });
   return productView(D.product(id));
 });
 on('GET', '/api/products/:id', (req, id) => productView(need(D.product(id), 'Produk')));
 on('PUT', '/api/products/:id', async (req, id) => {
-  need(D.product(id), 'Produk');
-  const b = await body(req);
-  if ('name' in b && !String(b.name).trim()) throw new HttpError(400, 'Nama produk wajib diisi.');
-  D.update('products', id, b, D.PRODUCT_FIELDS);
+  const current = need(D.product(id), 'Produk');
+  D.update('products', id, V.product(await body(req), { partial: true, current }), D.PRODUCT_FIELDS);
   return productView(D.product(id));
 });
 on('DELETE', '/api/products/:id', (req, id) => {
@@ -126,12 +122,12 @@ on('DELETE', '/api/products/:id', (req, id) => {
 });
 
 on('POST', '/api/import', async (req) => {
-  const { url } = await body(req);
+  const url = V.link(await body(req));
   try { return await importProduct(url); } catch (e) { throw new HttpError(400, e.message); }
 });
 on('POST', '/api/products/:id/import-images', async (req, id) => {
   const p = need(D.product(id), 'Produk');
-  const urls = [].concat((await body(req)).urls || []).slice(0, 12);
+  const urls = V.urls(await body(req));
   const dir = join(D.productDir(p), 'assets'); fs.mkdirSync(dir, { recursive: true });
   const saved = [], failed = [];
   for (const [i, u] of urls.entries()) {
@@ -165,9 +161,8 @@ on('PUT', '/api/products/:id/assets', async (req, id, url) => {
 });
 on('PATCH', '/api/assets/:id', async (req, id) => {
   const a = need(db.prepare('SELECT * FROM assets WHERE id = ?').get(id), 'Aset');
-  const b = await body(req);
-  if ('origin' in b && !['own', 'listing'].includes(b.origin)) throw new HttpError(400, 'Asal harus own atau listing.');
-  for (const k of ['origin', 'shows']) if (k in b) db.prepare(`UPDATE assets SET ${k} = ? WHERE id = ?`).run(b[k] || null, id);
+  const data = V.asset(await body(req));
+  for (const [k, val] of Object.entries(data)) db.prepare(`UPDATE assets SET ${k} = ? WHERE id = ?`).run(val, id);
   return productView(D.product(a.product_id));
 });
 on('DELETE', '/api/assets/:id', (req, id) => {
@@ -182,24 +177,18 @@ on('GET', '/api/videos', () => db.prepare(`SELECT v.id, v.slug, v.title, v.statu
   p.name AS product_name, p.id AS product_id FROM videos v JOIN products p ON p.id = v.product_id ORDER BY v.updated_at DESC`).all());
 on('POST', '/api/products/:id/videos', async (req, id) => {
   const p = need(D.product(id), 'Produk');
-  const b = await body(req);
-  const duration = [30, 45, 60].includes(+b.duration) ? +b.duration : 45;
-  if (b.look && !D.LOOKS.includes(b.look)) throw new HttpError(400, 'Look tidak dikenal.');
+  const b = await body(req), data = V.newVideo(b);
   if (!D.productAssets(id).length) throw new HttpError(400, 'Upload minimal satu foto atau video produk dulu.');
   const n = db.prepare('SELECT COUNT(*) AS n FROM videos WHERE product_id = ?').get(id).n + 1;
-  const vid = D.insert('videos', { product_id: id, slug: D.uniqueSlug('videos', `${p.slug}-v${n}`), title: b.title || `${p.name} #${n}`,
-    duration, look: b.look || 'ugc-native', style: b.style || null, concept_review: b.concept_review ? 1 : 0,
-    angle: b.angle, voice: b.voice, notes: b.notes, status: 'draft' });
+  const vid = D.insert('videos', { product_id: id, slug: D.uniqueSlug('videos', `${p.slug}-v${n}`), ...data,
+    title: data.title || `${p.name} #${n}`, look: data.look || 'ugc-native', status: 'draft' });
   if (b.queue !== false) queue(vid, 'dibuat dari studio');
   return videoView(D.video(vid));
 });
 on('GET', '/api/videos/:id', (req, id) => videoView(need(D.video(id), 'Video')));
 on('PATCH', '/api/videos/:id', async (req, id) => {
   need(D.video(id), 'Video');
-  const b = await body(req);
-  if ('duration' in b && ![30, 45, 60].includes(+b.duration)) throw new HttpError(400, 'Durasi harus 30, 45 atau 60.');
-  if ('look' in b && !D.LOOKS.includes(b.look)) throw new HttpError(400, 'Look tidak dikenal.');
-  D.update('videos', id, b, D.VIDEO_FIELDS);
+  D.update('videos', id, V.videoPatch(await body(req)), D.VIDEO_FIELDS);
   return videoView(D.video(id));
 });
 on('DELETE', '/api/videos/:id', (req, id) => {
@@ -223,15 +212,15 @@ const action = (name, from, fn) => on('POST', `/api/videos/:id/${name}`, async (
 action('queue', ['draft', 'final', 'diposting', 'preview', 'revisi'], (v) => queue(v.id, 'diantrekan ulang'));
 action('approve', ['preview'], (v) => D.setStatus(v.id, 'disetujui', 'preview disetujui, menunggu render final'));
 action('revise', ['preview', 'final', 'disetujui'], (v, b) => {
-  const note = String(b.note || '').trim();
-  if (!note) throw new HttpError(400, 'Tulis dulu apa yang perlu direvisi.');
+  const { note } = V.revision(b);
   D.update('videos', v.id, { revision_note: note }, D.VIDEO_FIELDS);
   writeProject(D.video(v.id));
   D.setStatus(v.id, 'revisi', note);
 });
 action('posted', ['final', 'diposting'], (v, b) => {
-  D.update('videos', v.id, { posted_url: b.posted_url || v.posted_url, posted_at: b.posted_at || v.posted_at || new Date().toISOString().slice(0, 10) }, D.VIDEO_FIELDS);
-  if (v.status !== 'diposting') D.setStatus(v.id, 'diposting', b.posted_url || '');
+  const d = V.posted(b);
+  D.update('videos', v.id, { posted_url: d.posted_url || v.posted_url, posted_at: d.posted_at || v.posted_at || new Date().toISOString().slice(0, 10) }, D.VIDEO_FIELDS);
+  if (v.status !== 'diposting') D.setStatus(v.id, 'diposting', d.posted_url || '');
 });
 
 // ---- server
@@ -268,7 +257,7 @@ const server = http.createServer(async (req, res) => {
     const status = e.status || 500;
     if (status === 500) console.error(e);
     if (res.headersSent) return res.destroy();
-    json(res, { error: e.status ? e.message : `Kesalahan server: ${e.message}` }, status);
+    json(res, { error: e.status ? e.message : `Kesalahan server: ${e.message}`, ...(e.fields ? { fields: e.fields } : {}) }, status);
   }
 });
 server.on('error', (e) => { console.error(e.code === 'EADDRINUSE' ? `Port ${PORT} sedang dipakai. Coba: node studio/server.mjs --port ${PORT + 1}` : e); process.exit(1); });

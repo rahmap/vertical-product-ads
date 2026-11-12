@@ -143,11 +143,14 @@ unless the concept says otherwise. Differences from the rules above and in `dire
   empty `timeline` or camera moves only). Every shot is its own `video` or `img` layer with
   `"cut": true` on video and `tin`/`tout` on a word.
 - **Cut on words, not beats.** `tin` is `w<i>-0.05` of the word that names what the shot shows. Music
-  is a low bed (`audio.musicDb` −24 to −22); beats `k<n>` are optional.
+  is a low bed under the voice (`"audio": { "duckSpeechDb": -21, "duckGapDb": -15 }`); beats `k<n>` are
+  optional.
 - **A new picture every 1.5–3 s.** Reuse a clip with another `clip.in`, or the same picture with another
   `fx`/`fy`/`zoom`. Alternate wide and close; never two shots with the same framing in a row.
 - **Hand-held feel.** Give each shot a slow push or pull (`zoom` `{ "to": 1.04–1.08, "sp": "slow" }`),
-  alternating direction (start at 1.06 with a number, or push to 1.06). No sheen, no blur swaps.
+  or hold it closer with a plain number (`"zoom": 1.3`, with `fx`/`fy` choosing the part). A zoom spring
+  always starts at 1, so a pull-back is not available: alternate pushes with static crops. No sheen, no
+  blur swaps.
 - **Graphics are stickers.** At most one text line or chip group on screen besides the captions.
 - Captions: `{ "style": "plain", "case": "none", "anim": "pop", "maxWords": 3, "size": 64 }`, at `y` 1181, or lower
   (1300) while a sticker sits mid-frame.
@@ -175,6 +178,8 @@ The body of the film: own clips cut on the words that describe them.
     "zoom": { "to": 1.05, "at": "w17", "sp": "slow" } }
 ]
 ```
+A working film of 24 shots from pictures alone: `examples/affiliate-60/`.
+
 A clip shorter than its slot holds its last frame: check each clip's length in `build/footage.json`
 and pick `clip.in` so `in + (tout − tin)` stays inside it.
 

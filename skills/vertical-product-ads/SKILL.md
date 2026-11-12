@@ -68,7 +68,7 @@ them (footage in panels for `ugc`/`hybrid`). Catalogue, rules and recipes: `refe
 1. **Project folder:** create `<project>/assets/` and `<project>/scenes.json`, copied from
    `examples/minimal/scenes.json` (format: `references/scenes-format.md`); for muted product b-roll
    under a voice-over, start from `examples/product-broll/`; for fills that follow any look, see
-   `examples/look-sampler/`; for every layout piece, `examples/layout-sampler/`. `ELEVENLABS_API_KEY` is read
+   `examples/look-sampler/`; for every layout piece, `examples/layout-sampler/`; for an affiliate film, `examples/affiliate-60/`. `ELEVENLABS_API_KEY` is read
    by the tools from the environment or a `.env` in the project or any parent folder; it is needed only
    for ElevenLabs voice, music or transcription. If it is missing, tell the user to run
    `scripts/set_key.sh` **in their own terminal**, or use the free options. `.gitignore` for the

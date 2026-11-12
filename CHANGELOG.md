@@ -19,6 +19,14 @@
 - `studio/`: local web app with a SQLite store for products (import from a link, or by hand), assets,
   a video queue, preview approval and revision notes, finished videos and post results.
 - `.claude/skills/affiliate-queue`: works through the queue with the two skills.
+- The UI is styled with Tailwind CSS v4 (`studio/styles/input.css` → `studio/public/app.css`).
+- Inputs: prices format as rupiah while typing and are stored as whole numbers; commission, views and
+  orders are numbers; every write is validated on the server (`studio/validate.mjs`), with the
+  message shown under its field. Older databases are converted on first start.
+- `.env.example`: `ELEVENLABS_API_KEY`, `STUDIO_PORT`, `STUDIO_DATA`, `STUDIO_VOICE` (default voice).
+
+**Examples**
+- `examples/affiliate-60`: a 59 s affiliate film from pictures only, free voice and synth bed.
 
 ## 0.5.0
 

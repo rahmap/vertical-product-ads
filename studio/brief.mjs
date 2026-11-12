@@ -3,7 +3,8 @@
 //   data/projects/<slug>/assets/    copies of the product's files
 import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { product, productAssets, productDir, projectDir } from './db.mjs';
+import { product, productAssets, productDir, projectDir, setting } from './db.mjs';
+import { discount, rupiah } from './validate.mjs';
 
 const v = (s) => (s == null || s === '' ? '' : String(s).trim());
 const lines = (s) => v(s).split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
@@ -24,9 +25,9 @@ export function briefMarkdown(p, assets, vid) {
     `- Name — nama produk: ${v(p.name)}`,
     `- Variants (shades, sizes) — varian: ${v(p.variants)}`,
     `- What it is, in one sentence — apa ini: ${v(p.what)}`,
-    `- Price and where to buy — harga dan tempat beli: ${v(p.price)}${p.shop ? ` — ${v(p.shop)}` : ''} (TikTok Shop, keranjang kuning)`,
+    `- Price and where to buy — harga dan tempat beli: ${rupiah(p.price)}${p.shop ? ` — ${v(p.shop)}` : ''} (TikTok Shop, keranjang kuning)`,
     `- Product link — link produk: ${v(p.url)}`,
-    `- Was-price (if any) — harga coret: ${v(p.was_price)}`,
+    `- Was-price (if any) — harga coret: ${rupiah(p.was_price)}${discount(p.price, p.was_price) ? ` (diskon ${discount(p.price, p.was_price)}%, computed from the two prices)` : ''}`,
     `- Promo and its end date — promo dan tanggal berakhir: ${[v(p.promo), v(p.promo_end)].filter(Boolean).join(' — sampai ')}`,
     `- Have you used it yourself? For how long? — sudah pakai sendiri? berapa lama: ${v(p.used_it)}`,
     `- One honest limitation — satu kekurangan jujur: ${v(p.honest_note)}`, '');
@@ -45,7 +46,7 @@ export function briefMarkdown(p, assets, vid) {
     '| File | Shows — isi | Origin — asal | Kind |', '|---|---|---|---|',
     ...(assets.length ? assets.map((a) => `| assets/${a.file} | ${cell(a.shows)} | ${a.origin} | ${a.kind} |`) : ['| | | | |']), '',
     '## Audio — Suara dan musik',
-    `- Voice — suara: ElevenLabs${v(vid.voice) ? ` (${v(vid.voice)})` : ', conversational Indonesian voice'}`,
+    `- Voice — suara: ElevenLabs${v(vid.voice) || setting('STUDIO_VOICE') ? `, voice id ${v(vid.voice) || setting('STUDIO_VOICE')}` : ', conversational Indonesian voice'}`,
     '- Music — musik: low bed under the voice (ElevenLabs prompt, or the free synth if no key)', '',
     '## Notes — Catatan');
   if (v(vid.angle)) out.push(`- Hook angle asked for — sudut hook: ${v(vid.angle)}`);

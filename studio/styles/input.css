@@ -48,6 +48,8 @@
   .field-hint { @apply font-normal text-muted; }
   .input { @apply block w-full rounded-lg border border-line bg-canvas px-3 py-2 text-[15px] text-ink placeholder:text-muted/70 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25; }
   textarea.input { @apply min-h-20 resize-y; }
+  .input[aria-invalid="true"], [aria-invalid="true"] > .input { @apply border-red-500 focus:border-red-500 focus:ring-red-500/25; }
+  .field-error { @apply mt-1 block text-[13px] font-medium text-red-600 dark:text-red-400; }
 
   .badge { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap; }
   .chip { @apply inline-flex cursor-pointer items-center gap-1 rounded-full border border-line bg-surface px-2.5 py-1 text-[13px] font-medium text-muted transition hover:border-muted hover:text-ink; }

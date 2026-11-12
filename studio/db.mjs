@@ -41,7 +41,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY, slug TEXT UNIQUE NOT NULL,
   url TEXT, name TEXT NOT NULL, variants TEXT, what TEXT, shop TEXT,
-  price TEXT, was_price TEXT, promo TEXT, promo_end TEXT, commission TEXT,
+  price INTEGER, was_price INTEGER, promo TEXT, promo_end TEXT, commission REAL,
   description TEXT, selling_points TEXT, claims TEXT NOT NULL DEFAULT '[]',
   audience TEXT, problem TEXT, used_it TEXT, honest_note TEXT, notes TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -67,6 +67,24 @@ CREATE TABLE IF NOT EXISTS events (
 );
 CREATE INDEX IF NOT EXISTS videos_status ON videos(status);
 `);
+
+// Older databases kept price, was_price and commission as free text ("Rp79.000", "10%"): convert them to numbers once.
+// price and was_price are whole rupiah (INTEGER), commission a percentage (REAL).
+const columnType = (table, col) => db.prepare(`SELECT type FROM pragma_table_info('${table}') WHERE name = ?`).get(col)?.type;
+if (columnType('products', 'price') === 'TEXT') {
+  const money = (s) => { const m = /\d[\d.]*/.exec(String(s ?? '')); const n = m ? Number(m[0].replace(/\./g, '')) : NaN; return Number.isInteger(n) && n > 0 ? n : null; };
+  const percent = (s) => { const m = /\d+(?:[.,]\d+)?/.exec(String(s ?? '')); const n = m ? Number(m[0].replace(',', '.')) : NaN; return n >= 0 && n <= 100 ? n : null; };
+  db.exec('BEGIN');
+  try {
+    for (const [col, type, parse] of [['price', 'INTEGER', money], ['was_price', 'INTEGER', money], ['commission', 'REAL', percent]]) {
+      db.exec(`ALTER TABLE products RENAME COLUMN ${col} TO ${col}_old; ALTER TABLE products ADD COLUMN ${col} ${type};`);
+      const set = db.prepare(`UPDATE products SET ${col} = ? WHERE id = ?`);
+      for (const r of db.prepare(`SELECT id, ${col}_old AS v FROM products`).all()) set.run(parse(r.v), r.id);
+      db.exec(`ALTER TABLE products DROP COLUMN ${col}_old`);
+    }
+    db.exec('COMMIT');
+  } catch (e) { db.exec('ROLLBACK'); throw e; }
+}
 
 export const PRODUCT_FIELDS = ['url', 'name', 'variants', 'what', 'shop', 'price', 'was_price', 'promo', 'promo_end', 'commission',
   'description', 'selling_points', 'claims', 'audience', 'problem', 'used_it', 'honest_note', 'notes'];

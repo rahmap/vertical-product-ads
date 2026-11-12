@@ -54,6 +54,7 @@
   .cap { position: absolute; left: 50%; width: max-content; box-sizing: border-box; text-align: center; transform-origin: 50% 50%;
          font-family: var(--caption-font, var(--sans)); font-weight: var(--caption-weight, 800); line-height: 1.12; color: var(--caption-ink); }
   .cap .cw { display: inline-block; white-space: pre; transform-origin: 50% 80%; }
+  .cap.pop .cw { margin: 0 0.05em; }   /* room for the spoken word to grow without touching its neighbours */
   .cap.pill { padding: 0.18em 0.45em 0.22em; border-radius: var(--caption-radius, 0.42em); background: var(--caption-bg); }
   .cap.plain { -webkit-text-stroke: 0.09em var(--caption-stroke, rgba(0, 0, 0, 0.85)); paint-order: stroke fill; text-shadow: 0 0.05em 0.14em rgba(0, 0, 0, 0.55); }
   /* chips, labels and the CTA share the UI variables: --ui-font, --ui-ink, --ui-weight, --ui-case, --ui-tracking,

@@ -24,7 +24,8 @@ function meta(html, key) {
   const tag = new RegExp(`<meta[^>]+(?:property|name)=["']${key}["'][^>]*>`, 'i').exec(html);
   return tag ? decode(/content=["']([^"']*)["']/i.exec(tag[0])?.[1]) : '';
 }
-const rupiah = (n) => (Number.isFinite(+n) && +n > 0 ? 'Rp' + Math.round(+n).toLocaleString('id-ID') : '');
+// whole rupiah, or nothing: other currencies are left for the user to enter
+const idr = (n, cur) => (cur === 'IDR' && Number.isFinite(+n) && +n > 0 ? Math.round(+n) : undefined);
 
 function findProduct(node, depth = 0) {
   if (!node || depth > 6) return null;
@@ -48,7 +49,7 @@ export function parseProduct(html, baseUrl) {
     if (offer) {
       const cur = offer.priceCurrency || 'IDR';
       const price = offer.price ?? offer.lowPrice;
-      if (price != null) fields.price ||= cur === 'IDR' ? rupiah(price) : `${price} ${cur}`;
+      if (price != null) fields.price ||= idr(price, cur);
     }
     for (const i of [].concat(p.image || [])) addImage(typeof i === 'object' ? i.url : i);
   }
@@ -57,7 +58,7 @@ export function parseProduct(html, baseUrl) {
   if (!fields.price) {
     const amt = meta(html, 'product:price:amount') || meta(html, 'og:price:amount');
     const cur = meta(html, 'product:price:currency') || meta(html, 'og:price:currency') || 'IDR';
-    if (amt) fields.price = cur === 'IDR' ? rupiah(amt) : `${amt} ${cur}`;
+    if (amt) fields.price = idr(amt, cur);
   }
   for (const m of html.matchAll(/<meta[^>]+(?:property|name)=["']og:image(?::secure_url)?["'][^>]*>/gi)) {
     const c = /content=["']([^"']*)["']/i.exec(m[0])?.[1]; if (c) addImage(c);

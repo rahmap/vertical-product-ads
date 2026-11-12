@@ -41,6 +41,12 @@ Apple M3 Pro, 31 s film, 1080×1920:
 | Master | 35 s (re-encodes video) | ~5 s (audio only, video copied) |
 | Draft with sound | none | 12 s |
 
+Linux under WSL2 (16 threads, no GPU flags, so Chromium rasterises on the CPU), `examples/affiliate-60`
+(59 s, 24 picture shots, captions, two `fit: "contain"` shots): preview 150 s (draft capture 67 s, layout
+gate over 1,770 frames included); final picture render 397 s (6.7 s per film second, 7,080 subframes at
+18/s). Plan about 7 minutes of final render for a one-minute film on such a machine, and review on the
+draft, which costs a quarter of that.
+
 Speed choices:
 - **Capture JPEG q95, never PNG** (PNG ≈ 10× slower). `tmix` and H.264 hide JPEG's loss.
 - **Run Chromium on the GPU:** Metal on macOS, by default. `VPA_GPU=0` forces the CPU rasteriser;

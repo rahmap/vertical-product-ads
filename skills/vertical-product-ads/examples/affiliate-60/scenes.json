@@ -1,0 +1,560 @@
+{
+ "title": "Affiliate 60 (fictional product): a first-person TikTok Shop recommendation from pictures only, free voice and music. Swap the SVG stand-ins for your own clips.",
+ "duration": 59,
+ "style": "motion",
+ "look": "ugc-native",
+ "format": {
+  "width": 1080,
+  "height": 1920,
+  "safe": {
+   "l": 84,
+   "r": 930,
+   "t": 250,
+   "b": 1460
+  }
+ },
+ "render": {
+  "fps": 30
+ },
+ "vo": {
+  "engine": "edge",
+  "voice": "id-ID-GadisNeural",
+  "language": "id",
+  "settings": {
+   "rate": "+14%",
+   "pitch": "+0Hz",
+   "volume": "+0%"
+  },
+  "script": "Meja kerja kamu masih kayak gini? Kabel charger di mana-mana, tiap mau ngecas harus nyari dulu. Aku nemu ini di keranjang kuning, namanya Klipo, klip kabel buat di meja. Kecil banget, segenggam doang. Bahannya silikon, jadi lentur dan nggak ngegores kabel. Cara pasangnya gampang. Lepas perekatnya, tempel di sisi meja, terus tekan sebentar. Satu klip muat tiga kabel. Kabelnya tinggal diselipin, dan nggak jatuh lagi ke lantai. Dalam satu paket isinya tiga klip, dan ada tiga pilihan warna. Jujur, perekatnya butuh sehari biar nempel kuat, jadi jangan langsung ditarik-tarik ya. Harganya cuma dua puluh sembilan ribu, lagi diskon dari empat puluh lima ribu. Kalau meja kamu juga berantakan, klik keranjang kuning sekarang ya.",
+  "place": [
+   {
+    "words": [
+     0,
+     5
+    ],
+    "anchor": 0,
+    "at": 0.1,
+    "why": "hook: the problem, on the messy desk"
+   },
+   {
+    "words": [
+     6,
+     15
+    ],
+    "anchor": 6,
+    "at": 2.93,
+    "why": "the problem, agitated"
+   },
+   {
+    "words": [
+     16,
+     28
+    ],
+    "anchor": 16,
+    "at": 7.52,
+    "why": "the find: product name"
+   },
+   {
+    "words": [
+     29,
+     32
+    ],
+    "anchor": 29,
+    "at": 13.13,
+    "why": "size in hand"
+   },
+   {
+    "words": [
+     33,
+     40
+    ],
+    "anchor": 33,
+    "at": 16.03,
+    "why": "material"
+   },
+   {
+    "words": [
+     41,
+     43
+    ],
+    "anchor": 41,
+    "at": 20.32,
+    "why": "how to: intro"
+   },
+   {
+    "words": [
+     44,
+     52
+    ],
+    "anchor": 44,
+    "at": 22.61,
+    "why": "how to: three steps"
+   },
+   {
+    "words": [
+     53,
+     57
+    ],
+    "anchor": 53,
+    "at": 27.73,
+    "why": "capacity claim"
+   },
+   {
+    "words": [
+     58,
+     66
+    ],
+    "anchor": 58,
+    "at": 30.4,
+    "why": "result"
+   },
+   {
+    "words": [
+     67,
+     77
+    ],
+    "anchor": 67,
+    "at": 34.91,
+    "why": "what is in the box, colours"
+   },
+   {
+    "words": [
+     78,
+     89
+    ],
+    "anchor": 78,
+    "at": 39.95,
+    "why": "honest note"
+   },
+   {
+    "words": [
+     90,
+     102
+    ],
+    "anchor": 90,
+    "at": 46.18,
+    "why": "price and promo"
+   },
+   {
+    "words": [
+     103,
+     112
+    ],
+    "anchor": 103,
+    "at": 51.89,
+    "why": "CTA"
+   }
+  ]
+ },
+ "music": {
+  "file": "audio/bed.wav",
+  "bpm": 100,
+  "key": "A minor",
+  "synth": {
+   "style": "chill",
+   "drop": 2.4,
+   "end": 57.8,
+   "seed": 5
+  }
+ },
+ "audio": {
+  "duckSpeechDb": -21,
+  "duckGapDb": -15,
+  "sfxGain": 0.5
+ },
+ "assets": {
+  "messy": "assets/messy.svg",
+  "hand": "assets/hand.svg",
+  "stick": "assets/stick.svg",
+  "tidy": "assets/tidy.svg",
+  "close": "assets/close.svg",
+  "listing-box": "assets/listing-box.svg",
+  "listing-colors": "assets/listing-colors.svg"
+ },
+ "shape": {
+  "initial": {
+   "x": 540,
+   "y": 960,
+   "w": 1080,
+   "h": 1920,
+   "r": 0
+  }
+ },
+ "timeline": [],
+ "layers": [
+  {
+   "id": "s00",
+   "kind": "img",
+   "src": "messy",
+   "cut": true,
+   "tin": 0,
+   "tout": "w6-0.05",
+   "zoom": {
+    "to": 1.07,
+    "at": 0,
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s01",
+   "kind": "img",
+   "src": "messy",
+   "cut": true,
+   "tin": "w6-0.05",
+   "tout": "w10-0.05",
+   "zoom": 1.4,
+   "fy": 0.72
+  },
+  {
+   "id": "s02",
+   "kind": "img",
+   "src": "messy",
+   "cut": true,
+   "tin": "w10-0.05",
+   "tout": "w16-0.05",
+   "zoom": 1.25,
+   "fx": 0.25,
+   "fy": 0.8
+  },
+  {
+   "id": "s03",
+   "kind": "img",
+   "src": "hand",
+   "cut": true,
+   "tin": "w16-0.05",
+   "tout": "w22-0.05",
+   "zoom": {
+    "to": 1.06,
+    "at": "w16",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s04",
+   "kind": "img",
+   "src": "close",
+   "cut": true,
+   "tin": "w22-0.05",
+   "tout": "w24-0.05"
+  },
+  {
+   "id": "s05",
+   "kind": "img",
+   "src": "hand",
+   "cut": true,
+   "tin": "w24-0.05",
+   "tout": "w29-0.05",
+   "zoom": 1.3,
+   "fy": 0.56
+  },
+  {
+   "id": "s06",
+   "kind": "img",
+   "src": "hand",
+   "cut": true,
+   "tin": "w29-0.05",
+   "tout": "w33-0.05",
+   "zoom": {
+    "to": 1.12,
+    "at": "w29",
+    "sp": "slow"
+   },
+   "fy": 0.55
+  },
+  {
+   "id": "s07",
+   "kind": "img",
+   "src": "close",
+   "cut": true,
+   "tin": "w33-0.05",
+   "tout": "w37-0.05",
+   "zoom": {
+    "to": 1.08,
+    "at": "w33",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s08",
+   "kind": "img",
+   "src": "close",
+   "cut": true,
+   "tin": "w37-0.05",
+   "tout": "w41-0.05",
+   "zoom": 1.5,
+   "fx": 0.28,
+   "fy": 0.42
+  },
+  {
+   "id": "s09",
+   "kind": "img",
+   "src": "stick",
+   "cut": true,
+   "tin": "w41-0.05",
+   "tout": "w44-0.05"
+  },
+  {
+   "id": "s10",
+   "kind": "img",
+   "src": "stick",
+   "cut": true,
+   "tin": "w44-0.05",
+   "tout": "w46-0.05",
+   "zoom": 1.35,
+   "fx": 0.55,
+   "fy": 0.63
+  },
+  {
+   "id": "s11",
+   "kind": "img",
+   "src": "stick",
+   "cut": true,
+   "tin": "w46-0.05",
+   "tout": "w50-0.05",
+   "zoom": {
+    "to": 1.1,
+    "at": "w46",
+    "sp": "slow"
+   },
+   "fy": 0.6
+  },
+  {
+   "id": "s12",
+   "kind": "img",
+   "src": "stick",
+   "cut": true,
+   "tin": "w50-0.05",
+   "tout": "w53-0.05",
+   "zoom": 1.6,
+   "fx": 0.6,
+   "fy": 0.64
+  },
+  {
+   "id": "s13",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w53-0.05",
+   "tout": "w58-0.05",
+   "zoom": 1.3,
+   "fy": 0.62
+  },
+  {
+   "id": "s14",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w58-0.05",
+   "tout": "w61-0.05",
+   "zoom": {
+    "to": 1.06,
+    "at": "w58",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s15",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w61-0.05",
+   "tout": "w67-0.05",
+   "zoom": 1.55,
+   "fy": 0.63
+  },
+  {
+   "id": "s16",
+   "kind": "img",
+   "src": "listing-box",
+   "cut": true,
+   "tin": "w67-0.05",
+   "tout": "w73-0.05",
+   "fit": "contain",
+   "zoom": {
+    "to": 1.05,
+    "at": "w67",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s17",
+   "kind": "img",
+   "src": "listing-colors",
+   "cut": true,
+   "tin": "w73-0.05",
+   "tout": "w78-0.05",
+   "fit": "contain",
+   "zoom": {
+    "to": 1.05,
+    "at": "w73",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s18",
+   "kind": "img",
+   "src": "stick",
+   "cut": true,
+   "tin": "w78-0.05",
+   "tout": "w85-0.05",
+   "zoom": 1.45,
+   "fx": 0.52,
+   "fy": 0.62
+  },
+  {
+   "id": "s19",
+   "kind": "img",
+   "src": "hand",
+   "cut": true,
+   "tin": "w85-0.05",
+   "tout": "w90-0.05",
+   "zoom": 1.2,
+   "fy": 0.56
+  },
+  {
+   "id": "s20",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w90-0.05",
+   "tout": "w96-0.05",
+   "zoom": {
+    "to": 1.05,
+    "at": "w90",
+    "sp": "slow"
+   }
+  },
+  {
+   "id": "s21",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w96-0.05",
+   "tout": "w103-0.05",
+   "zoom": 1.3,
+   "fy": 0.62
+  },
+  {
+   "id": "s22",
+   "kind": "img",
+   "src": "messy",
+   "cut": true,
+   "tin": "w103-0.05",
+   "tout": "w108-0.05",
+   "zoom": 1.2,
+   "fy": 0.7
+  },
+  {
+   "id": "s23",
+   "kind": "img",
+   "src": "tidy",
+   "cut": true,
+   "tin": "w108-0.05",
+   "zoom": {
+    "to": 1.08,
+    "at": "w108",
+    "sp": "slow"
+   }
+  }
+ ],
+ "captions": {
+  "style": "plain",
+  "case": "none",
+  "anim": "pop",
+  "maxWords": 3,
+  "size": 64,
+  "y": 1180
+ },
+ "texts": [
+  {
+   "y": 300,
+   "cls": "sans sub",
+   "lines": [
+    [
+     {
+      "t": "Meja ",
+      "at": 0.1
+     },
+     {
+      "t": "berantakan?",
+      "at": 0.1,
+      "acc": true
+     }
+    ]
+   ],
+   "tout": "w6-0.05"
+  },
+  {
+   "y": 1404,
+   "cls": "sans foot",
+   "lines": [
+    [
+     {
+      "t": "*Menurut deskripsi penjual. Produk, harga & klaim fiktif untuk contoh.",
+      "at": "w53"
+     }
+    ]
+   ],
+   "tout": "w67-0.05"
+  },
+  {
+   "y": 1404,
+   "cls": "sans foot",
+   "lines": [
+    [
+     {
+      "t": "*Harga promo contoh sampai 30 Nov 2026, bisa berubah.",
+      "at": "w90"
+     }
+    ]
+   ],
+   "tout": "w103-0.05"
+  }
+ ],
+ "chips": [
+  {
+   "text": "Muat 3 kabel*",
+   "x": 100,
+   "y": 420,
+   "side": "left",
+   "tin": "w55-0.05",
+   "tout": "w61-0.05"
+  }
+ ],
+ "prices": [
+  {
+   "y": 400,
+   "price": "Rp29.000",
+   "was": "Rp45.000",
+   "badge": "-36%",
+   "tin": "w92-0.05",
+   "tout": "w103-0.05"
+  }
+ ],
+ "cta": {
+  "text": "Keranjang kuning",
+  "y": 1300,
+  "h": 104,
+  "half": 250,
+  "tin": "w108-0.1",
+  "textIn": "w108+0.15",
+  "press": "w111"
+ },
+ "cues": [
+  {
+   "at": "w55-0.05",
+   "kind": "pop",
+   "gain": 0.3
+  },
+  {
+   "at": "w92-0.05",
+   "kind": "pop",
+   "gain": 0.35
+  },
+  {
+   "at": "w111",
+   "kind": "click",
+   "gain": 0.4
+  }
+ ]
+}

@@ -13,6 +13,7 @@ const fs = await import('node:fs');
 const { join, relative, resolve } = await import('node:path');
 const D = await import('./db.mjs');
 const { writeProject } = await import('./brief.mjs');
+const V = await import('./validate.mjs');
 const { db } = D;
 
 const [cmd, ...args] = process.argv.slice(2);
@@ -63,7 +64,7 @@ switch (cmd) {
     const row = {};
     for (const [f, col] of [['caption', 'caption'], ['hashtags', 'hashtags'], ['pinned', 'pinned_comment']]) if (flag(f) !== undefined) row[col] = flag(f);
     if (!Object.keys(row).length) fail('usage: copy <id> --caption "…" --hashtags "…" --pinned "…"');
-    D.update('videos', v.id, row, D.VIDEO_FIELDS);
+    try { D.update('videos', v.id, V.copy(row), D.VIDEO_FIELDS); } catch (e) { fail(e.message); }
     D.log(v.id, 'copy', 'caption/hashtag disimpan');
     out({ ok: true, ...row });
     break;
