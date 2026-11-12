@@ -112,7 +112,8 @@ persetujuan ulang.
 
 Durasi bawaan 30 detik; iklan produksi harus 15–60 detik. Di atas 34 detik, konsep wajib
 menjelaskan alasannya. Hook tampil dalam tiga detik pertama; CTA ditahan tiga sampai lima detik.
-Versi pendek Reels dibuat sebagai proyek terpisah.
+Versi pendek Reels dibuat sebagai proyek terpisah. Video affiliate TikTok Shop
+(`objective: affiliate` di brief) bawaannya 45 detik dan boleh sampai 60 detik tanpa catatan itu.
 [Panduan platform dan sumber](../skills/ad-concept/references/duration-and-platforms.md).
 
 ## Suara dan musik
@@ -171,3 +172,28 @@ menghentikan build. Tonton video akhir dan dengarkan audionya sebelum tayang.
 
 [Pengecekan kualitas dan batasan](technical.id.md#pengecekan-kualitas) ·
 [Referensi produksi](../skills/vertical-product-ads/references/render-and-qa.md)
+
+## Studio (aplikasi web lokal)
+
+`studio/` adalah aplikasi web satu pengguna untuk konten affiliate TikTok Shop: form produk (tempel
+link untuk mengisi otomatis, lalu koreksi), unggah aset, antrean video, review preview, dan arsip
+file jadi. Butuh Node 22.5 atau lebih baru (SQLite bawaan) tanpa paket tambahan.
+
+```bash
+node studio/server.mjs            # http://127.0.0.1:4173
+```
+
+1. **Produk:** tempel link produk lalu pilih "Ambil data", atau isi form secara manual. Halaman toko
+   sering menolak pengambilan otomatis; form manual selalu bisa dipakai.
+2. **Aset:** unggah klip dan foto sendiri, tandai tiap file sebagai milik sendiri atau dari listing,
+   dan tulis isi tiap klip (agent tidak bisa menonton video).
+3. **Antrekan video:** pilih 30, 45 atau 60 detik dan look-nya.
+4. **Buat:** di Claude Code, di root repo, ketik `/affiliate-queue`. Konsep dan adegan ditulis, lalu
+   draft dirender.
+5. **Review:** tonton draft di halaman video; setujui atau kirim catatan revisi, lalu jalankan
+   `/affiliate-queue` lagi untuk render final atau revisinya.
+6. **Posting:** unduh MP4, salin caption dan hashtag, lalu catat link dan hasilnya.
+
+Pengaturan ada di `.env` di root repo: salin `.env.example`, lalu isi `ELEVENLABS_API_KEY` (dan, bila
+perlu, `STUDIO_PORT` dan `STUDIO_DATA`). Semua tersimpan di `data/` (diabaikan git): `studio.db`, `products/`, `projects/` dan `videos/`.
+Server hanya mendengarkan di 127.0.0.1 dan tidak punya akun; jangan dibuka ke jaringan.

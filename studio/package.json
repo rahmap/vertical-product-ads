@@ -1,0 +1,16 @@
+{
+  "name": "affiliate-studio",
+  "private": true,
+  "type": "module",
+  "description": "Local single-user studio for TikTok Shop affiliate videos. The server has no runtime dependencies; Tailwind is only needed to rebuild public/app.css.",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node server.mjs",
+    "css": "tailwindcss -i styles/input.css -o public/app.css --minify",
+    "css:watch": "tailwindcss -i styles/input.css -o public/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

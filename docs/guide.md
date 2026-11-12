@@ -111,7 +111,8 @@ contrast check still applies. Changing an approved concept in checkpoint mode re
 
 The default is 30 seconds; production ads must be 15–60 seconds. Above 34 seconds, the concept
 must explain the length. The hook belongs in the first three seconds; the CTA holds for three to
-five seconds. Reels cutdowns are separate projects.
+five seconds. Reels cutdowns are separate projects. TikTok Shop affiliate videos
+(`objective: affiliate` in the brief) default to 45 seconds and may run to 60 without that note.
 [Platform guidance and sources](../skills/ad-concept/references/duration-and-platforms.md).
 
 ## Voice and music
@@ -169,3 +170,28 @@ stop the build. Watch the final video and listen to its audio before publishing.
 
 [Quality checks and limitations](technical.md#quality-checks) ·
 [Production reference](../skills/vertical-product-ads/references/render-and-qa.md)
+
+## Studio (local web app)
+
+`studio/` is a single-user web app for TikTok Shop affiliate work: a product form (paste a link to
+prefill it, then correct it), asset uploads, a video queue, preview review and an archive of the
+finished files. It needs Node 22.5 or newer (built-in SQLite) and no extra packages.
+
+```bash
+node studio/server.mjs            # http://127.0.0.1:4173
+```
+
+1. **Product:** paste the product link and choose "Ambil data", or fill the form by hand. Shop pages
+   often refuse automated requests; the manual form always works.
+2. **Assets:** upload your own clips and photos, mark each as own or from the listing, and describe
+   what each clip shows (the agent cannot watch video).
+3. **Queue a video:** pick 30, 45 or 60 seconds and a look.
+4. **Build:** in Claude Code, at the repository root, type `/affiliate-queue`. It writes the concept
+   and scenes and renders a draft.
+5. **Review:** watch the draft on the video's page; approve it or send a revision note, then run
+   `/affiliate-queue` again for the final render or the revision.
+6. **Post:** download the MP4, copy the caption and hashtags, and record the link and results.
+
+Settings live in `.env` at the repository root: copy `.env.example`, then fill in `ELEVENLABS_API_KEY`
+(and, if you like, `STUDIO_PORT` and `STUDIO_DATA`). Everything is stored in `data/` (git-ignored): `studio.db`, `products/`, `projects/` and `videos/`.
+The server listens on 127.0.0.1 only and has no accounts; do not expose it to a network.

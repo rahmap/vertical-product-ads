@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+**Affiliate videos (TikTok Shop)**
+- **`objective: affiliate`:** a first-person recommendation instead of a brand ad. 45 s by default, up
+  to 60 s without a written justification, hard cuts on words, `ugc-native` look, an honest note,
+  price and promo from the brief, post copy (caption, hashtags, pinned comment) in the concept.
+  `skills/ad-concept/references/affiliate.md`; recipes in the production `references/styles.md`.
+- **`fit: "contain"`** on `img` and `video` layers: the whole picture over a blurred copy of itself
+  (square seller photos, landscape clips). `cut` now also works on `img` and `fill` layers.
+- **`prices`:** a price sticker with was-price and badge; checked by the layout gate.
+- **`captions.anim: "pop"`:** the spoken word scales up while it is said.
+- **`footage.<name>.sound`:** b-roll keeps its own audio under the voice wherever it is shown.
+- **Natural voice:** settings, punctuation and placement guidance in `references/vo-beat-sync.md`.
+- `qa_safe.mjs` checks frames in parallel tabs (`VPA_WORKERS`).
+
+**Studio**
+- `studio/`: local web app with a SQLite store for products (import from a link, or by hand), assets,
+  a video queue, preview approval and revision notes, finished videos and post results.
+- `.claude/skills/affiliate-queue`: works through the queue with the two skills.
+
 ## 0.5.0
 
 **Layouts**
