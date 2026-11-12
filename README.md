@@ -31,7 +31,16 @@ collage under a marquee, and a phone with the shop page; again only `"look"` cha
 
 <a href="media/layouts.mp4"><img src="media/layouts.gif" width="720" alt="Grid of eight vertical ads playing in sync, one per look, each showing the same layouts in its own style: a split screen of a dull and a glowing card, gradient letters spelling GLOWA, a serum bottle with callouts to vitamin C, niacinamide and hyaluronic, a comparison list with check marks, four polaroids under a tilted promo marquee, and a phone with the shop page above a CTA"></a>
 
-All films have Indonesian voice-overs; the GIFs are silent. Grids with sound: [looks](media/looks.mp4), [layouts](media/layouts.mp4).
+**Creator-shot footage, eight looks.** The permitted ginger-shampoo footage gets a new 20.2 s
+edit: picture-in-picture, split screen, a polaroid collage with a marquee, and an end-card volume
+callout. Only `"look"` changes between the eight versions. This is **hybrid** (muted creator-shot
+b-roll with an ElevenLabs voice-over), not a talking-head UGC or lip-sync demo. Original product
+identity and label-sourced claims stay intact. The GIF previews the layouts from 5 s onward; the
+linked MP4 includes the full film with sound.
+
+<a href="media/ugc-layouts.mp4"><img src="media/ugc-layouts.gif" width="720" height="696" alt="Eight synchronized ginger-shampoo ads, labelled by look, showing a product detail in picture-in-picture, two footage panels, a polaroid collage under a texture marquee, and an end-card callout identifying the bottle's 300 ml volume"></a>
+
+All films have Indonesian voice-overs; the GIFs are silent. Grids with sound: [looks](media/looks.mp4), [layouts](media/layouts.mp4), [creator footage + layouts](media/ugc-layouts.mp4).
 
 - **Dior Addict Lip Glow** is an unofficial spec ad, made to demonstrate the skills: it is not
   affiliated with, sponsored or endorsed by Christian Dior. Dior and Addict Lip Glow are trademarks
@@ -427,5 +436,5 @@ MIT, see `LICENSE`. Portions are derived from
 Product images, footage, voices and music you put into a film keep their own licences. The fonts in
 `looks/fonts/` are under the SIL Open Font License 1.1 (licence beside each family).
 The showcase films in `media/` are not under the MIT licence: the Dior film is an unofficial spec ad
-with marks of their owner, the shampoo footage is by @hanie.ugc.creator, used with permission, and
-the look and layout grids use an edge-tts voice (see `NOTICE`).
+with marks of their owner; both shampoo edits use @hanie.ugc.creator's footage with permission and
+ElevenLabs audio. The `looks.*` and `layouts.*` grids use an edge-tts voice (see `NOTICE`).

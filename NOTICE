@@ -54,6 +54,14 @@ media/layouts.mp4 and .gif: the layout-sampler example rendered in each look. Th
 claims are invented; its two pictures (a serum bottle and a shop page) are SVG drawings made for the
 example. Voice, music and type as for media/looks.*.
 
+media/ugc-layouts.mp4 and .gif: a new edit of the same permitted @hanie.ugc.creator shampoo footage
+credited above, rendered in all eight looks with picture-in-picture, split panels, a polaroid
+collage, a marquee and a volume callout. This is muted creator-shot b-roll with voice-over
+(hybrid), not creator dialogue or synthetic lip-sync. Original music is muted; the existing
+ElevenLabs voice, music and sound effects are reused under the repository owner's plan. Product
+marks belong to their owner. Claims and the 300 ml volume are read from the packaging; a claim
+footnote remains on screen. No source footage or project audio is included outside media/.
+
 Font in examples/product-broll/
 -------------------------------
 assets/fonts/nunito-800.woff2 is Nunito (Copyright 2014 The Nunito Project Authors), under the SIL

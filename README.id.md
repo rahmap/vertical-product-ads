@@ -32,7 +32,16 @@ berubah hanya `"look"`. Proyeknya: [`examples/layout-sampler/`](skills/vertical-
 
 <a href="media/layouts.mp4"><img src="media/layouts.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look, masing-masing menampilkan layout yang sama dengan gayanya sendiri: split screen kartu kusam dan kartu bercahaya, huruf bergradasi bertuliskan GLOWA, botol serum dengan callout ke vitamin C, niacinamide, dan hyaluronic, daftar perbandingan dengan tanda centang, empat polaroid di bawah teks promo berjalan yang miring, dan ponsel berisi halaman toko di atas tombol CTA"></a>
 
-Semua film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. Grid dengan suara: [look](media/looks.mp4), [layout](media/layouts.mp4).
+**Footage kreator, delapan look.** Footage sampo jahe berizin mendapat edit baru 20,2 detik:
+picture-in-picture, split screen, kolase polaroid dengan teks berjalan, dan callout volume pada
+end card. Yang berubah antardelapan versi hanya `"look"`. Gaya ini **hybrid** (b-roll kreator
+dibisukan dan diberi voice-over ElevenLabs), bukan demo kreator berbicara atau lip-sync.
+Identitas produk dan klaim yang bersumber dari label tetap dipertahankan. GIF menampilkan layout
+mulai detik ke-5; tautan MP4 berisi film lengkap dengan suara.
+
+<a href="media/ugc-layouts.mp4"><img src="media/ugc-layouts.gif" width="720" height="696" alt="Delapan iklan sampo jahe yang diputar bersamaan dengan label look: detail produk dalam picture-in-picture, dua panel footage, kolase polaroid di bawah teks tekstur berjalan, dan callout volume botol 300 ml pada end card"></a>
+
+Semua film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. Grid dengan suara: [look](media/looks.mp4), [layout](media/layouts.mp4), [footage kreator + layout](media/ugc-layouts.mp4).
 
 - **Dior Addict Lip Glow** adalah spec ad tidak resmi, dibuat untuk memperlihatkan kemampuan skill:
   tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
@@ -432,5 +441,5 @@ Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisens
 Font di `looks/fonts/` berlisensi SIL Open Font License 1.1 (teks lisensinya ada di samping tiap
 keluarga font).
 Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
-milik pemiliknya, footage sampo milik @hanie.ugc.creator, dipakai dengan izin, dan grid look serta
-grid layout memakai suara edge-tts (lihat `NOTICE`).
+milik pemiliknya; kedua edit sampo memakai footage @hanie.ugc.creator dengan izin dan audio
+ElevenLabs. Grid `looks.*` dan `layouts.*` memakai suara edge-tts (lihat `NOTICE`).

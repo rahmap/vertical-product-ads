@@ -43,6 +43,9 @@
   callouts, a comparison list, a grid that becomes a collage under a marquee, and a phone with the
   shop page. Two SVG drawings ship with it; voice and music are free.
 - `media/layouts.mp4` and `.gif`: that film in all eight looks.
+- `media/ugc-layouts.mp4` and `.gif`: permitted ginger-shampoo creator footage in all eight looks,
+  with picture-in-picture, split screen, a polaroid collage, marquee and volume callout. Reuses
+  the existing ElevenLabs audio; labelled hybrid (b-roll + voice-over), not creator dialogue.
 
 **Measured** (M3 Pro, picture render, 30 fps with motion blur): the 20 s layout sampler takes
 19.8–45.5 s per look, 0.99–2.28 s per film second against 0.95–2.38 for the 17 s look sampler
