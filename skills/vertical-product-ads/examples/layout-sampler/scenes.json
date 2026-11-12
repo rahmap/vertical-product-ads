@@ -1,0 +1,785 @@
+{
+  "title": "Layout sampler: every layout piece in one film (20 s, fictional product, free voice and music). Change \"look\" and render again.",
+  "duration": 20,
+  "style": "motion",
+  "look": "luxe-editorial",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "safe": {
+      "l": 84,
+      "r": 930,
+      "t": 250,
+      "b": 1460
+    }
+  },
+  "render": {
+    "fps": 30
+  },
+  "vo": {
+    "engine": "edge",
+    "voice": "id-ID-GadisNeural",
+    "language": "id",
+    "settings": {
+      "rate": "+12%",
+      "pitch": "+0Hz",
+      "volume": "+0%"
+    },
+    "script": "Kulit kusam? Ini bedanya. Glowa Serum, dengan vitamin C, niacinamide, dan hyaluronic. Lebih lembap, tanpa alkohol, cerah dalam tujuh hari. Lagi promo! Cek keranjang kuning sekarang.",
+    "place": [
+      {
+        "words": [
+          0,
+          1
+        ],
+        "anchor": 0,
+        "at": 0.15,
+        "why": "hook from the first frame"
+      },
+      {
+        "words": [
+          2,
+          3
+        ],
+        "anchor": 2,
+        "at": 2.501,
+        "why": "'Ini' on k4, right after the drop: the split"
+      },
+      {
+        "words": [
+          4,
+          5
+        ],
+        "anchor": 4,
+        "at": 4.499,
+        "why": "'Glowa' on k8 as the panels merge back"
+      },
+      {
+        "words": [
+          6,
+          11
+        ],
+        "anchor": 7,
+        "at": 5.999,
+        "why": "'vitamin' on k11: first callout"
+      },
+      {
+        "words": [
+          12,
+          19
+        ],
+        "anchor": 12,
+        "at": 9.996,
+        "why": "'Lebih' on k19: the check list"
+      },
+      {
+        "words": [
+          20,
+          21
+        ],
+        "anchor": 20,
+        "at": 14.494,
+        "why": "'Lagi' on k28: the grid"
+      },
+      {
+        "words": [
+          22,
+          25
+        ],
+        "anchor": 22,
+        "at": 15.993,
+        "why": "'Cek' on k31: the phone"
+      }
+    ]
+  },
+  "music": {
+    "file": "audio/music.wav",
+    "bpm": 120,
+    "key": "A minor",
+    "synth": {
+      "style": "pop",
+      "drop": 2.0,
+      "end": 21,
+      "seed": 11
+    }
+  },
+  "audio": {
+    "duckSpeechDb": -14,
+    "duckGapDb": -7,
+    "sfxGain": 0.8,
+    "fadeOut": 0.6
+  },
+  "assets": {
+    "bottle": "assets/bottle.svg",
+    "shop": "assets/shop.svg"
+  },
+  "anchors": {
+    "SPLIT": "w2-0.1",
+    "MERGE": "w4-0.15",
+    "INGR": "w6-0.1",
+    "BEN": "w12-0.15",
+    "GRID": "w20-0.12",
+    "SHOP": "w22-0.3"
+  },
+  "shape": {
+    "initial": {
+      "x": 540,
+      "y": 960,
+      "w": 760,
+      "h": 880,
+      "r": 48
+    }
+  },
+  "timeline": [
+    {
+      "at": "SPLIT",
+      "set": {
+        "o": 0
+      },
+      "sp": "jump",
+      "why": "the card hands over to two panels"
+    },
+    {
+      "at": "SPLIT+0.05",
+      "set": {
+        "y": 1000,
+        "w": 700,
+        "h": 820
+      },
+      "why": "re-shapes unseen to the hero card the panels merge into"
+    },
+    {
+      "at": "MERGE+0.32",
+      "set": {
+        "o": 1
+      },
+      "sp": "jump",
+      "why": "panels land on the card, the card takes over"
+    },
+    {
+      "at": "INGR",
+      "set": {
+        "x": 330,
+        "w": 440
+      },
+      "why": "card slides left to make room for the callouts"
+    },
+    {
+      "at": "BEN",
+      "set": {
+        "x": 540,
+        "y": 560,
+        "w": 520,
+        "h": 520,
+        "r": 260
+      },
+      "why": "closes to a circle above the check list"
+    },
+    {
+      "at": "GRID",
+      "set": {
+        "o": 0
+      },
+      "sp": "jump",
+      "why": "four panels grow out of the circle"
+    },
+    {
+      "at": "w24-0.4",
+      "set": {
+        "dx": 560,
+        "dy": 1372
+      },
+      "sp": "move",
+      "why": "finger travels to the button"
+    }
+  ],
+  "panels": [
+    {
+      "id": "before",
+      "x": 300,
+      "y": 960,
+      "w": 440,
+      "h": 880,
+      "r": 40,
+      "tin": "SPLIT",
+      "tout": "MERGE",
+      "from": "shape",
+      "into": "shape",
+      "why": "split screen, before"
+    },
+    {
+      "id": "after",
+      "x": 780,
+      "y": 960,
+      "w": 440,
+      "h": 880,
+      "r": 40,
+      "tin": "w3-0.2",
+      "tout": "MERGE",
+      "from": "right",
+      "into": "shape",
+      "why": "split screen, after"
+    },
+    {
+      "id": "g1",
+      "x": 320,
+      "y": 700,
+      "w": 380,
+      "h": 440,
+      "r": 20,
+      "tin": "GRID",
+      "tout": "SHOP",
+      "from": "shape",
+      "into": "left",
+      "frame": "polaroid",
+      "moves": [
+        {
+          "at": "w21",
+          "set": {
+            "rot": -7,
+            "x": 330,
+            "y": 690
+          },
+          "sp": "snap"
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "x": 760,
+      "y": 700,
+      "w": 380,
+      "h": 440,
+      "r": 20,
+      "tin": "GRID+0.06",
+      "tout": "SHOP",
+      "from": "shape",
+      "into": "right",
+      "frame": "polaroid",
+      "moves": [
+        {
+          "at": "w21+0.06",
+          "set": {
+            "rot": 5,
+            "x": 750,
+            "y": 720
+          },
+          "sp": "snap"
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "x": 320,
+      "y": 1180,
+      "w": 380,
+      "h": 440,
+      "r": 20,
+      "tin": "GRID+0.12",
+      "tout": "SHOP+0.05",
+      "from": "shape",
+      "into": "left",
+      "frame": "polaroid",
+      "moves": [
+        {
+          "at": "w21+0.12",
+          "set": {
+            "rot": 4,
+            "x": 320,
+            "y": 1170
+          },
+          "sp": "snap"
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "x": 760,
+      "y": 1180,
+      "w": 380,
+      "h": 440,
+      "r": 20,
+      "tin": "GRID+0.18",
+      "tout": "SHOP+0.05",
+      "from": "shape",
+      "into": "right",
+      "frame": "polaroid",
+      "moves": [
+        {
+          "at": "w21+0.18",
+          "set": {
+            "rot": -5,
+            "x": 760,
+            "y": 1150
+          },
+          "sp": "snap"
+        }
+      ]
+    },
+    {
+      "id": "phone",
+      "x": 540,
+      "y": 790,
+      "w": 480,
+      "h": 980,
+      "r": 72,
+      "tin": "SHOP",
+      "from": "bottom",
+      "frame": "phone",
+      "sp": "move",
+      "why": "phone mockup: the shop page"
+    }
+  ],
+  "layers": [
+    {
+      "id": "dull",
+      "kind": "fill",
+      "fill": "linear-gradient(160deg, color-mix(in srgb, var(--tone-1) 35%, #A39C98) 0%, color-mix(in srgb, var(--tone-2) 25%, #6F6865) 100%)",
+      "tout": "MERGE"
+    },
+    {
+      "id": "herobg",
+      "kind": "fill",
+      "fill": "radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--tone-2) 35%, var(--tone-1)) 0%, var(--tone-1) 72%)",
+      "tin": "MERGE"
+    },
+    {
+      "id": "hero",
+      "src": "bottle",
+      "tin": "MERGE",
+      "zoom": {
+        "to": 1.06,
+        "at": "MERGE",
+        "sp": "drift"
+      }
+    },
+    {
+      "id": "dullL",
+      "kind": "fill",
+      "fill": "linear-gradient(160deg, color-mix(in srgb, var(--tone-1) 35%, #A39C98) 0%, color-mix(in srgb, var(--tone-2) 25%, #6F6865) 100%)",
+      "panel": "before"
+    },
+    {
+      "id": "brightR",
+      "kind": "fill",
+      "fill": "radial-gradient(110% 80% at 45% 30%, color-mix(in srgb, var(--tone-1) 35%, #FFFFFF) 0%, var(--tone-2) 62%, var(--tone-3) 100%)",
+      "panel": "after"
+    },
+    {
+      "id": "sheenR",
+      "kind": "sheen",
+      "panel": "after",
+      "t0": "w3-0.1",
+      "t1": "w3+0.9"
+    },
+    {
+      "id": "g1bg",
+      "kind": "fill",
+      "fill": "var(--tone-1)",
+      "panel": "g1"
+    },
+    {
+      "id": "g1p",
+      "src": "bottle",
+      "panel": "g1",
+      "fy": 0.6
+    },
+    {
+      "id": "g2bg",
+      "kind": "fill",
+      "fill": "var(--tone-2)",
+      "panel": "g2"
+    },
+    {
+      "id": "g2p",
+      "src": "bottle",
+      "panel": "g2",
+      "fy": 0.25,
+      "zoom": 1.4
+    },
+    {
+      "id": "g3bg",
+      "kind": "fill",
+      "fill": "var(--tone-3)",
+      "panel": "g3"
+    },
+    {
+      "id": "g3p",
+      "src": "bottle",
+      "panel": "g3",
+      "fy": 0.62,
+      "zoom": 1.5
+    },
+    {
+      "id": "g4bg",
+      "kind": "fill",
+      "fill": "radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--tone-2) 35%, var(--tone-1)) 0%, var(--tone-1) 72%)",
+      "panel": "g4"
+    },
+    {
+      "id": "g4p",
+      "src": "bottle",
+      "panel": "g4",
+      "fy": 0.6
+    },
+    {
+      "id": "shop",
+      "src": "shop",
+      "panel": "phone"
+    }
+  ],
+  "masks": [
+    {
+      "text": "GLOWA",
+      "y": 262,
+      "size": 190,
+      "fill": "linear-gradient(100deg, var(--tone-3) 0%, var(--tone-2) 55%, var(--tone-3) 100%)",
+      "tin": "w4",
+      "tout": "BEN"
+    }
+  ],
+  "texts": [
+    {
+      "y": 262,
+      "cls": "serif h0",
+      "lines": [
+        [
+          {
+            "t": "Kulit",
+            "at": "w0"
+          }
+        ],
+        [
+          {
+            "t": "kusam?",
+            "at": "w1",
+            "acc": true
+          }
+        ]
+      ],
+      "tout": "SPLIT-0.2"
+    },
+    {
+      "y": 300,
+      "cls": "serif h1",
+      "lines": [
+        [
+          {
+            "t": "Ini",
+            "at": "w2"
+          },
+          {
+            "t": " bedanya.",
+            "at": "w3",
+            "acc": true
+          }
+        ]
+      ],
+      "tout": "MERGE-0.1"
+    },
+    {
+      "x": 300,
+      "w": 400,
+      "y": 456,
+      "cls": "sans caps",
+      "lines": [
+        [
+          {
+            "t": "Sebelum",
+            "at": "w2+0.1"
+          }
+        ]
+      ],
+      "tout": "MERGE-0.1"
+    },
+    {
+      "x": 780,
+      "w": 300,
+      "y": 456,
+      "cls": "sans caps",
+      "lines": [
+        [
+          {
+            "t": "Sesudah",
+            "at": "w3"
+          }
+        ]
+      ],
+      "tout": "MERGE-0.1"
+    },
+    {
+      "y": 500,
+      "cls": "sans caps",
+      "lines": [
+        [
+          {
+            "t": "Serum",
+            "at": "w5"
+          },
+          {
+            "t": " vitamin C",
+            "at": "w5+0.1"
+          }
+        ]
+      ],
+      "tout": "BEN"
+    }
+  ],
+  "callouts": [
+    {
+      "text": "Vitamin C",
+      "point": [
+        361,
+        1205
+      ],
+      "label": [
+        580,
+        1150
+      ],
+      "tin": "w7-0.05",
+      "tout": "BEN-0.2"
+    },
+    {
+      "text": "Niacinamide",
+      "point": [
+        330,
+        1000
+      ],
+      "label": [
+        580,
+        960
+      ],
+      "tin": "w9-0.05",
+      "tout": "BEN-0.2"
+    },
+    {
+      "text": "Hyaluronic",
+      "point": [
+        330,
+        785
+      ],
+      "label": [
+        580,
+        770
+      ],
+      "tin": "w11-0.05",
+      "tout": "BEN-0.2"
+    }
+  ],
+  "checks": [
+    {
+      "y": 900,
+      "w": 780,
+      "size": 42,
+      "head": [
+        "Glowa",
+        "Biasa"
+      ],
+      "tin": "w12+0.05",
+      "tout": "GRID-0.25",
+      "rows": [
+        {
+          "text": "Lebih lembap",
+          "at": "w13",
+          "marks": [
+            true,
+            false
+          ]
+        },
+        {
+          "text": "Tanpa alkohol",
+          "at": "w15",
+          "marks": [
+            true,
+            false
+          ]
+        },
+        {
+          "text": "Cerah 7 hari",
+          "at": "w18",
+          "marks": [
+            true,
+            false
+          ]
+        }
+      ]
+    }
+  ],
+  "marquees": [
+    {
+      "text": "Promo 7.7 • Gratis ongkir",
+      "sep": "✦",
+      "y": 940,
+      "h": 100,
+      "rot": -5,
+      "tin": "w20",
+      "tout": "SHOP"
+    }
+  ],
+  "pops": [
+    {
+      "panel": "g1",
+      "at": "w21"
+    },
+    {
+      "panel": "g2",
+      "at": "w21+0.06"
+    },
+    {
+      "panel": "g3",
+      "at": "w21+0.12"
+    },
+    {
+      "panel": "g4",
+      "at": "w21+0.18"
+    }
+  ],
+  "touch": {
+    "start": [
+      760,
+      1640
+    ],
+    "windows": [
+      {
+        "tin": "w24-0.45",
+        "tout": "w24+0.5"
+      }
+    ]
+  },
+  "cta": {
+    "text": "Cek keranjang kuning",
+    "y": 1360,
+    "h": 108,
+    "half": 250,
+    "tin": "w23",
+    "textIn": "w23+0.2",
+    "press": "w24"
+  },
+  "cues": [
+    {
+      "at": 0.12,
+      "kind": "whoosh",
+      "gain": 0.3,
+      "dur": 0.4,
+      "up": true
+    },
+    {
+      "at": "SPLIT",
+      "kind": "whoosh",
+      "gain": 0.32,
+      "dur": 0.45
+    },
+    {
+      "at": "w3",
+      "kind": "shimmer",
+      "gain": 0.26,
+      "dur": 0.9,
+      "bright": true
+    },
+    {
+      "at": "MERGE+0.32",
+      "kind": "sub",
+      "gain": 0.36,
+      "dur": 1.0
+    },
+    {
+      "at": "w4",
+      "kind": "chime",
+      "gain": 0.24,
+      "notes": [
+        0,
+        4,
+        7,
+        12
+      ]
+    },
+    {
+      "at": "INGR",
+      "kind": "swish",
+      "gain": 0.2,
+      "dur": 0.35
+    },
+    {
+      "at": "w7",
+      "kind": "pluck",
+      "gain": 0.24,
+      "note": 0
+    },
+    {
+      "at": "w9",
+      "kind": "pluck",
+      "gain": 0.24,
+      "note": 4
+    },
+    {
+      "at": "w11",
+      "kind": "pluck",
+      "gain": 0.24,
+      "note": 7
+    },
+    {
+      "at": "BEN",
+      "kind": "whoosh",
+      "gain": 0.24,
+      "dur": 0.45,
+      "rev": true
+    },
+    {
+      "at": "w13+0.12",
+      "kind": "tick",
+      "gain": 0.3
+    },
+    {
+      "at": "w15+0.12",
+      "kind": "tick",
+      "gain": 0.3
+    },
+    {
+      "at": "w18+0.12",
+      "kind": "tick",
+      "gain": 0.3
+    },
+    {
+      "at": "GRID",
+      "kind": "glass",
+      "gain": 0.3,
+      "note": 0
+    },
+    {
+      "at": "w20",
+      "kind": "swish",
+      "gain": 0.22,
+      "dur": 0.35
+    },
+    {
+      "at": "w21",
+      "kind": "pop",
+      "gain": 0.24,
+      "f": 520
+    },
+    {
+      "at": "w21+0.12",
+      "kind": "pop",
+      "gain": 0.2,
+      "f": 660
+    },
+    {
+      "at": "SHOP",
+      "kind": "whoosh",
+      "gain": 0.3,
+      "dur": 0.45,
+      "up": true
+    },
+    {
+      "at": "w23",
+      "kind": "pop",
+      "gain": 0.22,
+      "f": 660
+    },
+    {
+      "at": "w24",
+      "kind": "click",
+      "gain": 0.5
+    }
+  ]
+}

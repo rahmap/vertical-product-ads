@@ -3,9 +3,11 @@
 `schemas/scenes.schema.json` is the contract. `scripts/validate.mjs` checks it plus cross-references.
 Working reference: `examples/minimal/scenes.json` (no assets, no voice). A full hybrid film with
 voice-over, sound effects, chips, split bands and an end card: `examples/product-broll/` (bring your
-own footage). A film written to work in every look: `examples/look-sampler/`. For the fields behind
-each product-ad beat (before/after wipe, parallax packshot, split bands, chips, odometer, CTA), see
-the recipe table in `direction.md`.
+own footage). A film written to work in every look: `examples/look-sampler/`. Every layout piece
+(panels, phone, mask, callouts, check list, marquee) in one film: `examples/layout-sampler/`. For the
+fields behind each product-ad beat (before/after wipe, parallax packshot, split bands, chips, odometer,
+CTA), see the recipe table in `direction.md`; for split screens, grids, picture-in-picture, collages and
+the other layouts, `layouts.md`.
 
 ## Time expressions
 Any `at`, `tin`, `tout`, `t0`, `t1`, `press`… accepts a time in one of these forms:
@@ -49,6 +51,13 @@ Theme variables (defaults in `engine/index.html`; the variables a look adds are 
 - **UI fills:** `--surface`, `--surface-label`, `--icon-bg`.
 - **Shadows:** `--shadow-rgb`, `--cta-shadow-rgb`, `--dot-shadow-rgb` (as `r, g, b`).
 - **Fonts and finish:** `--serif`, `--sans`, `--sheen`, `--grain-opacity`.
+- **Layout pieces:** `--panel-round`, `--panel-shadow`, `--panel-border`, `--panel-paper`, `--device-ink`,
+  `--callout-line`, `--callout-width`, `--callout-dot`, `--marquee-bg`, `--marquee-ink`, `--marquee-font`,
+  `--marquee-weight`, `--check-yes`, `--check-no`, `--mask-shadow`, `--mask-stroke` (`layouts.md`).
+
+`validate.mjs` merges the engine defaults, the look and `theme.css`, and fails when chip, label, CTA or
+marquee text falls under 3:1 contrast on its surface (the usual cause: a full theme written for one
+look, kept over another).
 
 ## The shape: `shape.initial` and `timeline`
 Tracks:
@@ -61,6 +70,9 @@ Tracks:
     before the band appears, e.g. keep a whole-shape layer under the bands until each has its own.
 - **Camera:** `zoom` (written as a scale; stored as log), `cx cy`.
 - **Touch dot:** `dx dy`.
+- **Opacity:** `o` (default 1). `0` hides the shape (use `"sp": "jump"`) while panels or type carry
+  the frame; an empty hidden shape does not trip the empty-band gate. To start hidden, put `o: 0` in
+  `shape.initial` (a timeline event at 0 still shows frame 0).
 
 ```json
 { "at": "DROP-0.13", "set": { "w": 900, "h": 900, "r": 450 }, "sp": "snap", "why": "drop" }
@@ -83,6 +95,7 @@ Events apply in file order; write them chronologically. `sp` is one of:
 | `id`, `kind` | `img` (default), `fill` (CSS background in `fill`), `sheen` (sweep from `t0` to `t1`) |
 | `src` | asset name |
 | `band` | omit for the whole shape, or `0`/`1`/`2` for one band |
+| `panel` | draw inside this panel (`panels`) instead of the shape. Cover mode only; no `band`, `toutBand`, `wipe`, `place` or `pivot`; arcs don't draw over panel layers |
 | `mode` | `cover` (default: fills the band or shape, focal point `fx`/`fy` in 0–1) or `world` (fixed placement, for packshots that must not crop) |
 | `place` | `world` only: `{size, srcSize, imagePoint, at, srcAspect}`. The image is drawn `size` px wide (height `size × srcAspect`, default square). `imagePoint` is a pixel in the source image measured at `srcSize` width, and it lands on frame point `at` |
 | `pivot` | `world` only: the frame point `zoom` scales around (default: frame centre) |
@@ -103,6 +116,22 @@ Events apply in file order; write them chronologically. `sp` is one of:
 With neither `clip` nor `dialogue`, the clip plays from its second 0 at `tin`. `fx`, `fy`, `zoom`,
 `shift`, `band`, `blend`, `clipX`, `toutBand` work as for images.
 
+## panels (extra frames beside the shape)
+`{id, x, y, w, h, r, rot, tin, tout, from, into, sp, moves, frame, shadow}`, drawn in order above the
+shape and under the HUD, in world space like the shape. Layers join a panel with `"panel": "<id>"`.
+| Key | |
+|---|---|
+| `x`, `y`, `w`, `h`, `r`, `rot` | centre, size, corner radius (× the look's `--panel-round`), rotation in degrees |
+| `tin`, `from` | how it enters: `shape` (default: grows out of the shape's rect at `tin`), `left`/`right`/`top`/`bottom` (slides in from off-frame), `scale` (pops up from its centre), `fade`, `cut` |
+| `tout`, `into` | how it leaves: `fade` (default), `shape` (lands on the shape's rect at `tout`, then hands over), an edge, `scale`, `cut`. No `tout`: stays to the end |
+| `sp` | spring for entering and leaving (default `morph`) |
+| `moves` | `[{at, set:{x,y,w,h,r,rot}, sp}]`, chronological |
+| `frame` | `none` (default), `polaroid` (paper border, wide bottom: `--panel-paper`), `phone` (bezel and island: `--device-ink`; content is the screen) |
+| `shadow` | `false` drops the look's `--panel-shadow` |
+
+A panel layer usually has no `tin`/`tout`: the panel's own entry and exit show it. A panel with no
+visible layer fails the empty-band gate, like a band.
+
 ## HUD elements (screen space, must stay in the safe zone)
 - **`texts`:** `{y, cls, lines:[[{t, at, acc, slam}]], tout, lead, x, w, align}`.
   - `y` is the top of the text box; `x` is its centre (default 540); `align` defaults to `center`.
@@ -120,11 +149,23 @@ With neither `clip` nor `dialogue`, the clip plays from its second 0 at `tin`. `
   the cues automatically.
 - **`arcs`:** `{layer, t0, t1, tout, path:[[x,y]×3]}`. A quadratic stroke in the layer's image
   coordinates (0–1).
-- **`pops`:** `{band, at}`, a damped scale punch on a band.
+- **`pops`:** `{band, at}` or `{panel, at}`, a damped scale punch on a band or a panel.
 - **`touch`:** `{start:[x,y], windows:[{tin,tout,dOut}], presses:[t], holds:[{from,to,wiper}]}`.
   Move the dot with `dx`/`dy` in the timeline.
 - **`cta`:** `{text, y, h, half, tin, textIn, press}`. The press is added to `touch.presses`
   automatically.
+- **`masks`:** `{text, x, y, size, cls, src | fill | footage, clip, fx, fy, zoom, tin, tout, dOut}`. Big
+  letters filled with a picture: `src` (an asset), `fill` (a CSS gradient) or `footage` (a clip, with
+  `clip: {in, at}`; `ugc`/`hybrid` only). `y` is the top, `x` the centre; `cls` is `serif` or `sans`
+  (+ `ital`). Checked like text. Needs a calm background behind it.
+- **`callouts`:** `{text, point:[x,y], label:[x,y], side, tin, tout}`. A dot on `point`, a line drawn to
+  `label`, then a label whose near edge sits on `label` (`side` defaults to the side `label` is on).
+- **`checks`:** `{x, y, w, size, head, rows:[{text, at, marks}], tin, tout}`. Rows of ✓/✗ that land on
+  their word or beat. `head` (1–3 column names) makes a comparison; `marks` has one `true`/`false` per
+  column (default `[true]`). `y` is the top; `w` default 800, `size` default 44.
+- **`marquees`:** `{text, sep, y, h, size, speed, dir, rot, fill, ink, tin, tout}`. A band of repeating
+  text running edge to edge (`speed` px/s, default 140; `dir` `left`/`right`; `rot` a small tilt). Its
+  height must stay inside the safe zone; its width may not.
 
 ## cues
 `{at, kind, gain, …}` with these kinds and parameters:

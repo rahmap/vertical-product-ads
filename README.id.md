@@ -6,8 +6,8 @@ Versi Inggris: [README.md](README.md).
 
 | Skill | Tugasnya |
 |---|---|
-| `ad-concept` | Membaca brief dan aset, meriset produk, mengusulkan 3 hook, memilih gaya dan look, menulis naskah dan beat sheet ke `concept.md` |
-| `vertical-product-ads` | Memproduksi konsep yang disetujui menjadi MP4 dalam salah satu dari delapan look: suara, musik, animasi, pengecekan kualitas, render |
+| `ad-concept` | Membaca brief dan aset, meriset produk, mengusulkan 3 hook, memilih gaya, look, dan layout tiap beat, menulis naskah dan beat sheet ke `concept.md` |
+| `vertical-product-ads` | Memproduksi konsep yang disetujui menjadi MP4 dalam salah satu dari delapan look, dengan split screen, grid, picture-in-picture, callout, dan lainnya: suara, musik, animasi, pengecekan kualitas, render |
 
 Bisa dipakai di agen apa pun yang membaca skill `SKILL.md`: Claude Code, Codex, Cursor, Amp, Cline,
 dan lainnya.
@@ -25,7 +25,14 @@ Proyeknya: [`examples/look-sampler/`](skills/vertical-product-ads/examples/look-
 
 <a href="media/looks.mp4"><img src="media/looks.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look: classic, luxe-editorial, clean-clinical, bold-streetwear, warm-organic, tech-neon, pop-playful, dan ugc-native. Semua memakai adegan yang sama (kartu hook, merek, angka 24 jam yang berputar dengan chip, tiga panel shade, end card dengan CTA) dengan font, warna, dan cara teks muncul masing-masing"></a>
 
-Ketiga film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. [Grid delapan look dengan suara](media/looks.mp4).
+**Satu film, semua layout, delapan look.** Iklan serum fiktif 20 detik yang memperlihatkan teks
+kinetik, split screen yang keluar dari kartu, teks berisi gambar, callout, daftar perbandingan, grid
+yang berubah jadi kolase di bawah teks berjalan, dan ponsel berisi halaman toko; lagi-lagi yang
+berubah hanya `"look"`. Proyeknya: [`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/).
+
+<a href="media/layouts.mp4"><img src="media/layouts.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look, masing-masing menampilkan layout yang sama dengan gayanya sendiri: split screen kartu kusam dan kartu bercahaya, huruf bergradasi bertuliskan GLOWA, botol serum dengan callout ke vitamin C, niacinamide, dan hyaluronic, daftar perbandingan dengan tanda centang, empat polaroid di bawah teks promo berjalan yang miring, dan ponsel berisi halaman toko di atas tombol CTA"></a>
+
+Semua film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. Grid dengan suara: [look](media/looks.mp4), [layout](media/layouts.mp4).
 
 - **Dior Addict Lip Glow** adalah spec ad tidak resmi, dibuat untuk memperlihatkan kemampuan skill:
   tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
@@ -37,7 +44,7 @@ Ketiga film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. [Grid dela
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Daftar isi**
-- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Look](#look) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
+- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Look](#look) · [Layout](#layout) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
 - Hasil: [Jaminan kualitas](#jaminan-kualitas) · [Batasan](#batasan) · [Kecepatan terukur](#kecepatan-terukur)
 - Teknis: [Kebutuhan sistem](#kebutuhan-sistem) · [Struktur repo](#struktur-repo) · [Lisensi](#lisensi)
 
@@ -202,6 +209,31 @@ dipakai ulang. Panduan untuk pemula: [`references/looks.md`](skills/ad-concept/r
 
 ---
 
+## Layout
+
+Tiap beat bisa memakai layout sendiri, dan look yang mengatur gayanya. Panel keluar dari bentuk yang
+berubah-ubah lalu menyatu kembali ke dalamnya, jadi film tetap tanpa potongan; footage juga bisa
+tampil di dalam panel.
+
+| Layout | Cocok untuk |
+|---|---|
+| Split screen | Sebelum/sesudah, produk kita vs biasa, hari ke-1 vs hari ke-7 |
+| Grid, kolase | Shade, ukuran, paket; momen keseharian sebagai polaroid miring |
+| Picture-in-picture | Kreator tetap bicara di jendela kecil di atas b-roll |
+| Tumpukan kartu | Ulasan atau fitur, satu kartu masing-masing |
+| Ponsel | Halaman toko atau rekaman layar, CTA di bawahnya |
+| Teks berisi gambar | Produk atau footage di dalam nama merek |
+| Callout | Bahan atau fitur yang ditunjuk langsung di produk |
+| Daftar perbandingan | Baris ✓/✗ yang muncul pada katanya |
+| Teks berjalan | Pita promo yang terus bergerak |
+| Teks kinetik, grid editorial | Kata-kata saja; satu gambar besar dan satu kecil dengan huruf besar |
+
+Agen konsep memilih 2–4 layout per film dari menu adegan dan menuliskannya di beat sheet; minta yang
+tertentu dengan menyebut namanya (*"Pakai split screen untuk sebelum/sesudah dan ponsel untuk CTA."*).
+Resep dan aturannya: [`references/layouts.md`](skills/vertical-product-ads/references/layouts.md).
+
+---
+
 ## Suara dan musik
 
 Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, lihat
@@ -262,10 +294,10 @@ memperbaiki adegannya; tidak ada pengecekan yang boleh dilewati.
 
 | Pengecekan | Yang dijaga |
 |---|---|
-| Safe zone | Setiap kata, caption, chip, dan CTA berada di x 84–930, y 250–1460 (tidak tertutup tombol aplikasi), dicek di **setiap frame** |
-| Tata letak | Tidak ada teks yang bertumpuk; tidak ada band kosong (bentuk yang tampil tanpa gambar atau isi) |
+| Safe zone | Setiap kata, caption, chip, callout, baris daftar, teks berisi gambar, dan CTA berada di x 84–930, y 250–1460 (tidak tertutup tombol aplikasi), dicek di **setiap frame** |
+| Tata letak | Tidak ada teks yang bertumpuk; tidak ada band atau panel kosong (bingkai yang tampil tanpa gambar atau isi) |
 | Dialog footage | Potongan tidak jatuh di tengah kata; segmen tidak saling tumpang |
-| Format | Isi `scenes.json`, aset, gaya, dan durasi sesuai aturan |
+| Format | Isi `scenes.json`, aset, gaya, dan durasi sesuai aturan; teks tombol, chip, dan teks berjalan terbaca di atas warnanya (≥ 3:1) setelah look dan warna brand digabung |
 | Audio | Master −14 LUFS (±0,6), puncak ≤ −0,5 dBFS pada file akhir |
 | Render | Tidak ada patahan di sambungan antar potongan render |
 
@@ -277,7 +309,8 @@ Ciri hasilnya:
 - **Suara dan musik terkunci:** waktu tiap kata diukur; kata kunci jatuh di ketukan musik; teks muncul
   pada kata yang menyebutnya.
 - **Sound design sintetis** sesuai nada lagu; musik mengecil saat ada suara.
-- **Adegan motion tanpa potongan:** satu bentuk berubah menjadi kartu, lingkaran, tiga pita, atau layar penuh.
+- **Adegan motion tanpa potongan:** satu bentuk berubah menjadi kartu, lingkaran, tiga pita, atau layar penuh,
+  lalu menyerahkan layar ke panel (split screen, grid, kolase, ponsel) yang keluar darinya.
 
 ---
 
@@ -325,6 +358,24 @@ Yang memakan waktu adalah grain film: tiga look tanpa grain selesai dalam separu
 selisih paling banyak 2 % dari `classic`. Memilih look tidak menambah langkah kerja: fontnya sudah
 ikut terpasang bersama skill.
 
+Layout hampir tidak menambah waktu. Layout sampler 20 detik
+([`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/)), berisi panel,
+callout, daftar perbandingan, teks berjalan, teks berisi gambar, dan ponsel, dibandingkan per detik
+film dengan look sampler:
+
+| Look | Layout sampler (20 dtk) | Per detik film | Look sampler, per detik film |
+|---|---|---|---|
+| `classic` | 45,4 dtk | 2,27 dtk | 2,31 dtk |
+| `luxe-editorial` | 43,9 dtk | 2,20 dtk | 2,31 dtk |
+| `clean-clinical` | 23,7 dtk | 1,19 dtk | 1,14 dtk |
+| `bold-streetwear` | 43,4 dtk | 2,17 dtk | 2,33 dtk |
+| `warm-organic` | 45,5 dtk | 2,28 dtk | 2,38 dtk |
+| `tech-neon` | 40,6 dtk | 2,03 dtk | 2,14 dtk |
+| `pop-playful` | 24,9 dtk | 1,25 dtk | 1,15 dtk |
+| `ugc-native` | 19,8 dtk | 0,99 dtk | 0,95 dtk |
+
+Tiga aliran footage tambahan di layar sepanjang film 20 detik (grid video 2×2) menambah +1,8 %.
+
 Uji dengan agen baru (skill dipasang lewat `npx skills add`, tanpa bantuan):
 
 | Mode | Hasil | Prompt → MP4 |
@@ -360,7 +411,7 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
 | `skills/ad-concept/examples/` | Contoh prompt dan brief terisi per gaya |
 | `skills/vertical-product-ads/SKILL.md` | Panduan agen produksi |
-| `skills/vertical-product-ads/references/` | Arahan, gaya, look, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
+| `skills/vertical-product-ads/references/` | Arahan, gaya, look, layout, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
 | `skills/vertical-product-ads/looks/` | Delapan look (`<nama>.json`) beserta fontnya (OFL, `fonts/`) |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: renderer `seek(t)` |
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) dan semua langkahnya |
@@ -368,6 +419,7 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/examples/minimal/` | Film 8,5 detik tanpa aset |
 | `skills/vertical-product-ads/examples/product-broll/` | Iklan hybrid 20 detik (sampo fiktif): b-roll produk yang Anda rekam sendiri, voice, musik dan efek suara ElevenLabs, kartu bahan, layar terbelah tiga, end card |
 | `skills/vertical-product-ads/examples/look-sampler/` | Iklan 17 detik tanpa aset yang ditulis agar cocok di semua look; suara dan musik gratis |
+| `skills/vertical-product-ads/examples/layout-sampler/` | Iklan 20 detik berisi semua bagian layout (dua gambar SVG disertakan); suara dan musik gratis |
 | `media/` | Film contoh hasil (MP4 + pratinjau GIF); tidak ikut terpasang bersama skill |
 
 ---
@@ -380,5 +432,5 @@ Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisens
 Font di `looks/fonts/` berlisensi SIL Open Font License 1.1 (teks lisensinya ada di samping tiap
 keluarga font).
 Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
-milik pemiliknya, footage sampo milik @hanie.ugc.creator, dipakai dengan izin, dan grid delapan look
-memakai suara edge-tts (lihat `NOTICE`).
+milik pemiliknya, footage sampo milik @hanie.ugc.creator, dipakai dengan izin, dan grid look serta
+grid layout memakai suara edge-tts (lihat `NOTICE`).

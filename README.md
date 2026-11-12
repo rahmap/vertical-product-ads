@@ -6,8 +6,8 @@ Indonesian version: [README.id.md](README.id.md).
 
 | Skill | Does |
 |---|---|
-| `ad-concept` | Reads the brief and assets, researches the product, proposes 3 hooks, picks a style and a look, writes the script and a beat sheet into `concept.md` |
-| `vertical-product-ads` | Produces the approved concept as an MP4 in one of eight looks: voice, music, animation, quality gates, render |
+| `ad-concept` | Reads the brief and assets, researches the product, proposes 3 hooks, picks a style, a look and the layouts per beat, writes the script and a beat sheet into `concept.md` |
+| `vertical-product-ads` | Produces the approved concept as an MP4 in one of eight looks, with split screens, grids, picture-in-picture, callouts and more: voice, music, animation, quality gates, render |
 
 Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, Amp, Cline and others.
 
@@ -24,7 +24,14 @@ fictional lip serum with free audio (edge-tts voice, local synth bed), no images
 
 <a href="media/looks.mp4"><img src="media/looks.gif" width="720" alt="Grid of eight vertical ads playing in sync, one per look: classic, luxe-editorial, clean-clinical, bold-streetwear, warm-organic, tech-neon, pop-playful and ugc-native. Each shows the same scenes (hook card, brand, a rolling 24-hour number with chips, three shade bands, end card with a CTA) in its own fonts, colours and text entrances"></a>
 
-All three films have Indonesian voice-overs; the GIFs are silent. [Eight-look grid with sound](media/looks.mp4).
+**One film, every layout, eight looks.** A 20 s fictional serum ad that walks through kinetic type, a
+split screen out of the card, a text mask, callouts, a comparison list, a grid that turns into a
+collage under a marquee, and a phone with the shop page; again only `"look"` changes. The project is
+[`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/).
+
+<a href="media/layouts.mp4"><img src="media/layouts.gif" width="720" alt="Grid of eight vertical ads playing in sync, one per look, each showing the same layouts in its own style: a split screen of a dull and a glowing card, gradient letters spelling GLOWA, a serum bottle with callouts to vitamin C, niacinamide and hyaluronic, a comparison list with check marks, four polaroids under a tilted promo marquee, and a phone with the shop page above a CTA"></a>
+
+All films have Indonesian voice-overs; the GIFs are silent. Grids with sound: [looks](media/looks.mp4), [layouts](media/layouts.mp4).
 
 - **Dior Addict Lip Glow** is an unofficial spec ad, made to demonstrate the skills: it is not
   affiliated with, sponsored or endorsed by Christian Dior. Dior and Addict Lip Glow are trademarks
@@ -35,7 +42,7 @@ All three films have Indonesian voice-overs; the GIFs are silent. [Eight-look gr
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Contents**
-- Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Looks](#looks) · [Voice and music](#voice-and-music) · [Duration](#duration)
+- Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Looks](#looks) · [Layouts](#layouts) · [Voice and music](#voice-and-music) · [Duration](#duration)
 - Results: [Quality gates](#quality-gates) · [Limits](#limits) · [Measured speed](#measured-speed)
 - Technical: [Requirements](#requirements) · [Repo layout](#repo-layout) · [Licence](#licence)
 
@@ -200,6 +207,30 @@ Plain-language guide: [`references/looks.md`](skills/ad-concept/references/looks
 
 ---
 
+## Layouts
+
+Every beat can use its own layout, and the look styles it. Panels grow out of the morphing shape and
+merge back into it, so the film still never cuts; footage works inside panels too.
+
+| Layout | Good for |
+|---|---|
+| Split screen | Before/after, ours vs. the usual, day 1 vs. day 7 |
+| Grid, collage | Shades, sizes, a bundle; lifestyle moments as tilted polaroids |
+| Picture-in-picture | The creator keeps talking over b-roll |
+| Card stack | Reviews or features, one card each |
+| Phone | The shop page or a screen recording, CTA under it |
+| Text mask | The product or footage inside the brand word |
+| Callouts | Ingredients or features pointed out on the product |
+| Comparison list | ✓/✗ rows landing on their words |
+| Marquee | A running promo band |
+| Kinetic type, editorial grid | Words alone; one big and one small picture with big type |
+
+The concept agent picks 2–4 per film from the scene menu and names them in the beat sheet; ask for
+one by name (*"Use a split screen for before/after and a phone for the CTA."*). Recipes and rules:
+[`references/layouts.md`](skills/vertical-product-ads/references/layouts.md).
+
+---
+
 ## Voice and music
 
 A full ad needs **no ElevenLabs key**. To use ElevenLabs, see [ElevenLabs API key](#elevenlabs-api-key)
@@ -261,10 +292,10 @@ gate can be skipped.
 
 | Gate | Guards |
 |---|---|
-| Safe zone | Every word, caption, chip and the CTA inside x 84–930, y 250–1460 (clear of app buttons), checked at **every frame** |
-| Layout | No overlapping text; no empty band (a shape on screen showing no image or fill) |
+| Safe zone | Every word, caption, chip, callout, check row, text mask and the CTA inside x 84–930, y 250–1460 (clear of app buttons), checked at **every frame** |
+| Layout | No overlapping text; no empty band or panel (a frame on screen showing no image or fill) |
 | Footage dialogue | No cut inside a word; segments don't overlap |
-| Format | `scenes.json`, assets, style and duration follow the rules |
+| Format | `scenes.json`, assets, style and duration follow the rules; button, chip and marquee text readable on its colour (≥ 3:1) once the look and the brand colours are combined |
 | Audio | Master −14 LUFS (±0.6), peak ≤ −0.5 dBFS in the delivered file |
 | Render | No glitch at the seams between render chunks |
 
@@ -276,7 +307,8 @@ What the result looks like:
 - **Voice and music locked together:** every word timed; key words land on the music's beat; text
   appears on the word that names it.
 - **Synthesized sound design** in the song's key; music ducks under speech.
-- **Motion scenes without cuts:** one shape morphs into cards, circles, three bands or full bleed.
+- **Motion scenes without cuts:** one shape morphs into cards, circles, three bands or full bleed,
+  and hands over to panels (split screen, grid, collage, phone) that grow out of it.
 
 ---
 
@@ -323,6 +355,23 @@ Picture render per look, the same 17 s film ([`examples/look-sampler/`](skills/v
 Film grain is the cost: the three looks without grain render in half the time, and the others stay
 within 2 % of `classic`. Choosing a look adds no step to the workflow: its fonts ship with the skill.
 
+Layouts add almost nothing. The 20 s layout sampler
+([`examples/layout-sampler/`](skills/vertical-product-ads/examples/layout-sampler/)), with panels,
+callouts, a comparison list, a marquee, a mask and a phone, per film second against the look sampler:
+
+| Look | Layout sampler (20 s) | Per film second | Look sampler, per film second |
+|---|---|---|---|
+| `classic` | 45.4 s | 2.27 s | 2.31 s |
+| `luxe-editorial` | 43.9 s | 2.20 s | 2.31 s |
+| `clean-clinical` | 23.7 s | 1.19 s | 1.14 s |
+| `bold-streetwear` | 43.4 s | 2.17 s | 2.33 s |
+| `warm-organic` | 45.5 s | 2.28 s | 2.38 s |
+| `tech-neon` | 40.6 s | 2.03 s | 2.14 s |
+| `pop-playful` | 24.9 s | 1.25 s | 1.15 s |
+| `ugc-native` | 19.8 s | 0.99 s | 0.95 s |
+
+Three extra footage streams on screen for a whole 20 s film (a 2×2 grid of video) cost +1.8 %.
+
 Fresh agents (skills installed with `npx skills add`, no help):
 
 | Mode | Result | Prompt → MP4 |
@@ -358,7 +407,7 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
 | `skills/ad-concept/examples/` | Example prompts and filled briefs per style |
 | `skills/vertical-product-ads/SKILL.md` | What the production agent follows |
-| `skills/vertical-product-ads/references/` | Direction, styles, looks, `scenes.json` format, VO/beat sync, safe zones, render + QA |
+| `skills/vertical-product-ads/references/` | Direction, styles, looks, layouts, `scenes.json` format, VO/beat sync, safe zones, render + QA |
 | `skills/vertical-product-ads/looks/` | The eight looks (`<name>.json`) and their fonts (OFL, `fonts/`) |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: the pure `seek(t)` renderer |
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) and every step it runs |
@@ -366,6 +415,7 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
 | `skills/vertical-product-ads/examples/product-broll/` | A 20 s hybrid ad (fictional shampoo): product b-roll you shoot, ElevenLabs voice, music and sound effects, ingredient card, split bands, end card |
 | `skills/vertical-product-ads/examples/look-sampler/` | A 17 s asset-free ad written to work in every look; free voice and music |
+| `skills/vertical-product-ads/examples/layout-sampler/` | A 20 s ad with every layout piece (two SVG drawings included); free voice and music |
 | `media/` | The showcase films (MP4 + GIF previews); not part of the installed skills |
 
 ---
@@ -378,4 +428,4 @@ Product images, footage, voices and music you put into a film keep their own lic
 `looks/fonts/` are under the SIL Open Font License 1.1 (licence beside each family).
 The showcase films in `media/` are not under the MIT licence: the Dior film is an unofficial spec ad
 with marks of their owner, the shampoo footage is by @hanie.ugc.creator, used with permission, and
-the eight-look grid uses an edge-tts voice (see `NOTICE`).
+the look and layout grids use an edge-tts voice (see `NOTICE`).

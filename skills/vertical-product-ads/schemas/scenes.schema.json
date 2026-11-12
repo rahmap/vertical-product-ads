@@ -12,7 +12,7 @@
         { "type": "number" },
         { "type": "string", "pattern": "^\\s*(we\\d+|w\\d+|k\\d+(\\.\\d+)?|\\d+(\\.\\d+)?|[A-Za-z_][A-Za-z0-9_]*)(\\s*[+-]\\s*(we\\d+|w\\d+|k\\d+(\\.\\d+)?|\\d+(\\.\\d+)?|[A-Za-z_][A-Za-z0-9_]*))*\\s*$" },
         { "type": "object", "required": ["cross", "value", "from", "to"], "additionalProperties": false,
-          "properties": { "cross": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "cx", "cy", "dx", "dy"] },
+          "properties": { "cross": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "cx", "cy", "dx", "dy", "o"] },
             "value": { "type": "number" }, "from": { "$ref": "#/$defs/time" }, "to": { "$ref": "#/$defs/time" }, "step": { "type": "number" } } }
       ]
     },
@@ -136,7 +136,7 @@
       "properties": {
         "at": { "$ref": "#/$defs/time" },
         "set": { "oneOf": [{ "const": "full" }, { "type": "object", "minProperties": 1, "additionalProperties": { "type": "number" },
-          "propertyNames": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "zoom", "cx", "cy", "dx", "dy"] } }] },
+          "propertyNames": { "enum": ["x", "y", "w", "h", "r", "gap", "rin", "b0", "b1", "b2", "lz", "zoom", "cx", "cy", "dx", "dy", "o"] } }] },
         "sp": { "$ref": "#/$defs/spring" }, "why": { "$ref": "#/$defs/why" } } } },
     "layers": { "type": "array", "items": {
       "type": "object", "required": ["id"], "additionalProperties": false,
@@ -145,6 +145,7 @@
         "kind": { "enum": ["img", "sheen", "fill", "video"] },
         "src": { "type": "string" }, "fill": { "type": "string" },
         "band": { "enum": [0, 1, 2] },
+        "panel": { "type": "string", "description": "draw inside this panel instead of the shape" },
         "mode": { "enum": ["cover", "world"] },
         "fx": { "type": "number" }, "fy": { "type": "number" },
         "zoom": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/springTo" }, { "type": "array", "items": { "$ref": "#/$defs/springTo" } }] },
@@ -192,8 +193,74 @@
       "properties": { "layer": { "type": "string" }, "t0": { "$ref": "#/$defs/time" }, "t1": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
         "path": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } } } } } },
     "pops": { "type": "array", "items": {
-      "type": "object", "required": ["band", "at"], "additionalProperties": false,
-      "properties": { "band": { "enum": [0, 1, 2] }, "at": { "$ref": "#/$defs/time" } } } },
+      "type": "object", "required": ["at"], "additionalProperties": false,
+      "properties": { "band": { "enum": [0, 1, 2] }, "panel": { "type": "string" }, "at": { "$ref": "#/$defs/time" } } } },
+    "panels": { "type": "array", "items": {
+      "type": "object", "required": ["id", "x", "y", "w", "h", "tin"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "x": { "type": "number" }, "y": { "type": "number" }, "w": { "type": "number", "exclusiveMinimum": 0 }, "h": { "type": "number", "exclusiveMinimum": 0 },
+        "r": { "type": "number", "minimum": 0 }, "rot": { "type": "number" },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "from": { "enum": ["shape", "left", "right", "top", "bottom", "scale", "fade", "cut"] },
+        "into": { "enum": ["shape", "left", "right", "top", "bottom", "scale", "fade", "cut"] },
+        "sp": { "$ref": "#/$defs/spring" },
+        "moves": { "type": "array", "items": {
+          "type": "object", "required": ["at", "set"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/time" }, "sp": { "$ref": "#/$defs/spring" }, "why": { "$ref": "#/$defs/why" },
+            "set": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "number" },
+              "propertyNames": { "enum": ["x", "y", "w", "h", "r", "rot"] } } } } },
+        "frame": { "enum": ["none", "polaroid", "phone"] },
+        "shadow": { "type": "boolean" },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
+    "masks": { "type": "array", "items": {
+      "type": "object", "required": ["text", "y", "size", "tin"], "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" }, "x": { "type": "number" }, "y": { "type": "number" }, "size": { "type": "number", "exclusiveMinimum": 0 },
+        "cls": { "type": "string", "pattern": "^(serif|sans)( ital)?$" },
+        "src": { "type": "string" }, "fill": { "type": "string" }, "footage": { "type": "string" },
+        "clip": { "type": "object", "required": ["in", "at"], "additionalProperties": false,
+          "properties": { "in": { "type": "number", "minimum": 0 }, "at": { "$ref": "#/$defs/time" } } },
+        "fx": { "type": "number" }, "fy": { "type": "number" },
+        "zoom": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/springTo" }, { "type": "array", "items": { "$ref": "#/$defs/springTo" } }] },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" }, "dOut": { "type": "number" },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
+    "callouts": { "type": "array", "items": {
+      "type": "object", "required": ["text", "point", "label", "tin"], "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" },
+        "point": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "label": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "side": { "enum": ["left", "right"] },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
+    "marquees": { "type": "array", "items": {
+      "type": "object", "required": ["text", "y", "tin"], "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" }, "y": { "type": "number" },
+        "h": { "type": "number", "exclusiveMinimum": 0 }, "size": { "type": "number", "exclusiveMinimum": 0 },
+        "speed": { "type": "number", "exclusiveMinimum": 0 }, "dir": { "enum": ["left", "right"] }, "rot": { "type": "number" },
+        "sep": { "type": "string" }, "fill": { "type": "string" }, "ink": { "type": "string" },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
+    "checks": { "type": "array", "items": {
+      "type": "object", "required": ["y", "rows"], "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" }, "y": { "type": "number" }, "w": { "type": "number", "exclusiveMinimum": 0 },
+        "size": { "type": "number", "exclusiveMinimum": 0 },
+        "head": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string" } },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
+        "rows": { "type": "array", "minItems": 1, "items": {
+          "type": "object", "required": ["text", "at"], "additionalProperties": false,
+          "properties": { "text": { "type": "string" }, "at": { "$ref": "#/$defs/time" },
+            "marks": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "boolean" } },
+            "why": { "$ref": "#/$defs/why" } } } },
+        "why": { "$ref": "#/$defs/why" }
+      } } },
     "touch": {
       "type": "object", "additionalProperties": false,
       "properties": {

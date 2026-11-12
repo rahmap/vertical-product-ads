@@ -8,7 +8,7 @@
 | Voice or dialogue, music, beat grid, placement | `vo.py` (ElevenLabs or edge) \| `transcribe.py` + `place_dialogue.py`, `music.py` (prompt or synth), `tempo.py`, `place_vo.py` | `audio/*` |
 | Cue table from the engine | `events.mjs` | `audio/events.json` |
 | SFX synth + ducking + mix | `audio.py` | `audio/mix.wav` |
-| Layout gate: safe zone, overlapping text/UI, empty bands | `qa_safe.mjs` | pass/fail |
+| Layout gate: safe zone, overlapping text/UI, empty bands and panels | `qa_safe.mjs` | pass/fail |
 | Beat contact sheet (tiles stamped with time and beat) | `snap.mjs --beats --sheet 8` | `snaps/sheet.png` |
 | Draft: no motion blur (1 subframe, "shutter 0°"), for timing only | `render.mjs --draft` | `renders/draft.mp4` (540×960, sound) |
 | Final picture | `render.mjs` | `renders/video_noaudio.mp4` |
@@ -56,11 +56,13 @@ Speed choices:
 | Gate | Rule |
 |---|---|
 | `validate.mjs` | schema, assets exist, names resolve, `vo.place` covers every word in order |
-| `validate.mjs` (style) | `motion`: no video layers; `ugc`/`hybrid`: ≥ 1 video layer; `ugc`: `captions` present; `captions` need `vo` or `dialogue`; `vo` and `dialogue` not together; dialogue footage has `speech: true`; a video layer's `src` matches its dialogue segment's footage; `clip`/`dialogue`/`cut` only on video layers; `music.synth` and `music.prompt` not together |
+| `validate.mjs` (style) | `motion`: no footage (video layers or footage masks); `ugc`/`hybrid`: ≥ 1 video layer; `ugc`: `captions` present; `captions` need `vo` or `dialogue`; `vo` and `dialogue` not together; dialogue footage has `speech: true`; a video layer's `src` matches its dialogue segment's footage; `clip`/`dialogue`/`cut` only on video layers; `music.synth` and `music.prompt` not together |
+| `validate.mjs` (layouts) | panel ids unique and each holds a layer; a layer's `panel`, a pop's `panel`, a mask's `src`/`footage` resolve; panel layers carry no `band`/`toutBand`/`wipe`/`place`; masks have exactly one of `src`, `fill`, `footage`; comparison rows have one mark per column |
+| `validate.mjs` (contrast) | with the look and `theme.css` merged: chip/callout/check-row, label, CTA and marquee text ≥ 3:1 on its surface (plain colours only) |
 | `validate.mjs` (duration) | 15–60 s; over 34 s a warning (justify it in the concept and report); over 60 s is an error; the warning does not fail the build |
 | `place_dialogue.py` | no segment edge cuts inside a transcribed word (it suggests the nearest edge); segments do not overlap in film time and stay inside the film |
 | `place_vo.py` | > 0.2 s between segments, ≥ 0.5 s tail |
-| `qa_safe.mjs` | at every output frame: every visible text/UI element inside `format.safe`; no two visible text/UI blocks (text block, chip, label, odometer, caption chunk, CTA) overlap; every visible band shows a layer (no bare surface, no gap between footage segments) |
+| `qa_safe.mjs` | at every output frame: every visible text/UI element (text, chip, label, odometer, caption, CTA, mask, callout label, check row) inside `format.safe`, a marquee band inside it vertically; no two visible text/UI blocks overlap; every visible band and panel shows a layer (no bare surface, no gap between footage segments) |
 | `finish.sh` | delivered AAC file within ±0.6 LU of target and sample peak ≤ −0.5 dBFS (the limiter targets −1 dBTP; the margin absorbs AAC overshoot) |
 | `qa_video.py` | no spike at a render-chunk seam (Δ > 2 and > 2.5× its neighbours) |
 

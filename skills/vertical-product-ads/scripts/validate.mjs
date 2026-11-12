@@ -1,6 +1,7 @@
 // node validate.mjs <project> → schema check of scenes.json plus the cross-references a schema can't see:
 // asset/footage files exist, layer/arc/icon names resolve, style/dialogue/caption/music rules, VO segments fit the
-// word list, duration limits. Exit 1 on any problem; a duration above 34 s only prints a WARNING.
+// word list, duration limits, and the contrast of UI text on its surface once the look and the project theme are
+// merged. Exit 1 on any problem; a duration above 34 s only prints a WARNING.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,6 +16,7 @@ const problems = [];
 if (!ajv.validate(schema, S)) for (const e of ajv.errors) problems.push(`schema: ${e.instancePath || '/'} ${e.message}${e.params && e.params.additionalProperty ? ` (${e.params.additionalProperty})` : ''}`);
 
 // look: the preset must exist, its theme and caption defaults must pass the same schema, its fonts must be there
+let lookCss = {};
 if (S.look) {
   const file = path.join(LOOKS, S.look + '.json');
   if (!fs.existsSync(file)) {
@@ -28,6 +30,42 @@ if (S.look) {
     }
     for (const f of (L.theme && L.theme.fontFaces) || [])
       if (!fs.existsSync(path.join(LOOKS, f.src))) problems.push(`look "${S.look}": font ${f.src} is missing from looks/`);
+    lookCss = (L.theme && L.theme.css) || {};
+  }
+}
+
+// contrast: the engine's defaults, then the look, then the project's theme.css. A project theme written for one
+// look (or for none) can leave the look's light ink on its own white surface; these texts are ≥ 28 px, so the
+// bar is WCAG's 3:1 for large text. Only plain colours are compared (gradients and translucent fills are skipped).
+{
+  const html = fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../engine/index.html'), 'utf8');
+  const root = Object.fromEntries([...(/:root\s*{([^}]*)}/.exec(html) || ['', ''])[1].matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)].map(m => [m[1], m[2].trim()]));
+  const css = { ...root, ...lookCss, ...((S.theme && S.theme.css) || {}) };
+  const value = (v, depth = 0) => {
+    const m = v && /^var\((--[a-z0-9-]+)(?:\s*,\s*(.+))?\)$/.exec(v.trim());
+    if (!m || depth > 5) return v;
+    return value(css[m[1]] != null ? css[m[1]] : m[2], depth + 1);
+  };
+  const rgb = v => {
+    v = value(v);
+    let m = v && /^#([\da-f]{3}|[\da-f]{6})$/i.exec(v.trim());
+    if (m) { const h = m[1].length === 3 ? [...m[1]].map(c => c + c).join('') : m[1]; return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+    m = v && /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)$/i.exec(v.trim());
+    if (m && (m[4] == null || +m[4] >= 0.85)) return [+m[1], +m[2], +m[3]];
+    return null;
+  };
+  const lum = c => { const [r, g, b] = c.map(x => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const pairs = [
+    ['chip, callout and check-row text', css['--ui-ink'] || css['--ink'], css['--surface']],
+    ['label text', css['--ui-ink'] || css['--ink'], css['--surface-label']],
+    ['CTA text', css['--cta-ink'] || '#FFFFFF', css['--accent']],
+    ['marquee text', css['--marquee-ink'] || css['--cta-ink'] || '#FFFFFF', css['--marquee-bg'] || css['--accent']],
+  ];
+  for (const [what, fg, bg] of pairs) {
+    const a = rgb(fg), b = rgb(bg);
+    if (!a || !b) continue;
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x), ratio = (hi + 0.05) / (lo + 0.05);
+    if (ratio < 3) problems.push(`contrast: ${what} ${value(fg)} on ${value(bg)} is ${ratio.toFixed(2)}:1 (needs 3:1). theme.css over a look usually needs only the brand colours; drop the rest or set the ink too`);
   }
 }
 
@@ -65,6 +103,35 @@ for (const a of S.arcs || []) {
   if (!L) problems.push(`arc: layer "${a.layer}" not found`);
   else if ((L.kind || 'img') !== 'img' || L.mode === 'world') problems.push(`arc: layer "${a.layer}" must be a cover img layer`);
 }
+
+// layouts: panels hold layers; layer/pop/mask references resolve; comparison rows fit their columns
+const panelIds = new Set();
+for (const P of S.panels || []) {
+  if (panelIds.has(P.id)) problems.push(`panel id "${P.id}" is used twice`);
+  panelIds.add(P.id);
+  if (!(S.layers || []).some(L => L.panel === P.id)) problems.push(`panel "${P.id}": no layer has "panel": "${P.id}" (an empty panel shows the bare --band surface)`);
+}
+for (const L of S.layers || []) {
+  if (L.panel == null) continue;
+  if (!panelIds.has(L.panel)) problems.push(`layer "${L.id}": panel "${L.panel}" not in panels`);
+  for (const k of ['band', 'toutBand', 'wipe', 'place', 'pivot']) if (L[k] != null) problems.push(`layer "${L.id}": "${k}" does not apply inside a panel`);
+  if (L.mode === 'world') problems.push(`layer "${L.id}": panel layers are cover mode only`);
+  if ((S.arcs || []).some(a => a.layer === L.id)) problems.push(`arc: layer "${L.id}" is in a panel; arcs draw over the shape only`);
+}
+for (const p of S.pops || []) {
+  if ((p.band == null) === (p.panel == null)) problems.push('pops: each pop needs either "band" or "panel"');
+  else if (p.panel != null && !panelIds.has(p.panel)) problems.push(`pops: panel "${p.panel}" not in panels`);
+}
+for (const m of S.masks || []) {
+  if (['src', 'fill', 'footage'].filter(k => m[k] != null).length !== 1) problems.push(`mask "${m.text}": give exactly one of src, fill, footage`);
+  if (m.src && !assets[m.src]) problems.push(`mask "${m.text}": src "${m.src}" is not in assets`);
+  if (m.footage && !footage[m.footage]) problems.push(`mask "${m.text}": footage "${m.footage}" is not in footage`);
+  if (m.clip && !m.footage) problems.push(`mask "${m.text}": clip is only for footage masks`);
+}
+for (const k of S.checks || []) {
+  const cols = k.head ? k.head.length : 1;
+  for (const r of k.rows) if ((r.marks || [true]).length !== cols) problems.push(`checks: row "${r.text}" has ${(r.marks || [true]).length} mark(s), the list has ${cols} column(s)`);
+}
 for (const c of S.chips || []) if (c.icon && !(S.icons || {})[c.icon]) problems.push(`chip "${c.text}": icon "${c.icon}" not in icons`);
 const M = S.music;
 if (M && M.synth && M.prompt) problems.push('music: synth and prompt are mutually exclusive');
@@ -95,8 +162,8 @@ const byAt = dlg.map((s, i) => ({ i, a: s.at, b: s.at + s.out - s.in })).sort((x
 for (let k = 1; k < byAt.length; k++)
   if (byAt[k].a < byAt[k - 1].b - 1e-6) problems.push(`dialogue.segments[${byAt[k - 1].i}] and [${byAt[k].i}] overlap in film time`);
 
-const style = S.style || 'motion', videos = (S.layers || []).filter(l => l.kind === 'video');
-if (style === 'motion' && videos.length) problems.push('style "motion" has video layers: set style to ugc or hybrid');
+const style = S.style || 'motion', videos = [...(S.layers || []).filter(l => l.kind === 'video'), ...(S.masks || []).filter(m => m.footage)];
+if (style === 'motion' && videos.length) problems.push('style "motion" has footage (video layers or footage masks): set style to ugc or hybrid');
 if (style !== 'motion' && !videos.length) problems.push(`style "${style}" needs at least one video layer`);
 if (style === 'ugc' && !S.captions) problems.push('style "ugc" needs "captions"');
 if (S.captions && !S.vo && !S.dialogue) problems.push('captions need a speech track: add vo or dialogue');

@@ -1,6 +1,6 @@
 ---
 name: vertical-product-ads
-description: Use when asked to build or render a vertical 9:16 product ad (TikTok, Instagram Reels, YouTube Shorts commercial, e-commerce promo, beauty/skincare video) from an approved concept or storyboard, product photos, creator footage or a voice-over script. Styles are motion graphics, UGC footage with captions, or hybrid, in one of eight looks (luxe editorial, clean clinical, bold streetwear, warm organic, tech neon, pop playful, UGC native, classic). Needs an approved concept.md, use the ad-concept skill first if there is none.
+description: Use when asked to build or render a vertical 9:16 product ad (TikTok, Instagram Reels, YouTube Shorts commercial, e-commerce promo, beauty/skincare video) from an approved concept or storyboard, product photos, creator footage or a voice-over script. Styles are motion graphics, UGC footage with captions, or hybrid, in one of eight looks (luxe editorial, clean clinical, bold streetwear, warm organic, tech neon, pop playful, UGC native, classic), with layouts such as split screen, grid, picture-in-picture, collage, phone mockup, callouts, comparison lists, marquees and text masks. Needs an approved concept.md, use the ad-concept skill first if there is none.
 ---
 
 # Vertical product ads
@@ -45,6 +45,13 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 enters. Brand colours go over it in `theme.css`. Each look also has its own shape, pace, music and
 sound direction: `references/looks.md`.
 
+## Layouts
+Besides the one shape (card, circle, bands, full bleed), a scene can use **panels** (split screen, grid,
+picture-in-picture, collage, card stack, phone mockup), **masks** (picture or footage inside big
+letters), **callouts**, **check lists** (with a comparison head) and **marquees**. Panels grow out of the
+shape or slide in from an edge, and merge back; the look styles every piece, and every style can use
+them (footage in panels for `ugc`/`hybrid`). Catalogue, rules and recipes: `references/layouts.md`.
+
 ## Free vs paid options
 | Part | ElevenLabs (key in env or `.env`) | Free |
 |---|---|---|
@@ -57,7 +64,7 @@ sound direction: `references/looks.md`.
 1. **Project folder:** create `<project>/assets/` and `<project>/scenes.json`, copied from
    `examples/minimal/scenes.json` (format: `references/scenes-format.md`); for muted product b-roll
    under a voice-over, start from `examples/product-broll/`; for fills that follow any look, see
-   `examples/look-sampler/`. `ELEVENLABS_API_KEY` is read
+   `examples/look-sampler/`; for every layout piece, `examples/layout-sampler/`. `ELEVENLABS_API_KEY` is read
    by the tools from the environment or a `.env` in the project or any parent folder; it is needed only
    for ElevenLabs voice, music or transcription. If it is missing, tell the user to run
    `scripts/set_key.sh` **in their own terminal**, or use the free options. `.gitignore` for the
@@ -78,12 +85,13 @@ sound direction: `references/looks.md`.
    the track ends. If a generated track fades before your CTA, regenerate with `--force`. Kick-peak
    beats are `k<n>`.
 4. **Direct:** set `look` from the concept, then fill in `vo.place` (when using `vo`), `timeline`,
-   `layers`, `texts`, `captions`, `cues` and the rest from the concept's beat sheet, following
-   `references/direction.md` (motion recipes), `references/looks.md` (the look's shape, pace and
-   sound) and `references/styles.md` (footage recipes). Every reveal is cued to a word or a beat,
-   never to a guess.
+   `layers`, `panels`, `texts`, `captions`, `cues` and the rest from the concept's beat sheet (its
+   recipes name the layouts), following `references/direction.md` (motion recipes), `references/layouts.md`
+   (split screens, grids, picture-in-picture, callouts, check lists…), `references/looks.md` (the
+   look's shape, pace and sound) and `references/styles.md` (footage recipes). Every reveal is cued to
+   a word or a beat, never to a guess.
 5. **Preview:** `scripts/make.sh <project> preview`. It validates the scenes (including style and
-   duration rules), builds footage frames, mixes audio, runs the layout gate (safe zone, overlapping text, empty bands), and writes a beat
+   duration rules), builds footage frames, mixes audio, runs the layout gate (safe zone, overlapping text, empty bands and panels), and writes a beat
    contact sheet plus a half-size draft with sound.
 6. **Review (mandatory, never skip).** Look at `snaps/sheet.png`; each tile is stamped with its time
    and beat. Then snap every transition at ±0.1 s around the `at` times in your timeline:
@@ -118,6 +126,7 @@ sound direction: `references/looks.md`.
 |---|---|
 | `references/direction.md` | Planning motion scenes: rules, recipes, sound design |
 | `references/looks.md` | Choosing or applying a look; brand colours over it; entrances and look variables |
+| `references/layouts.md` | Split screen, grid, picture-in-picture, collage, phone, callouts, check lists, marquees, masks |
 | `references/styles.md` | ugc and hybrid recipes, dialogue editing, switching styles |
 | `references/scenes-format.md` | Writing `scenes.json`: every field, time expressions |
 | `references/vo-beat-sync.md` | Script, voice engines, transcription, placing on the music |

@@ -6,16 +6,16 @@ skill's `references/looks.md`.
 `style` says how the film is produced (photos, footage, both). `look` says how it looks: fonts,
 palette, chip and button shape, captions and how text enters. Any look works with any style.
 
-| Look | Feels like | Fits | Avoid for |
-|---|---|---|---|
-| `classic` | Soft, polished beauty ad (the Dior Lip Glow film) | Anything, when nothing else fits | Products that need energy |
-| `luxe-editorial` | Fashion magazine: Bodoni serif, ivory, slow and quiet | Fragrance, jewellery, premium beauty, fashion | Promotions, discounts, fast offers |
-| `clean-clinical` | Dermatology clinic: one clean sans, white and teal, data | Skincare actives, pharmacy, supplements, oral and baby care | Fun, emotional or fashion products |
-| `bold-streetwear` | Drop-day poster: black, huge capitals, acid lime, hard cuts | Sneakers, streetwear, energy drinks, fitness, gaming gear | Gentle, caring, premium-quiet products |
-| `warm-organic` | Kitchen table: cream paper, soft serif, terracotta | Herbal and jamu, coffee, food, hair and body care, home | Tech and high-energy products |
-| `tech-neon` | Launch keynote: dark grid, cyan glow, typed text | Gadgets, audio, apps, smart home | Natural, food, baby products |
-| `pop-playful` | Snack aisle: chunky letters, pink and yellow, bouncy | Snacks, drinks, candy, toys, Gen-Z beauty | Luxury, health claims |
-| `ugc-native` | Made in the app: TikTok Sans, outlined captions, sticker chips | `ugc` and `hybrid` with creator footage | `motion` films with no footage |
+| Look | Feels like | Fits | Avoid for | Layouts it reads best with |
+|---|---|---|---|---|
+| `classic` | Soft, polished beauty ad (the Dior Lip Glow film) | Anything, when nothing else fits | Products that need energy | Split screen, Callouts, Comparison list |
+| `luxe-editorial` | Fashion magazine: Bodoni serif, ivory, slow and quiet | Fragrance, jewellery, premium beauty, fashion | Promotions, discounts, fast offers | Editorial grid, Text mask, Callouts |
+| `clean-clinical` | Dermatology clinic: one clean sans, white and teal, data | Skincare actives, pharmacy, supplements, oral and baby care | Fun, emotional or fashion products | Split screen, Comparison list, Callouts |
+| `bold-streetwear` | Drop-day poster: black, huge capitals, acid lime, hard cuts | Sneakers, streetwear, energy drinks, fitness, gaming gear | Gentle, caring, premium-quiet products | Split screen, Marquee, Grid |
+| `warm-organic` | Kitchen table: cream paper, soft serif, terracotta | Herbal and jamu, coffee, food, hair and body care, home | Tech and high-energy products | Collage, Callouts |
+| `tech-neon` | Launch keynote: dark grid, cyan glow, typed text | Gadgets, audio, apps, smart home | Natural, food, baby products | Phone, Comparison list, Callouts |
+| `pop-playful` | Snack aisle: chunky letters, pink and yellow, bouncy | Snacks, drinks, candy, toys, Gen-Z beauty | Luxury, health claims | Collage, Marquee, Grid |
+| `ugc-native` | Made in the app: TikTok Sans, outlined captions, sticker chips | `ugc` and `hybrid` with creator footage | `motion` films with no footage | Picture-in-picture, Split screen, Comparison list |
 
 ## Choosing
 1. The user or `brief.md` names a look: use it. If it clashes with the product (e.g. `pop-playful`

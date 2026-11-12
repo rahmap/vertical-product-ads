@@ -28,6 +28,13 @@ bentuk chip dan tombol, caption, dan cara teks muncul. Pilihan: `classic`, `luxe
 bold-streetwear") atau di `brief.md` (`look:`). Kosong: agent memilih dari kategori produk dan nada
 brand, lalu menuliskan alasannya di konsep.
 
+## Layout
+Dalam satu iklan, tiap beat bisa memakai layout berbeda: split screen (sebelum/sesudah), grid,
+picture-in-picture (kreator tetap bicara di jendela kecil), kolase, tumpukan kartu, mockup ponsel
+(halaman toko), callout bahan, daftar ✓/✗ perbandingan, teks berjalan (promo), dan teks berisi
+gambar. Agent memilih 2–4 layout yang cocok dengan look; sebut di prompt kalau mau yang tertentu
+("pakai split screen untuk sebelum/sesudah, dan ponsel untuk CTA").
+
 ## `motion`
 **Pendek (dengan brief):**
 > Buatkan iklan dari folder `iklan/glowa`. Brief ada di `brief.md`.
@@ -89,6 +96,8 @@ brand, lalu menuliskan alasannya di konsep.
 | Ganti gaya | *Ubah iklan `iklan/[nama]` jadi hybrid, pakai `review.mp4` untuk hook.* |
 | Ganti look | *Render ulang iklan `iklan/[nama]` dengan look tech-neon, warna brand tetap.* |
 | Bandingkan look | *Buat 3 versi iklan `iklan/[nama]`: luxe-editorial, clean-clinical, pop-playful, masing-masing di proyek terpisah.* |
+| Ganti layout | *Di iklan `iklan/[nama]`, ganti adegan bahan jadi callout yang menunjuk ke botol, dan tambahkan daftar ✓/✗ "kita vs biasa".* |
+| Tambah PiP | *Waktu b-roll di detik 9–12, tampilkan kreator tetap bicara di jendela kecil kanan atas.* |
 | Revisi setelah jadi | *Teks klaim di detik 18 terlalu kecil, dan CTA muncul terlalu cepat. Perbaiki lalu render ulang.* |
 | Ganti suara | *Ganti voice-over ke suara laki-laki, sisanya sama.* |
 | Versi pendek | *Buat versi 15 detik dari iklan `iklan/[nama]` untuk Reels, sebagai proyek terpisah `iklan/[nama]-15s`.* |

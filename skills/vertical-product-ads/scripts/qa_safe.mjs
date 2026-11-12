@@ -1,10 +1,11 @@
 // node qa_safe.mjs <project> → layout gate, checked at every output frame (1/render.fps). Exit 1 on any violation
 // (first time each breaks):
-//   safe zone   every visible word, chip, label, odometer digit, caption chunk and the CTA sits inside format.safe
-//   overlap     no two visible HUD blocks (text block, chip, label, odometer, caption chunk, CTA) cover each other:
-//               double-printed text is a bug, not a transition
-//   empty band  every visible band of the shape shows at least one layer (else the bare --band surface or a
-//               gap between footage segments reaches the screen)
+//   safe zone   every visible word, chip, label, odometer digit, caption chunk, mask, callout label, check row and the
+//               CTA sits inside format.safe; a marquee band runs edge to edge, so only its height is checked
+//   overlap     no two visible HUD blocks (text block, chip, label, odometer, caption chunk, mask, callout, check row,
+//               marquee, CTA) cover each other: double-printed text is a bug, not a transition
+//   empty band  every visible band of the shape and every visible panel shows at least one layer (else the bare
+//               --band surface or a gap between footage segments reaches the screen)
 import { projectDir, readScenes, serve, launch, openPage } from './lib/stage.mjs';
 
 const dir = projectDir(process.argv[2]);
@@ -40,12 +41,18 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
       const pad = (r.height - parseFloat(getComputedStyle(e).fontSize)) / 2;
       return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad, width: r.width };
     };
-    for (const e of document.querySelectorAll('#hud .w, #hud .chip, #hud .label, #hud .odo > *, #hud .cap, #cta')) {
+    const HUD_SEL = '#hud .w, #hud .chip, #hud .label, #hud .odo > *, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head';
+    for (const e of document.querySelectorAll(HUD_SEL)) {
       if (alpha(e, 'hud') < 0.05) continue;
       const r = rectOf(e);
       if (r.width < 1) continue;
       if (r.left < Z.l - 0.5 || r.right > Z.r + 0.5 || r.top < Z.t - 0.5 || r.bottom > Z.b + 0.5)
         safe.push([e.classList.contains('slot') ? e.firstChild.textContent : name(e), box(r)]);
+    }
+    for (const e of document.querySelectorAll('#hud .marq')) {
+      if (alpha(e, 'hud') < 0.05) continue;
+      const r = e.getBoundingClientRect();
+      if (r.top < Z.t - 0.5 || r.bottom > Z.b + 0.5) safe.push([`marquee "${e.firstChild.firstChild.textContent}"`, box(r)]);
     }
 
     // a text block or odometer is the union of its visible glyph boxes; the others are one box each
@@ -67,7 +74,7 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
       const r = union(parts, 0);
       if (r) blocks.push([parts.map(p => (p.classList.contains('slot') ? p.firstChild.textContent : p.textContent)).join('').trim(), r]);
     }
-    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .cap, #cta')) {
+    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head, #hud .marq')) {
       if (alpha(e, 'hud') < 0.25) continue;
       const r = e.getBoundingClientRect();
       if (r.width >= 1) blocks.push([name(e), r]);
@@ -78,11 +85,18 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
       if (w > 2 && h > 2) overlap.push([`"${a}" × "${b}"`, `${box(ra)} ${box(rb)}`]);
     }
 
+    const bandsOn = alpha(document.getElementById('bands'), 'world') >= 0.05;
     document.querySelectorAll('#bands > .band').forEach((band, i) => {
-      if (getComputedStyle(band).display === 'none' || band.getBoundingClientRect().height < 2) return;
+      if (!bandsOn || getComputedStyle(band).display === 'none' || band.getBoundingClientRect().height < 2) return;
       const shown = [...band.children].some(c => alpha(c, 'bands') >= 0.05);
       if (!shown) empty.push([`band ${i}`, box(band.getBoundingClientRect())]);
     });
+    for (const p of document.querySelectorAll('#panels > .pnl')) {
+      if (alpha(p, 'panels') < 0.05) continue;
+      const pin = p.querySelector('.pin'), r = pin.getBoundingClientRect();
+      if (r.right < 0 || r.left > innerWidth || r.bottom < 0 || r.top > innerHeight || r.height < 2) continue;
+      if (![...pin.children].some(c => alpha(c, 'panels') >= 0.05)) empty.push([`panel ${p.dataset.id}`, box(r)]);
+    }
     return { safe, overlap, empty };
   }, [t, S.format.safe]);
   for (const k of Object.keys(fails)) for (const [n, b] of hits[k]) if (!fails[k].has(n)) fails[k].set(n, `t=${t.toFixed(2)}  ${k === 'overlap' ? n : `"${n}"`} ${b}`);

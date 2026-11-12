@@ -4,7 +4,9 @@
  * window.seek(t): every style is computed from t, nothing is carried between frames.
  *
  * One shape, never cut: a rounded clip that holds three bands. The bands can split apart (gap), change
- * relative heights (b0..b2) and merge again; every scene is the same element morphing.
+ * relative heights (b0..b2) and merge again; every scene is the same element morphing. Panels are extra rounded
+ * frames that grow out of the shape (or slide in) for split screens, grids, picture-in-picture, collages and phone
+ * mockups; masks, callouts, marquees and check lists are the other layout pieces.
  *
  * Globals set for the tools: READY, seek, FILM_DURATION, CUES, SCENE_META. Load errors land in ERROR.
  */
@@ -42,7 +44,7 @@ const TEXT_CLASSES = new Set(['serif', 'sans', 'ital', 'h0', 'h1', 'sub', 'wordm
 // how HUD text and UI enter (theme.enter, usually from the look): blur (default), rise, cut, pop, wipe, type
 const ENTERS = new Set(['blur', 'rise', 'cut', 'pop', 'wipe', 'type']);
 const POP = { w: 22, z: 0.55 };
-const TRACK_KEYS = ['x', 'y', 'w', 'h', 'r', 'gap', 'rin', 'b0', 'b1', 'b2', 'lz', 'cx', 'cy', 'dx', 'dy'];
+const TRACK_KEYS = ['x', 'y', 'w', 'h', 'r', 'gap', 'rin', 'b0', 'b1', 'b2', 'lz', 'cx', 'cy', 'dx', 'dy', 'o'];
 
 async function fetchJSON(path, optional) {
   const res = await fetch(PROJECT + path);
@@ -60,8 +62,9 @@ async function main() {
   const S = await fetchJSON('scenes.json');
   const LOOK = S.look ? await fetchLook(S.look) : null;
   const WORDS = await fetchJSON('audio/words.json', true);
-  const FOOT = (S.layers || []).some(l => l.kind === 'video') ? await fetchJSON('build/footage.json', true) : null;
-  if ((S.layers || []).some(l => l.kind === 'video') && !FOOT) throw new Error('video layers need build/footage.json: run footage.py (make.sh runs it)');
+  const usesFootage = (S.layers || []).some(l => l.kind === 'video') || (S.masks || []).some(m => m.footage);
+  const FOOT = usesFootage ? await fetchJSON('build/footage.json', true) : null;
+  if (usesFootage && !FOOT) throw new Error('video layers and footage masks need build/footage.json: run footage.py (make.sh runs it)');
   const GRID = (await fetchJSON('audio/grid.json', true)) ||
     { period: 60 / ((S.music && S.music.bpm) || 120), phase: 0, peak_offset: 0 };
 
@@ -124,7 +127,7 @@ async function main() {
 
   // ── tracks ───────────────────────────────────────────────────────────────────────────────
   const init = { x: CX, y: CY, w: W * 0.87, h: H * 0.4, r: 52, gap: 0, rin: 0, b0: 1, b1: 1, b2: 1, lz: 0,
-    cx: CX, cy: CY, dx: W * 0.065, dy: CY, ...(S.shape && S.shape.initial) };
+    cx: CX, cy: CY, dx: W * 0.065, dy: CY, o: 1, ...(S.shape && S.shape.initial) };
   if (S.touch && S.touch.start) { init.dx = S.touch.start[0]; init.dy = S.touch.start[1]; }
   const TR = {};
   for (const k of TRACK_KEYS) TR[k] = new Track(init[k]);
@@ -161,10 +164,46 @@ async function main() {
     return t => ({ dx: dx(t), dy: dy(t) });
   }
 
+  // ── panels ───────────────────────────────────────────────────────────────────────────────
+  // x, y = centre in world px, like the shape. A panel enters at tin (out of the shape's rect at that moment, from
+  // an edge, scaling up, fading or on a cut), springs through its moves, and leaves at tout the same ways.
+  const PANEL_WAYS = new Set(['shape', 'left', 'right', 'top', 'bottom', 'scale', 'fade', 'cut']);
+  const PANEL_KEYS = ['x', 'y', 'w', 'h', 'r', 'rot'];
+  const isEdge = s => s === 'left' || s === 'right' || s === 'top' || s === 'bottom';
+  const shapeAt = t => ({ x: TR.x.at(t), y: TR.y.at(t), w: TR.w.at(t), h: TR.h.at(t), r: TR.r.at(t), rot: 0 });
+  const offEdge = (side, g) => {
+    const o = { ...g }, reach = Math.hypot(g.w, g.h) / 2 + 40;   // fully outside the frame, even rotated
+    if (side === 'left') o.x = -reach; else if (side === 'right') o.x = W + reach;
+    else if (side === 'top') o.y = -reach; else o.y = H + reach;
+    return o;
+  };
+  const PANELS = (S.panels || []).map(P => {
+    const from = P.from || 'shape', into = P.into || 'fade';
+    for (const w of [from, into]) if (!PANEL_WAYS.has(w)) throw new Error(`panel "${P.id}": "${w}" not in ${[...PANEL_WAYS]}`);
+    const tin = T(P.tin), tout = P.tout == null ? null : T(P.tout), s = sp(P.sp);
+    const goal = { x: P.x, y: P.y, w: P.w, h: P.h, r: P.r == null ? 40 : P.r, rot: P.rot || 0 };
+    const start = from === 'shape' ? shapeAt(tin) : isEdge(from) ? offEdge(from, goal) : goal;
+    const tr = Object.fromEntries(PANEL_KEYS.map(k => [k, new Track(start[k]).to(tin, goal[k], s)]));
+    for (const m of P.moves || []) {
+      const at = T(m.at), ms = sp(m.sp);
+      for (const [k, v] of Object.entries(m.set)) {
+        if (!tr[k]) throw new Error(`panel "${P.id}": move key "${k}" not in ${PANEL_KEYS}`);
+        tr[k].to(at, v, ms);
+      }
+    }
+    if (tout != null && (into === 'shape' || isEdge(into))) {
+      const cur = Object.fromEntries(PANEL_KEYS.map(k => [k, tr[k].cur]));
+      const end = into === 'shape' ? shapeAt(tout) : offEdge(into, cur);
+      for (const k of PANEL_KEYS) tr[k].to(tout, end[k], s);
+    }
+    return { id: P.id, tin, tout, from, into, tr, frame: P.frame || 'none', shadow: P.shadow !== false };
+  });
+  const panelById = Object.fromEntries(PANELS.map(P => [P.id, P]));
+
   // ── scene content ────────────────────────────────────────────────────────────────────────
   const asset = k => { if (!S.assets || !S.assets[k]) throw new Error(`unknown asset "${k}"`); return PROJECT + S.assets[k]; };
   const LAYERS = (S.layers || []).map(L => ({
-    id: L.id, kind: L.kind || 'img', band: L.band == null ? 'all' : L.band, mode: L.mode || 'cover',
+    id: L.id, kind: L.kind || 'img', band: L.band == null ? 'all' : L.band, mode: L.mode || 'cover', panel: L.panel || null,
     src: L.src && L.kind !== 'video' ? asset(L.src) : null, fill: L.fill, fx: L.fx == null ? 0.5 : L.fx, fy: L.fy == null ? 0.5 : L.fy,
     zoom: zoomFn(L.zoom), shift: shiftFn(L.shift), blend: L.blend || null, clipX: L.clipX || null, wipe: !!L.wipe,
     tin: L.tin == null ? -9 : T(L.tin), tout: L.tout == null ? null : T(L.tout), dOut: L.dOut == null ? 0.16 : L.dOut,
@@ -180,6 +219,12 @@ async function main() {
   for (const L of LAYERS) {
     if (L.kind === 'img' && !L.src) throw new Error(`layer "${L.id}": img layers need "src"`);
     if (L.mode === 'world' && !L.rect) throw new Error(`layer "${L.id}": world layers need "place"`);
+  }
+  for (const L of LAYERS) {
+    if (!L.panel) continue;
+    L.P = panelById[L.panel];
+    if (!L.P) throw new Error(`layer "${L.id}": panel "${L.panel}" not in panels`);
+    if (L.wipe || L.mode === 'world' || L.toutBand) throw new Error(`layer "${L.id}": a panel layer is a cover layer without wipe or toutBand`);
   }
   // video layers: frame n of footage "src" shows at film time t, n = round((vin + t − vat)·fps). round, not floor, so the
   // motion-blur subframes of one output frame all show the same source frame.
@@ -209,12 +254,35 @@ async function main() {
   const ODOS = (S.odometers || []).map(o => ({ ...o, t0: T(o.t0), t1: T(o.t1), tout: o.tout == null ? null : T(o.tout) }));
   const ARCS = (S.arcs || []).map(a => ({ ...a, layer: layerById[a.layer], t0: T(a.t0), t1: T(a.t1), tout: T(a.tout) }));
   for (const a of ARCS) if (!a.layer) throw new Error('arc: unknown layer');
-  const POPS = (S.pops || []).map(p => ({ band: p.band, t: T(p.at) }));
+  const POPS = (S.pops || []).map(p => ({ band: p.band, panel: p.panel, t: T(p.at) }));
   const touch = S.touch || {};
   const DOT = (touch.windows || []).map(w => ({ tin: T(w.tin), tout: T(w.tout), dOut: w.dOut == null ? 0.2 : w.dOut }));
   const PRESSES = (touch.presses || []).map(T);
   if (CTA) PRESSES.push(CTA.press);
   const HOLDS = (touch.holds || []).map(h => ({ a: T(h.from), b: T(h.to), wiper: !!h.wiper }));
+
+  // masks (a picture inside big letters), callouts, marquees, check lists: the look styles them
+  const MASKS = (S.masks || []).map(m => {
+    const o = { x: CX, cls: 'serif', dOut: 0.16, fx: 0.5, fy: 0.5, ...m, zoomF: zoomFn(m.zoom),
+      tin: T(m.tin), tout: m.tout == null ? null : T(m.tout), src: m.src ? asset(m.src) : null };
+    for (const c of o.cls.split(/\s+/)) if (!['serif', 'sans', 'ital'].includes(c)) throw new Error(`mask class "${c}" not in serif, sans, ital`);
+    if (m.footage) {
+      o.man = FOOT[m.footage];
+      if (!o.man) throw new Error(`mask "${m.text}": footage "${m.footage}" not in build/footage.json (run footage.py)`);
+      o.vin = m.clip ? m.clip.in : 0; o.vat = m.clip ? T(m.clip.at) : o.tin;
+    }
+    return o;
+  });
+  const CALLS = (S.callouts || []).map(c => ({ ...c, side: c.side || (c.label[0] >= c.point[0] ? 'right' : 'left'),
+    tin: T(c.tin), tout: c.tout == null ? null : T(c.tout) }));
+  const MARQS = (S.marquees || []).map(m => ({ h: 96, speed: 140, dir: 'left', rot: 0, sep: '•', ...m,
+    tin: T(m.tin), tout: m.tout == null ? null : T(m.tout) }));
+  const CHECKS = (S.checks || []).map(k => {
+    const cols = k.head ? k.head.length : 1;
+    const rows = k.rows.map(r => ({ ...r, at: T(r.at), marks: r.marks || [true] }));
+    for (const r of rows) if (r.marks.length !== cols) throw new Error(`checks: row "${r.text}" has ${r.marks.length} marks, the list has ${cols} column(s)`);
+    return { x: CX, w: 800, size: 44, ...k, cols, rows, tin: k.tin == null ? rows[0].at - 0.12 : T(k.tin), tout: k.tout == null ? null : T(k.tout) };
+  });
 
   // captions: word-by-word chunks from audio/words.json (screen space, class "cap" so qa_safe checks them)
   const CAPCFG = { y: Math.round(H * 0.615), size: 64, maxWords: 3, maxGap: 0.35, case: 'upper', style: 'pill', ...(LOOK && LOOK.captions), ...S.captions };
@@ -254,6 +322,7 @@ async function main() {
   const $ = s => document.querySelector(s);
   const el = (tag, cls, parent) => { const e = document.createElement(tag); if (cls) e.className = cls; parent && parent.appendChild(e); return e; };
   const frame = $('#frame'), world = $('#world'), hud = $('#hud'), bandsEl = $('#bands'), grainEl = $('#grain');
+  const shadowsEl = $('#shadows'), panelsEl = $('#panels');
   frame.style.width = W + 'px'; frame.style.height = H + 'px';
   // look first, then the project's own theme on top: css keys and pools override, fonts and faces add up
   const LT = (LOOK && LOOK.theme) || {}, PT = S.theme || {};
@@ -270,6 +339,8 @@ async function main() {
   frame.style.setProperty('--accent-rgb', ACC.join(', '));
   // --ui-round scales the corner radius of chips, labels and the CTA (1 = pill, 0 = square)
   const UI_ROUND = cssVar('--ui-round') === '' ? 1 : parseFloat(cssVar('--ui-round'));
+  // --panel-round scales panel corner radii the same way (phones keep theirs)
+  const PANEL_ROUND = cssVar('--panel-round') === '' ? 1 : parseFloat(cssVar('--panel-round'));
   const safeBox = $('#safe div');
   Object.assign(safeBox.style, { left: SAFE.l + 'px', top: SAFE.t + 'px', width: SAFE.r - SAFE.l + 'px', height: SAFE.b - SAFE.t + 'px' });
   const overlay = $('#overlay');
@@ -283,15 +354,21 @@ async function main() {
   const POOLS = (theme.pools || []).map(p => ({ r: p.r, x: wave(p.x), y: wave(p.y), e: el('div', 'pool', $('#bg')), c: p.color }));
   for (const p of POOLS) { p.e.style.width = p.e.style.height = 2 * p.r + 'px'; p.e.style.background = `radial-gradient(closest-side, ${p.c}, rgba(255,255,255,0))`; }
 
+  for (const P of PANELS) {
+    P.e = el('div', `pnl ${P.frame}${P.shadow ? '' : ' flat'}`, panelsEl); P.e.dataset.id = P.id;
+    P.pin = el('div', 'pin', P.e);
+    if (P.frame === 'phone') P.island = el('div', 'island', P.e);
+  }
   const imgCache = {};
   for (const L of LAYERS) {
     L.els = [];
-    for (const b of L.band === 'all' ? [0, 1, 2] : [L.band]) {
+    for (const b of L.P ? ['p'] : L.band === 'all' ? [0, 1, 2] : [L.band]) {
+      const parent = L.P ? L.P.pin : BANDS[b];
       let e;
-      if (L.kind === 'sheen') e = el('div', 'sheen', BANDS[b]);
-      else if (L.kind === 'fill') { e = el('div', null, BANDS[b]); e.style.background = L.fill; }
-      else if (L.kind === 'video') { e = el('img', null, BANDS[b]); e.decoding = 'sync'; }
-      else { e = el('img', null, BANDS[b]); e.src = L.src; e.decoding = 'sync'; imgCache[L.src] = imgCache[L.src] || e; }
+      if (L.kind === 'sheen') e = el('div', 'sheen', parent);
+      else if (L.kind === 'fill') { e = el('div', null, parent); e.style.background = L.fill; }
+      else if (L.kind === 'video') { e = el('img', null, parent); e.decoding = 'sync'; }
+      else { e = el('img', null, parent); e.src = L.src; e.decoding = 'sync'; imgCache[L.src] = imgCache[L.src] || e; }
       if (L.blend) e.style.mixBlendMode = L.blend;
       L.els.push({ b, e });
     }
@@ -307,6 +384,25 @@ async function main() {
     overlay.appendChild(a.head);
   }
 
+  // marquees and masks sit under the texts, so they are built first
+  for (const m of MARQS) {
+    m.e = el('div', 'marq', hud); m.track = el('div', 'mtrack', m.e);
+    Object.assign(m.e.style, { left: -0.25 * W + 'px', width: 1.5 * W + 'px', top: m.y - m.h / 2 + 'px', height: m.h + 'px' });
+    if (m.fill) m.e.style.background = m.fill;
+    if (m.ink) m.e.style.color = m.ink;
+    m.track.style.fontSize = (m.size || Math.round(m.h * 0.5)) + 'px';
+    el('span', null, m.track).textContent = m.text; el('span', 'sep', m.track).textContent = m.sep;
+  }
+  for (const m of MASKS) {
+    m.e = el('div', 'mask ' + m.cls, hud); m.in = el('span', 'mki', m.e);
+    m.e.style.left = m.x + 'px'; m.e.style.top = m.y + 'px'; m.e.style.fontSize = m.size + 'px';
+    if (ENTER === 'rise') m.e.style.clipPath = 'inset(-0.4em -0.5em -0.3em -0.5em)';
+    if (ENTER === 'type') m.chars = [...m.text].map(ch => { const c = el('span', null, m.in); c.textContent = ch; return c; });
+    else m.in.textContent = m.text;
+    if (m.fill) { m.in.style.background = m.fill; m.in.style.webkitBackgroundClip = m.in.style.backgroundClip = 'text'; }
+    else if (m.src) { m.img = imgCache[m.src] || (imgCache[m.src] = Object.assign(new Image(), { src: m.src })); m.in.style.backgroundImage = `url("${m.src}")`; }
+    else m.img = new Image();   // footage: decodes each new frame before it is shown
+  }
   for (const o of TEXTS) {
     o.e = el('div', 'tb ' + o.cls, hud);
     o.e.style.left = o.x - o.w / 2 + 'px'; o.e.style.top = o.y + 'px'; o.e.style.width = o.w + 'px'; o.e.style.textAlign = o.align;
@@ -336,6 +432,47 @@ async function main() {
     if (c.side === 'left') c.e.style.left = c.x + 'px'; else c.e.style.right = W - c.x + 'px';
   }
   for (const l of LABELS) { l.e = el('div', 'label sans', hud); l.e.textContent = l.text; }
+  const svgEl = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent.appendChild(e); return e; };
+  if (CALLS.length) {
+    const svg = svgEl('svg', { id: 'calls', width: W, height: H, viewBox: `0 0 ${W} ${H}` }, hud);
+    for (const k of CALLS) {
+      const [x0, y0] = k.point, [lx, ly] = k.label;
+      k.line = svgEl('line', { x1: x0, y1: y0, x2: lx, y2: ly, pathLength: 1, 'stroke-dasharray': '1 1', class: 'cl-line' }, svg);
+      k.dot = svgEl('circle', { cx: x0, cy: y0, r: 12, class: 'cl-dot' }, svg);
+    }
+  }
+  // callout labels: the near edge sits on the line's end, vertically centred on it
+  for (const k of CALLS) {
+    k.e = el('div', 'callout', hud); k.e.textContent = k.text;
+    k.e.style.top = k.label[1] - 36 + 'px';
+    if (k.side === 'right') k.e.style.left = k.label[0] + 'px'; else k.e.style.right = W - k.label[0] + 'px';
+  }
+  const MARK_D = { true: 'M5 12.5 10 17.5 19.5 7', false: 'M7 7 17 17 M17 7 7 17' };
+  for (const k of CHECKS) {
+    const rowH = Math.round(k.size * 2.1), gap = Math.round(k.size * 0.34), pad = Math.round(k.size * 0.7);
+    k.mw = Math.round(k.size * 2.4);
+    const box = (e, top, h) => Object.assign(e.style, { left: k.x - k.w / 2 + 'px', top: top + 'px', width: k.w + 'px', height: h + 'px',
+      paddingLeft: pad + 'px', paddingRight: Math.round(pad * 0.4) + 'px' });
+    let y = k.y;
+    if (k.head) {
+      const hh = Math.round(k.size * 1.2);
+      k.he = el('div', 'ck-head', hud); box(k.he, y, hh); k.he.style.fontSize = Math.round(k.size * 0.6) + 'px';
+      el('span', 'ck-t', k.he);
+      k.hcells = k.head.map(name => { const s = el('span', 'ck-m', k.he); s.textContent = name; s.style.width = k.mw + 'px'; return s; });
+      y += hh + gap;
+    }
+    for (const r of k.rows) {
+      r.e = el('div', 'ck-row', hud); box(r.e, y, rowH);
+      r.e.style.fontSize = k.size + 'px'; r.e.style.borderRadius = rowH / 2 * UI_ROUND + 'px';
+      r.t = el('span', 'ck-t', r.e); r.t.textContent = r.text;
+      r.cells = []; r.paths = r.marks.map(m => {
+        const cell = el('span', 'ck-m', r.e); cell.style.width = k.mw + 'px'; r.cells.push(cell);
+        const svg = svgEl('svg', { viewBox: '0 0 24 24', width: Math.round(k.size * 1.15), height: Math.round(k.size * 1.15) }, cell);
+        return svgEl('path', { d: MARK_D[m], pathLength: 1, 'stroke-dasharray': '1 1', class: m ? 'ck-yes' : 'ck-no' }, svg);
+      });
+      y += rowH + gap;
+    }
+  }
   // Odometer cells are 1.4× the font size and use lining figures: glyphs overflow their em box (old-style
   // figures in Georgia/Cormorant descend), and with 1-em cells the neighbouring digit's tail showed inside the
   // window, even at rest. The block is shifted up by the padding so the digits sit where `y` puts them.
@@ -378,6 +515,23 @@ async function main() {
       c.e.style.display = 'none';
     }
   }
+  // after the fonts: comparison columns widen to their headers, row text shrinks to its row, mask boxes are
+  // measured, marquee text repeats to cover the band
+  function fitLayouts() {
+    for (const k of CHECKS) {
+      if (k.hcells) {
+        const need = Math.ceil(Math.max(...k.hcells.map(s => s.scrollWidth)) + k.size * 0.5);
+        if (need > k.mw) for (const c of [...k.hcells, ...k.rows.flatMap(r => r.cells)]) c.style.width = need + 'px';
+      }
+      for (const r of k.rows) { let s = k.size; while (s > k.size * 0.6 && r.t.scrollWidth > r.t.clientWidth + 0.5) { s *= 0.95; r.t.style.fontSize = s + 'px'; } }
+    }
+    for (const m of MASKS) { m.bw = m.in.offsetWidth; m.bh = m.in.offsetHeight; }
+    for (const m of MARQS) {
+      const unit = [...m.track.children];
+      m.seg = unit.reduce((a, e) => a + e.getBoundingClientRect().width, 0);
+      for (let n = Math.ceil(1.5 * W / m.seg) + 1; n > 0; n--) for (const e of unit) m.track.appendChild(e.cloneNode(true));
+    }
+  }
   let cta = null, ctaText = null;
   if (CTA) { cta = el('div', 'sans', hud); cta.id = 'cta'; ctaText = el('span', null, cta); ctaText.textContent = CTA.text; }
   for (const h of HOLDS) if (h.wiper) h.e = el('div', 'wiper', hud);
@@ -406,12 +560,11 @@ async function main() {
     const s = Math.max(R.w / iw, R.h / ih) * z, w = iw * s, h = ih * s;
     return { x: clamp(R.x + R.w / 2 - fx * w, R.x + R.w - w, R.x), y: clamp(R.y + R.h / 2 - fy * h, R.y + R.h - h, R.y), w, h };
   }
-  function layerRect(L, t, Sh, B) {
+  function layerRect(L, t, R) {
     if (L.mode === 'world') {
       const z = L.zoom(t), sh = L.shift ? L.shift(t) : { dx: 0, dy: 0 }, r = L.rect;
       return { x: L.ax + (r.x - L.ax) * z + sh.dx, y: L.ay + (r.y - L.ay) * z + sh.dy, w: r.w * z, h: r.h * z };
     }
-    const R = L.band === 'all' ? Sh : B;
     if (L.kind === 'fill') return { x: R.x, y: R.y, w: R.w, h: R.h };
     const img = L.kind === 'video' ? null : imgCache[L.src];
     return coverRect(R, L.man ? L.man.width : img.naturalWidth, L.man ? L.man.height : img.naturalHeight, L.fx, L.fy, L.zoom(t));
@@ -453,6 +606,27 @@ async function main() {
   const layerVis = (L, t, tout) => (L.cut
     ? { o: t >= frameEdge(L.tin) && (tout == null || t < frameEdge(tout)) ? 1 : 0, b: 0, e: 1, x: 0 }
     : vis(t, L.tin, tout, L.dOut));
+  // panel entry/exit: opacity o and scale sc
+  function panelVis(P, t) {
+    let o = 1, sc = 1;
+    if (P.from === 'fade') o = stepR(t - P.tin, { w: 14, z: 1 });
+    else if (P.from === 'scale') { sc = stepR(t - P.tin, POP); o = clamp((t - P.tin) / 0.06); }
+    else if (t < frameEdge(P.tin)) o = 0;
+    if (P.tout != null) {
+      const u = t - P.tout;
+      if (P.into === 'cut') { if (t >= frameEdge(P.tout)) o = 0; }
+      else if (u > 0 && P.into === 'fade') o *= 1 - clamp(u / 0.2) ** 2;
+      else if (u > 0 && P.into === 'scale') sc *= 1 - stepR(u, { w: 20, z: 1 });
+      else if (u > 0 && P.into === 'shape') o *= 1 - clamp((u - 0.35) / 0.15);   // lands on the shape, then hands over
+    }
+    return { o, sc };
+  }
+  // the picture area inside a panel's frame: polaroid paper, phone bezel, or none
+  function framePad(frame, w, h, r) {
+    if (frame === 'polaroid') { const s = w * 0.055; return { l: s, t: s, r: s, b: Math.min(w * 0.2, h * 0.3), ri: Math.min(r * 0.4, s) }; }
+    if (frame === 'phone') { const s = w * 0.035; return { l: s, t: s, r: s, b: s, ri: Math.max(0, r - s) }; }
+    return { l: 0, t: 0, r: 0, b: 0, ri: r };
+  }
 
   function seek(t) {
     pending = [];
@@ -466,6 +640,10 @@ async function main() {
     const seam = g < 0.6 ? 1 : 0;   // merged bands overlap by 1 px so no hairline shows
     bandsEl.style.left = px(Sh.x); bandsEl.style.top = px(Sh.y); bandsEl.style.width = px(Sh.w); bandsEl.style.height = px(Sh.h);
     bandsEl.style.clipPath = `inset(0px round ${px(R)})`;
+    // shape opacity: 0 hides it (panels or type alone carry the frame)
+    const so = clamp(TR.o.at(t)), sop = so < 0.999 ? so.toFixed(3) : '';
+    show(bandsEl, so > 0.003); show(shadowsEl, so > 0.003);
+    if (bandsEl.style.opacity !== sop) { bandsEl.style.opacity = sop; shadowsEl.style.opacity = sop; }
     const full = Sh.w >= W - 10;
     show(SHAPE_SH, !full && split < 1);
     Object.assign(SHAPE_SH.style, { left: px(Sh.x), top: px(Sh.y), width: px(Sh.w), height: px(Sh.h), borderRadius: px(R), opacity: (1 - split).toFixed(3) });
@@ -490,19 +668,38 @@ async function main() {
       }
     });
 
+    for (const P of PANELS) {
+      const pv = panelVis(P, t);
+      const w = Math.max(1, P.tr.w.at(t)), h = Math.max(1, P.tr.h.at(t)), x = P.tr.x.at(t), y = P.tr.y.at(t);
+      const s = toScreen(x, y, c), reach = Math.hypot(w, h) / 2 * c.z;
+      P.on = pv.o > 0.003 && pv.sc > 0.003 && s.x + reach > 0 && s.x - reach < W && s.y + reach > 0 && s.y - reach < H;
+      show(P.e, P.on); if (!P.on) continue;
+      const r = clamp(P.tr.r.at(t) * (P.frame === 'phone' ? 1 : PANEL_ROUND), 0, Math.min(w, h) / 2), rot = P.tr.rot.at(t);
+      let sc = pv.sc; for (const p of POPS) if (p.panel === P.id) sc += 0.045 * punch(t - p.t);
+      Object.assign(P.e.style, { left: px(x - w / 2), top: px(y - h / 2), width: px(w), height: px(h), borderRadius: px(r),
+        opacity: pv.o < 0.999 ? pv.o.toFixed(3) : '',
+        transform: (Math.abs(rot) > 0.01 ? `rotate(${rot.toFixed(3)}deg)` : '') + (Math.abs(sc - 1) > 1e-4 ? ` scale(${sc.toFixed(4)})` : '') });
+      const f = framePad(P.frame, w, h, r);
+      P.inner = { x: 0, y: 0, w: w - f.l - f.r, h: h - f.t - f.b };
+      Object.assign(P.pin.style, { left: px(f.l), top: px(f.t), width: px(P.inner.w), height: px(P.inner.h), borderRadius: px(f.ri) });
+      if (P.island) Object.assign(P.island.style, { left: px(w * 0.35), top: px(f.t + w * 0.03), width: px(w * 0.3), height: px(w * 0.085) });
+    }
+
     for (const L of LAYERS) {
       const v0 = L.toutBand ? null : layerVis(L, t, L.tout);
       for (const { b, e } of L.els) {
         const v = v0 || layerVis(L, t, L.toutBand[b]);
-        const B = Bs[b], on = v.o > 0.003 && B.h > 0.5;
+        // a panel layer draws in the panel's picture box (local coordinates), a band layer in its band
+        const B = L.P ? L.P.inner : Bs[b], Sx = L.P ? B : Sh;
+        const on = v.o > 0.003 && (L.P ? L.P.on : B.h > 0.5);
         show(e, on); if (!on) continue;
         if (L.kind === 'sheen') {
           const p = smooth((t - L.t0) / (L.t1 - L.t0));
-          e.style.left = px(Sh.x - B.x + lerp(-1.1, 1.1, p) * Sh.w); e.style.top = px(Sh.y - B.y);
-          e.style.width = px(Sh.w); e.style.height = px(Sh.h); e.style.opacity = v.o.toFixed(3);
+          e.style.left = px(Sx.x - B.x + lerp(-1.1, 1.1, p) * Sx.w); e.style.top = px(Sx.y - B.y);
+          e.style.width = px(Sx.w); e.style.height = px(Sx.h); e.style.opacity = v.o.toFixed(3);
           continue;
         }
-        const r = layerRect(L, t, Sh, B);
+        const r = layerRect(L, t, L.band === 'all' || L.P ? Sx : B);
         if (L.kind === 'video') setFrame(L, e, t);
         e.style.left = px(r.x - B.x); e.style.top = px(r.y - B.y); e.style.width = px(r.w); e.style.height = px(r.h);
         e.style.opacity = v.o.toFixed(3);
@@ -559,6 +756,42 @@ async function main() {
       show(o.e, any);
     }
 
+    for (const m of MASKS) {
+      const v = hudVis(t, m.tin, m.tout, m.dOut); show(m.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      const sc = ENTER === 'pop' ? 0.5 + 0.5 * stepR(t - m.tin, POP) : 1;
+      m.e.style.opacity = v.o.toFixed(3);
+      m.e.style.transform = `translateX(-50%)${sc !== 1 ? ` scale(${sc.toFixed(4)})` : ''}`;
+      m.in.style.filter = blurOf(v);
+      if (ENTER === 'rise') m.in.style.transform = `translateY(${((1 - v.e) * 1.4).toFixed(4)}em)`;
+      else if (ENTER === 'blur') m.in.style.transform = `translateY(${px((1 - v.e) * 20 - v.x * 12)})`;
+      else if (ENTER === 'wipe') m.e.style.clipPath = revealClip(v.e, false, 60);
+      else if (ENTER === 'type') {
+        const n = Math.floor((t - m.tin) / Math.min(0.06, 0.6 / m.chars.length)) + 1;
+        m.chars.forEach((ch, k) => { const vv = k < n ? '' : 'hidden'; if (ch.style.visibility !== vv) ch.style.visibility = vv; });
+      }
+      // the picture covers the letters' box, with its own slow zoom
+      let iw = 0, ih = 0;
+      if (m.man) {
+        const u = frameURL(m, t);
+        if (m._u !== u) { m._u = u; m.img.src = u; pending.push(m.img.decode()); m.in.style.backgroundImage = `url("${u}")`; }
+        iw = m.man.width; ih = m.man.height;
+      } else if (m.src) { iw = m.img.naturalWidth; ih = m.img.naturalHeight; }
+      if (iw) {
+        const r = coverRect({ x: 0, y: 0, w: m.bw, h: m.bh }, iw, ih, m.fx, m.fy, m.zoomF(t));
+        m.in.style.backgroundSize = `${px(r.w)} ${px(r.h)}`; m.in.style.backgroundPosition = `${px(r.x)} ${px(r.y)}`;
+      }
+    }
+
+    // marquee: the band reveals from the side its text comes from; the text runs at a constant speed
+    for (const m of MARQS) {
+      const v = hudVis(t, m.tin, m.tout, 0.16); show(m.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      const off = (m.speed * Math.max(0, t - m.tin)) % m.seg;
+      m.e.style.opacity = v.o.toFixed(3);
+      m.e.style.transform = m.rot ? `rotate(${m.rot}deg)` : '';
+      m.e.style.clipPath = ENTER === 'cut' ? '' : revealClip(stepR(t - m.tin, { w: 12, z: 1 }), m.dir === 'left', 0);
+      m.track.style.transform = `translateX(${px(m.dir === 'left' ? -off : off - m.seg)})`;
+    }
+
     for (const ch of CHIPS) {
       const v = hudVis(t, ch.tin, ch.tout, 0.14, 20); show(ch.e, v.o > 0.003); if (v.o <= 0.003) continue;
       const dir = ch.side === 'left' ? -1 : 1;
@@ -579,6 +812,41 @@ async function main() {
       if (l.side === 'left') { l.e.style.left = px(Math.max(SAFE.l + 16, a.x + 28)); l.e.style.right = ''; }
       else { l.e.style.right = px(Math.max(W - SAFE.r + 20, W - b.x + 28)); l.e.style.left = ''; }
       l.e.style.opacity = v.o.toFixed(3); l.e.style.filter = blurOf(v);
+    }
+
+    // callouts: the dot lands, the line draws out to the label, then the label enters
+    for (const k of CALLS) {
+      const v = hudVis(t, k.tin, k.tout, 0.16), on = v.o > 0.003;
+      show(k.line, on); show(k.dot, on);
+      const lv = hudVis(t, k.tin + (ENTER === 'cut' ? 0 : 0.3), k.tout, 0.16);
+      show(k.e, lv.o > 0.003);
+      if (!on) continue;
+      const fade = (1 - v.x).toFixed(3);
+      k.dot.setAttribute('r', (12 * (ENTER === 'cut' ? 1 : stepR(t - k.tin, POP))).toFixed(2)); k.dot.style.opacity = fade;
+      k.line.setAttribute('stroke-dashoffset', (ENTER === 'cut' ? 0 : 1 - smooth((t - k.tin - 0.06) / 0.3)).toFixed(4)); k.line.style.opacity = fade;
+      if (lv.o <= 0.003) continue;
+      const dir = k.side === 'right' ? -1 : 1;
+      k.e.style.opacity = lv.o.toFixed(3); k.e.style.filter = blurOf(lv);
+      if (ENTER === 'blur') k.e.style.transform = `translateX(${px(dir * (1 - lv.e) * 40)})`;
+      else if (ENTER === 'pop') k.e.style.transform = `scale(${(0.6 + 0.4 * stepR(t - k.tin - 0.3, POP)).toFixed(4)})`;
+      else if (ENTER === 'rise') k.e.style.transform = `translateY(${px((1 - lv.e) * 30)})`;
+      else if (ENTER === 'wipe' || ENTER === 'type') k.e.style.clipPath = revealClip(lv.e, k.side === 'left', 80);
+    }
+
+    // check lists: each row lands on its word or beat, then its marks draw
+    for (const k of CHECKS) {
+      if (k.he) { const v = hudVis(t, k.tin, k.tout, 0.14); show(k.he, v.o > 0.003); k.he.style.opacity = v.o.toFixed(3); k.he.style.filter = blurOf(v); }
+      for (const r of k.rows) {
+        const v = hudVis(t, r.at, k.tout, 0.14, 20); show(r.e, v.o > 0.003); if (v.o <= 0.003) continue;
+        r.e.style.opacity = v.o.toFixed(3); r.e.style.filter = blurOf(v);
+        // rows can span the safe width: no overshoot past their box (critically damped slide, pop capped at 1)
+        if (ENTER === 'blur') r.e.style.transform = `translateX(${px(-(1 - stepR(t - r.at, { w: 18, z: 1 })) * 60)})`;
+        else if (ENTER === 'pop') r.e.style.transform = `scale(${Math.min(1, 0.6 + 0.4 * stepR(t - r.at, POP)).toFixed(4)})`;
+        else if (ENTER === 'rise') r.e.style.transform = `translateY(${px((1 - v.e) * 30)})`;
+        else if (ENTER === 'wipe' || ENTER === 'type') r.e.style.clipPath = revealClip(v.e, false, 40);
+        const p = ENTER === 'cut' ? (t >= r.at + 0.12 ? 1 : 0) : smooth((t - r.at - 0.12) / 0.25);
+        for (const path of r.paths) path.setAttribute('stroke-dashoffset', (1 - p).toFixed(4));
+      }
     }
 
     for (const o of ODOS) {
@@ -671,6 +939,7 @@ async function main() {
   await Promise.all(faces.map(f => f.load()));
   await Promise.all([...theme.fonts.map(f => document.fonts.load(f)), ...Object.values(imgCache).map(i => i.decode())]);
   fitCaptions();
+  fitLayouts();
   await seek(0);
   window.READY = true;
 }

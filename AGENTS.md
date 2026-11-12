@@ -13,14 +13,15 @@ An agent skill for producing 9:16 product ads from a declarative `scenes.json`, 
 
 ## Key Directories
 
-- `engine/`: browser rendering and layout.
+- `engine/`: browser rendering and layout. Layout pieces (panels, masks, callouts, check lists, marquees) live beside the shape: panels in `#world` (camera applies), the rest in `#hud`; `scripts/qa_safe.mjs` must know each new HUD class to gate it.
 - `looks/`: look presets (`<name>.json`: theme + caption defaults) and their OFL fonts; served to the engine at `/looks/` by `scripts/lib/stage.mjs`. A new look variable needs a fallback at its `var()` use in `engine/index.html`, so films without it render unchanged.
 - `scripts/`: shell orchestration, Node/Playwright rendering and validation, Python audio processing; shared helpers in `scripts/lib/`.
 - `schemas/`: scene JSON schema.
-- `references/`: scene format, direction, looks, timing, safe zones and render/QA details.
+- `references/`: scene format, direction, looks, layouts, timing, safe zones and render/QA details.
 - `examples/minimal/`: asset-free example project.
 - `examples/product-broll/`: hybrid example (b-roll + VO + motion); the footage is not included, its README lists the shots.
 - `examples/look-sampler/`: asset-free film whose fills use only look tones; render it per look to check a look change.
+- `examples/layout-sampler/`: every layout piece in one film (SVG assets included); render it per look to check a layout or look change.
 
 ## Development Commands
 

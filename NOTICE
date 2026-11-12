@@ -50,6 +50,10 @@ footnote are invented. The voice comes from Microsoft's Edge read-aloud service 
 whose terms for reuse are unclear; the music is the skill's own local synth; the type is the OFL
 fonts listed below.
 
+media/layouts.mp4 and .gif: the layout-sampler example rendered in each look. The product, price and
+claims are invented; its two pictures (a serum bottle and a shop page) are SVG drawings made for the
+example. Voice, music and type as for media/looks.*.
+
 Font in examples/product-broll/
 -------------------------------
 assets/fonts/nunito-800.woff2 is Nunito (Copyright 2014 The Nunito Project Authors), under the SIL

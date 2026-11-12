@@ -1,6 +1,6 @@
 ---
 name: ad-concept
-description: Use when asked for an ad concept, hooks, creative angle, ad script, storyboard or creative brief for a vertical product ad (TikTok, Instagram Reels, YouTube Shorts, TikTok Shop, e-commerce or beauty/skincare promo), or when a product ad has no approved concept yet. Reads the brief and assets, researches the product, proposes 3 hooks, picks a style and a visual look, writes the script and a beat sheet into concept.md, then hands off to the vertical-product-ads skill.
+description: Use when asked for an ad concept, hooks, creative angle, ad script, storyboard or creative brief for a vertical product ad (TikTok, Instagram Reels, YouTube Shorts, TikTok Shop, e-commerce or beauty/skincare promo), or when a product ad has no approved concept yet. Reads the brief and assets, researches the product, proposes 3 hooks, picks a style, a visual look and the layouts per beat (split screen, grid, picture-in-picture, callouts, comparison list, phone…), writes the script and a beat sheet into concept.md, then hands off to the vertical-product-ads skill.
 ---
 
 # Ad concept
@@ -53,6 +53,9 @@ and refuses to start without it.
      `references/hooks-and-angles.md`.
    - **Beat sheet:** a table; every visual is a recipe from `references/scene-menu.md`. Do not
      invent visuals the engine cannot make.
+   - **Layouts:** vary the frame. A 15–30 s film uses 2–4 layout recipes from the menu (split screen,
+     grid, callouts, comparison list, phone…), one per beat, favouring the ones the look reads best
+     with (`references/looks.md`). Name them in the beat sheet's recipe column.
    - **Claims table:** each claim, its source, its on-screen footnote. No source, no claim.
    - **Audio plan:** voice (ElevenLabs, or edge-tts free), music (ElevenLabs prompt, local synth
      bed, or a licensed file you were given), licence notes.

@@ -8,9 +8,11 @@ The brand's own palette and type come first; never copy a template or a competit
    - resize and re-round it: card ↔ circle;
    - split it into three bands (`gap`, `rin`) and merge them back;
    - let one band swallow the others (`b0`/`b1` → 0.0001);
-   - open it full bleed (`"set": "full"`).
+   - open it full bleed (`"set": "full"`);
+   - hand over to panels that grow out of it (split screen, grid, collage) and merge back into it,
+     or hide it (`o: 0`) for a phone, a check list or type alone (`layouts.md`).
 
-   Transitions are morphs, never hard cuts.
+   Transitions are morphs, never hard cuts. New frames come out of the shape or in from an edge.
 2. **Content swaps with a short blur.** Layers and words enter on a spring with blur and exit
    short and early (`tout` sits a few frames before the next scene's `tin`), so old and new never
    overlap.
@@ -40,6 +42,11 @@ The brand's own palette and type come first; never copy a template or a competit
 | Choice | Bands slam in on 8ths; the touch taps the favourite, which swallows the others | `b0`/`b1` on `trail`/`lead` |
 | End card | Hero packshot, brand slam, CTA pill grows from the centre (edges on different springs) and is pressed on the call to action | `cta` |
 | Full-bleed end card with a square packshot | `cover` would crop a square photo to ~56 % of its width on a 9:16 frame. Instead: shape `"set": "full"`, a `fill` layer for the background, and the packshot as a `world` layer with `blend: multiply`, `place.size` ≈ 850 and `place.at` centring the product | `fill` + `world` layer |
+| Before/after, side by side | The card splits into two panels on "the difference"; labels above them; they merge back for the reveal | `panels` (`from`/`into: "shape"`), shape `o` |
+| Ingredients on the product | Card slides left; callouts draw from the product to labels on the right, one per ingredient word | `callouts` |
+| Benefits vs. the usual | Circle above, a comparison list whose rows land on their words | `checks` with `head` |
+| Promo | Grid of four polaroids out of the shape, a tilted marquee across them, a nudge into a collage on the next word | `panels` (`frame: "polaroid"`, `moves`), `marquees`, panel `pops` |
+| Shop CTA | A phone with the shop page rises from the bottom; the CTA sits under it | `panels` (`frame: "phone"`), `cta` |
 
 ## Sound design
 - **SFX are synthesized and placed by their own peak** (`audio.py`). Each one punctuates a
@@ -67,6 +74,8 @@ The brand's own palette and type come first; never copy a template or a competit
   small x-height (e.g. Cormorant) read small at `h1`; use `h0` for headlines or pick a sturdier face.
 - **Write fills with theme colours** (`var(--tone-1)` … `var(--tone-3)`, `var(--band)`) so the
   scenes stay right when the look or the brand colours change.
+- **Pick layouts the look reads best with** (`layouts.md`, "Per look"); the look styles panels,
+  callouts, check lists, marquees and masks on its own.
 - **Product photos on white:** use `"blend": "multiply"` so they sit on the shape. Measure the
   corner first (step 1); if it already reads 255, 255, 255 skip the rest. A background that isn't
   pure white shows as a grey box, so normalise it to 255:

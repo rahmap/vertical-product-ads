@@ -84,6 +84,48 @@
   #safe { pointer-events: none; display: none; }
   #safe.on { display: block; }
   #safe div { position: absolute; border: 2px dashed rgba(0, 160, 255, 0.9); }
+  /* layout pieces. Look variables: --panel-round (corner × 0–1), --panel-shadow, --panel-border, --panel-paper (polaroid),
+     --device-ink (phone bezel), --callout-line, --callout-width, --callout-dot, --marquee-bg, --marquee-ink, --marquee-font,
+     --marquee-weight, --check-yes, --check-no, --mask-shadow, --mask-stroke */
+  #panels { position: absolute; left: 0; top: 0; }
+  .pnl { position: absolute; transform-origin: 50% 50%;
+         box-shadow: var(--panel-shadow, 0 34px 80px rgba(var(--shadow-rgb), 0.22), 0 10px 24px rgba(var(--shadow-rgb), 0.12)); }
+  .pnl.flat { box-shadow: none; }
+  .pnl.polaroid { background: var(--panel-paper, #FFFFFF); }
+  .pnl.phone { background: var(--device-ink, #0E0E10); }
+  .pin { position: absolute; overflow: hidden; isolation: isolate; background: var(--band); }
+  .pin > * { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; }
+  .pin img { display: block; }
+  .pin::after { content: ''; position: absolute; inset: 0; z-index: 5; border-radius: inherit; border: var(--panel-border, none); pointer-events: none; }
+  .pnl.phone .pin::after { border: none; }
+  .pnl .island { position: absolute; border-radius: 999px; background: #000; }
+  .mask { position: absolute; white-space: pre; line-height: 0.92; filter: var(--mask-shadow, none); }
+  .mask .mki { display: inline-block; color: transparent; -webkit-background-clip: text; background-clip: text; background-repeat: no-repeat;
+               -webkit-text-stroke: var(--mask-stroke, 0px transparent); text-transform: var(--head-case, none);
+               letter-spacing: calc(-0.02em + var(--head-tracking, 0em)); }
+  #calls { position: absolute; left: 0; top: 0; overflow: visible; }
+  .cl-line { stroke: var(--callout-line, var(--accent)); stroke-width: var(--callout-width, 4px); stroke-linecap: round; fill: none; }
+  .cl-dot { fill: var(--callout-dot, var(--accent)); stroke: #FFFFFF; stroke-width: 5; }
+  .callout { position: absolute; height: 72px; padding: 0 30px; display: flex; align-items: center; box-sizing: border-box; white-space: nowrap;
+             background: var(--surface); color: var(--ui-ink, var(--ink)); border: var(--ui-border, none); border-radius: calc(36px * var(--ui-round, 1));
+             box-shadow: var(--chip-shadow, 0 18px 40px rgba(var(--shadow-rgb), 0.16)); font-size: 34px; font-family: var(--ui-font, var(--sans));
+             font-weight: var(--ui-weight, 600); text-transform: var(--ui-case, none); letter-spacing: var(--ui-tracking, normal); }
+  .marq { position: absolute; overflow: hidden; display: flex; align-items: center; transform-origin: 50% 50%;
+          background: var(--marquee-bg, var(--accent)); color: var(--marquee-ink, var(--cta-ink, #FFFFFF)); }
+  .mtrack { display: flex; white-space: nowrap; font-family: var(--marquee-font, var(--ui-font, var(--sans))); font-weight: var(--marquee-weight, 800);
+            text-transform: uppercase; letter-spacing: 0.04em; line-height: 1; }
+  .mtrack span { padding: 0 0.45em; }
+  .ck-row, .ck-head { position: absolute; display: flex; align-items: center; box-sizing: border-box; font-family: var(--ui-font, var(--sans)); }
+  .ck-row { background: var(--surface); color: var(--ui-ink, var(--ink)); border: var(--ui-border, none);
+            box-shadow: var(--chip-shadow, 0 18px 40px rgba(var(--shadow-rgb), 0.16)); font-weight: var(--ui-weight, 600);
+            text-transform: var(--ui-case, none); letter-spacing: var(--ui-tracking, normal); }
+  .ck-head { color: var(--ink); font-weight: var(--caps-weight, 600); letter-spacing: var(--caps-tracking, 0.2em); text-transform: uppercase;
+             text-shadow: var(--text-shadow, none); }
+  .ck-t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .ck-m { flex: none; display: grid; place-items: center; text-align: center; white-space: nowrap; }
+  .ck-yes, .ck-no { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .ck-yes { stroke: var(--check-yes, var(--accent)); }
+  .ck-no { stroke: var(--check-no, var(--muted)); }
 </style>
 </head>
 <body>
@@ -92,6 +134,7 @@
   <div id="world">
     <div id="shadows"></div>
     <div id="bands"></div>
+    <div id="panels"></div>
     <svg id="overlay"></svg>
   </div>
   <div id="hud"></div>

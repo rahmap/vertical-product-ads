@@ -1,7 +1,8 @@
 # Looks
 
-A **look** is a ready-made visual direction: fonts, palette, chip/CTA shape, caption style and how
-text enters. Set it with one line in `scenes.json`:
+A **look** is a ready-made visual direction: fonts, palette, chip/CTA shape, caption style, how
+text enters, and how the layout pieces look (panels, callouts, check lists, marquees, masks;
+`layouts.md`). Set it with one line in `scenes.json`:
 
 ```json
 "look": "bold-streetwear"
@@ -55,7 +56,12 @@ The brand comes first. Keep the look and override in `theme`:
   write in `captions` override the look's caption defaults (`style`, `case`, `size`).
 - A brand font: self-host it in the project (`theme.fontFaces`) and name it in `--serif` or `--sans`.
 - After changing colours, check contrast: ink on `--base` ≥ 4.5:1, `--cta-ink` on `--accent` ≥ 4.5:1
-  (≥ 3:1 is the floor at the CTA's 40 px), caption ink on `--caption-bg` ≥ 4.5:1.
+  (≥ 3:1 is the floor at the CTA's 40 px), caption ink on `--caption-bg` ≥ 4.5:1. `validate.mjs`
+  fails chip, label, CTA and marquee text under 3:1: a new `--accent` usually needs its `--cta-ink`
+  (the light looks use white, `bold-streetwear`, `tech-neon` and `ugc-native` dark ink).
+- **Switching a project to a look:** keep only the brand colours in `theme.css`. A full theme written
+  before (its `--surface`, `--ink`, `--band`…) fights the look; the contrast check catches the worst of
+  it (e.g. `tech-neon`'s light UI ink on an old white surface).
 
 ## Writing scenes that work in every look
 - **Fills use the theme, not hex codes.** Every look defines three tones of its palette, soft to
@@ -76,6 +82,9 @@ The brand comes first. Keep the look and override in `theme`:
   `"blend": "multiply"` darkens the whole photo against a dark band. Put a light `fill` layer
   (`var(--ink)` is near-white there) under the packshot inside its shape, or use a cut-out PNG
   with transparency and no blend.
+- **Layout pieces follow the look** (`layouts.md`, "Per look" lists the layouts each look reads best
+  with): `bold-streetwear` panels are square with a white border, `pop-playful` ones round with a hard
+  shadow, `ugc-native` ones white-bordered like stickers.
 
 ## Entrances (`theme.enter`)
 All are computed from `t` like everything else. The layout gate checks every frame, entrances
@@ -110,3 +119,4 @@ Besides the variables in `scenes-format.md`, a look (or your `theme.css`) can se
 | `--chip-shadow`, `--cta-shadow` | soft drop shadows | Their full `box-shadow` |
 | `--cta-ink` | `#fff` | CTA text colour |
 | `--caption-font`, `--caption-weight`, `--caption-radius`, `--caption-stroke` | `--sans`, `800`, `0.42em`, black 85 % | Captions |
+| `--panel-round` … `--mask-stroke` | per element | Panels, phone, callouts, check lists, marquees, masks (`layouts.md`) |

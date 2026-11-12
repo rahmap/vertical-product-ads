@@ -41,7 +41,19 @@
       "--caption-active": "#E2C79B",
       "--tone-1": "#EDE4D6",
       "--tone-2": "#C9B49A",
-      "--tone-3": "#7A5530"
+      "--tone-3": "#7A5530",
+      "--panel-round": "0.15",
+      "--panel-shadow": "0 24px 60px rgba(40, 30, 20, 0.14)",
+      "--panel-border": "1.5px solid rgba(22, 19, 15, 0.10)",
+      "--panel-paper": "#FFFDF9",
+      "--callout-line": "#16130F",
+      "--callout-width": "2px",
+      "--callout-dot": "#7A5530",
+      "--marquee-bg": "#16130F",
+      "--marquee-ink": "#F3EEE6",
+      "--marquee-weight": "500",
+      "--check-yes": "#7A5530",
+      "--check-no": "rgba(22, 19, 15, 0.4)"
     },
     "fontFaces": [
       {

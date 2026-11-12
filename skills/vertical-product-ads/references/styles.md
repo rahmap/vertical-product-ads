@@ -115,6 +115,25 @@ entry is a spring, so the first frames would show the card still opening.
 ### Music drop / Comparison / Claim number / Result / End card (hybrid)
 Same fields as in `direction.md`.
 
+### Picture-in-picture (ugc, hybrid)
+The creator keeps talking in a small panel while b-roll fills the frame. The panel's layer is the same
+dialogue segment, so lips stay in sync; give it a `tout` past the panel's exit, or it stops at the
+segment's end and the shrinking panel shows empty (`layouts.md`).
+```json
+"panels": [{ "id": "pip", "x": 745, "y": 560, "w": 330, "h": 440, "r": 32, "tin": 9.3, "tout": 12.6, "from": "scale", "into": "scale" }],
+"layers": [{ "id": "pipTalk", "kind": "video", "src": "talk", "dialogue": 2, "panel": "pip", "tout": 13.4, "fy": 0.3 }]
+```
+
+### Split screen of two clips (ugc, hybrid)
+Day 1 vs. day 7, with vs. without: two panels, each with a `video` layer (`clip` or `dialogue`). Hide the
+full-bleed shape with `{ "set": { "o": 0 }, "sp": "jump" }` on the first panel's `tin` and let that panel
+grow out of it (`from: "shape"`), so there is never an empty frame. Captions stay on top.
+
+### Footage collage and footage in letters (hybrid)
+Three `polaroid` panels, each a different moment of the b-roll (`clip.in`), popping on the words that
+list them; a `masks` entry with `footage` puts a clip inside the hook word. Masks need a calm
+background (a hidden shape or a flat fill), never other footage.
+
 ## Audio by style
 | Style | Speech | Music | Footage sound |
 |---|---|---|---|

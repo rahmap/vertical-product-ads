@@ -37,7 +37,22 @@
       "--caption-active": "#C2004F",
       "--tone-1": "#FFD1E0",
       "--tone-2": "#FFE14D",
-      "--tone-3": "#F2286E"
+      "--tone-3": "#F2286E",
+      "--panel-round": "0.9",
+      "--panel-shadow": "10px 10px 0 #1E1446",
+      "--panel-border": "4px solid #1E1446",
+      "--panel-paper": "#FFFFFF",
+      "--device-ink": "#1E1446",
+      "--callout-line": "#1E1446",
+      "--callout-width": "5px",
+      "--callout-dot": "#F2286E",
+      "--marquee-bg": "#FFE14D",
+      "--marquee-ink": "#1E1446",
+      "--marquee-font": "\"Bricolage Grotesque\", system-ui, sans-serif",
+      "--marquee-weight": "800",
+      "--check-yes": "#F2286E",
+      "--check-no": "rgba(30, 20, 70, 0.45)",
+      "--mask-stroke": "3px #1E1446"
     },
     "fontFaces": [
       {

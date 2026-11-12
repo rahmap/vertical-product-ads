@@ -1,5 +1,54 @@
 # Changelog
 
+## 0.5.0
+
+**Layouts**
+- **Panels:** extra rounded frames beside the shape, for split screens, grids, picture-in-picture,
+  collages, card stacks and editorial grids. A panel enters out of the shape's rect (`from:
+  "shape"`), from an edge, scaling up, fading or on a cut; springs through `moves` (`x y w h r rot`);
+  leaves the same ways, including `into: "shape"`. Layers join one with `"panel": "<id>"` (images,
+  fills, sheens, footage and dialogue clips); `pops` punch panels too.
+- **Frames:** `polaroid` (paper border) and `phone` (bezel and island; the content is the screen).
+- **Shape opacity:** new track `o` hides the shape while panels or type carry the frame.
+- **Masks:** big letters filled with an image, a gradient or a footage clip.
+- **Callouts:** a dot on the product, a line drawn out to a label.
+- **Check lists:** ✓/✗ rows that land on their words; with `head`, a comparison ("Glowa / Biasa").
+- **Marquees:** a band of repeating promo text, tilted if wanted.
+- Every piece follows the look (new variables `--panel-round`, `--panel-shadow`, `--panel-border`,
+  `--panel-paper`, `--device-ink`, `--callout-line`, `--callout-width`, `--callout-dot`,
+  `--marquee-*`, `--check-yes`, `--check-no`, `--mask-shadow`, `--mask-stroke`, set in all seven
+  non-classic looks) and the look's text entrance.
+- Films without layout pieces render as in 0.4.0 (Dior, ginger shampoo, flat shoes and the look
+  sampler in all eight looks: no pixel differs by more than the ±1 level two runs of 0.4.0 also show).
+
+**Gates**
+- `qa_safe.mjs` checks masks, callout labels and check rows for safe zone and overlap, a marquee for
+  its height, and fails a visible panel with no visible layer.
+- `validate.mjs` checks panel, pop and mask references, panel-layer restrictions and comparison
+  columns, and counts footage masks as footage for the style rules.
+- New contrast check: with the engine defaults, the look and `theme.css` merged, chip/callout/check
+  row, label, CTA and marquee text must reach 3:1 on its surface. It caught a full classic-era theme
+  kept under `tech-neon` (light ink on a white surface) and a brand accent with the look's dark CTA
+  ink (2.6:1).
+
+**Docs**
+- `references/layouts.md`: catalogue, rules, recipes, per-style and per-look use, sound, variables.
+  `direction.md`, `styles.md` (picture-in-picture, split of two clips, footage collage and masks),
+  `looks.md`, `scenes-format.md` and `render-and-qa.md` updated.
+- `ad-concept`: the scene menu gains twelve layout recipes, the concept uses 2–4 per film, and the
+  look guide lists the layouts each look reads best with.
+
+**Example and showcase**
+- `examples/layout-sampler/`: a 20 s ad that walks through kinetic type, a split screen, a text mask,
+  callouts, a comparison list, a grid that becomes a collage under a marquee, and a phone with the
+  shop page. Two SVG drawings ship with it; voice and music are free.
+- `media/layouts.mp4` and `.gif`: that film in all eight looks.
+
+**Measured** (M3 Pro, picture render, 30 fps with motion blur): the 20 s layout sampler takes
+19.8–45.5 s per look, 0.99–2.28 s per film second against 0.95–2.38 for the 17 s look sampler
+(−7 % to +9 % by look). Three extra footage streams on screen for a whole 20 s film cost +1.8 %;
+three extra images, nothing measurable.
+
 ## 0.4.0
 
 **Looks**
