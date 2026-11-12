@@ -313,7 +313,7 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, the contract `validate.mjs` enforces |
 | `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
 | `skills/vertical-product-ads/examples/product-broll/` | A 20 s hybrid ad (fictional shampoo): product b-roll you shoot, ElevenLabs voice, music and sound effects, ingredient card, split bands, end card |
-| `media/` | The showcase film (MP4 + GIF preview); not part of the installed skills |
+| `media/` | The showcase films (MP4 + GIF previews); not part of the installed skills |
 
 ---
 
@@ -322,5 +322,5 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 MIT, see `LICENSE`. Portions are derived from
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); see `NOTICE`.
 Product images, footage, voices and music you put into a film keep their own licences.
-The showcase film in `media/` is not under the MIT licence: footage by @shin.ugc, used with
-permission (see `NOTICE`).
+The showcase films in `media/` are not under the MIT licence: the Dior film is an unofficial spec ad
+with marks of their owner, and the shampoo footage is by @shin.ugc, used with permission (see `NOTICE`).

@@ -323,5 +323,5 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 MIT, lihat `LICENSE`. Sebagian diturunkan dari
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); lihat `NOTICE`.
 Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisensinya masing-masing.
-Film contoh di `media/` tidak berlisensi MIT: footage milik @shin.ugc, dipakai dengan izin (lihat
-`NOTICE`).
+Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
+milik pemiliknya, dan footage sampo milik @shin.ugc, dipakai dengan izin (lihat `NOTICE`).
