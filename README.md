@@ -23,7 +23,7 @@ Both have Indonesian voice-overs; the GIFs are silent.
 - **Dior Addict Lip Glow** is an unofficial spec ad, made to demonstrate the skills: it is not
   affiliated with, sponsored or endorsed by Christian Dior. Dior and Addict Lip Glow are trademarks
   of their owner. The 48-hour hydration claim and its footnote come from Dior's product page.
-- **Ginger shampoo** footage: [@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086),
+- **Ginger shampoo** footage: [@hanie.ugc.creator on TikTok](https://www.tiktok.com/@hanie.ugc.creator/video/7467561053971369223),
   used with permission. The product and brand belong to their owner; the claims are read from the
   product label. The same film as a reusable project with a fictional brand:
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
@@ -323,4 +323,4 @@ MIT, see `LICENSE`. Portions are derived from
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); see `NOTICE`.
 Product images, footage, voices and music you put into a film keep their own licences.
 The showcase films in `media/` are not under the MIT licence: the Dior film is an unofficial spec ad
-with marks of their owner, and the shampoo footage is by @shin.ugc, used with permission (see `NOTICE`).
+with marks of their owner, and the shampoo footage is by @hanie.ugc.creator, used with permission (see `NOTICE`).

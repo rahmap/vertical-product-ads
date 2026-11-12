@@ -21,7 +21,7 @@
   pop on their words, a band that swallows the others, and an end card. Ships `concept.md`,
   `scenes.json` and the headline font (Nunito, OFL); its README lists the shots to film and what to
   re-fit after generating a new voice or track.
-- The shot list follows a product UGC video by @shin.ugc on TikTok (credited in the example's
+- The shot list follows a product UGC video by @hanie.ugc.creator on TikTok (credited in the example's
   README); that video's footage and brand are not included.
 
 ## 0.2.2

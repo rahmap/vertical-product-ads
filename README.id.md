@@ -25,7 +25,7 @@ Keduanya memakai voice-over bahasa Indonesia; GIF-nya tanpa suara.
   tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
   Lip Glow adalah merek dagang pemiliknya. Klaim hidrasi 48 jam dan catatan kakinya diambil dari
   halaman produk Dior.
-- **Sampo jahe**: footage [@shin.ugc di TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086),
+- **Sampo jahe**: footage [@hanie.ugc.creator di TikTok](https://www.tiktok.com/@hanie.ugc.creator/video/7467561053971369223),
   dipakai dengan izin. Produk dan mereknya milik pemiliknya; klaim dibaca dari label kemasan. Film
   yang sama sebagai proyek siap pakai dengan merek fiktif:
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
@@ -324,4 +324,4 @@ MIT, lihat `LICENSE`. Sebagian diturunkan dari
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); lihat `NOTICE`.
 Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisensinya masing-masing.
 Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
-milik pemiliknya, dan footage sampo milik @shin.ugc, dipakai dengan izin (lihat `NOTICE`).
+milik pemiliknya, dan footage sampo milik @hanie.ugc.creator, dipakai dengan izin (lihat `NOTICE`).

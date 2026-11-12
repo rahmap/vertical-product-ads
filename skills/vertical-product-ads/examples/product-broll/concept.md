@@ -37,8 +37,8 @@ language: id
 Missing recommended items: price (the end card has none).
 
 ## Research sources
-- Shot reference: product UGC video by @shin.ugc on TikTok,
-  https://www.tiktok.com/@shin.ugc/video/7477264941087608086 (shot list, order and pacing only; its
+- Shot reference: product UGC video by @hanie.ugc.creator on TikTok,
+  https://www.tiktok.com/@hanie.ugc.creator/video/7467561053971369223 (shot list, order and pacing only; its
   footage and brand are not used).
 - Product, ingredients and claims: none, they are fictional.
 
