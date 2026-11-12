@@ -36,6 +36,15 @@ Cells show the recipe per style; `-` means the style cannot make that function.
 | Footage to card | Full-bleed footage morphs into the shape, product photo and text follow | hybrid |
 | Product card | Motion shape with packshot and text between footage scenes | hybrid |
 
+## Affiliate recipes (names defined in the production `references/styles.md`; `objective: affiliate` only)
+| Recipe | What it is | Style |
+|---|---|---|
+| Affiliate hook | The strongest own shot, full bleed, with the hook line as captions and one sticker line | ugc, hybrid |
+| Review b-roll | Own clips cut hard every 1.5–3 s under the voice-over, captions on | hybrid |
+| Listing photo move | A seller photo shown whole with a slow push, as a cut-away | all |
+| Price sticker | The price (and was-price, promo) as a sticker over footage, footnote with the end date | all |
+| Basket CTA | Last own shot with the CTA pill "Keranjang kuning" held 3–5 s | all |
+
 ## Layout recipes (names defined in the production `references/layouts.md`)
 | Recipe | What it is | Style |
 |---|---|---|

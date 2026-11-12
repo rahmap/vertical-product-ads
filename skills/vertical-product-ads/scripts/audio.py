@@ -2,10 +2,10 @@
 the voice and mix. Works with any subset of {music, voice}: SFX alone is a valid film.
 
 usage: python3 audio.py <project>
-reads  audio/events.json (from events.mjs), audio/grid.json, music.file, audio/vo_placed.wav
+reads  audio/events.json (from events.mjs), audio/grid.json, music.file, audio/vo_placed.wav, footage with "sound"
 writes audio/sfx.wav, audio/mix.wav (stereo 48 kHz float, peak 0.93; mastering happens in finish.sh)
 """
-import json, sys
+import json, subprocess, sys
 
 import numpy as np
 
@@ -146,12 +146,35 @@ else:
     mgain = np.full(N, 10 ** (cfg["musicDb"] / 20) / (rms(music.mean(1)) + 1e-12) if has_music else 0)
     sfx_gain = cfg["sfxGain"] * 0.5
 
-mix = music * mgain[:, None] + vo[:, None] + (sfx * sfx_gain)[:, None]
+# ── clip sound: b-roll that keeps its own audio (footage.<name>.sound), under the voice like the music ──
+clips = np.zeros((N, 2))
+sounds = ev.get("sounds", [])
+ref_level = ref if has_vo else 0.1
+for s in sounds:
+    try:
+        x = load_pcm(P / s["file"], SR, 2)
+    except subprocess.CalledProcessError:
+        sys.exit(f'footage "{s["src"]}": sound is set but {s["file"]} has no audio that ffmpeg can read; remove "sound" or use a clip with audio')
+    a = int(round(s["in"] * SR))
+    seg = x[a:a + int(round(s["dur"] * SR))].copy()
+    if len(seg) < int(0.05 * SR):
+        continue
+    f = min(int(0.015 * SR), len(seg) // 2)   # 15 ms fades: a hard cut in the picture, no click in the sound
+    seg[:f] *= np.linspace(0, 1, f)[:, None]; seg[-f:] *= np.linspace(1, 0, f)[:, None]
+    # gainDb is relative to the voice level; a near-silent clip is raised by at most 20 dB, not turned into hiss
+    g = min(ref_level * 10 ** (s["gainDb"] / 20) / (rms(seg) + 1e-12), 10.0)
+    start = int(round(s["t"] * SR)); b = min(N, start + len(seg))
+    if b > start:
+        clips[start:b] += g * seg[:b - start]
+if has_vo and sounds:
+    clips *= (1 - 0.5 * duck)[:, None]   # 6 dB down while she speaks
+
+mix = music * mgain[:, None] + vo[:, None] + (sfx * sfx_gain)[:, None] + clips
 peak = np.abs(mix).max()
 if peak < 1e-6:
     sys.exit("the mix is silent: no music, no voice and no cues")
 mix *= 0.93 / peak
 save_wav(A / "sfx.wav", np.stack([sfx * sfx_gain / peak * 0.93] * 2, 1), SR)
 save_wav(A / "mix.wav", mix, SR)
-print(f"{len(ev['cues'])} cues, worst peak placement {worst * 1000:.2f} ms · music {'yes' if has_music else 'no'} · "
+print(f"{len(ev['cues'])} cues, {len(sounds)} clip sound(s), worst peak placement {worst * 1000:.2f} ms · music {'yes' if has_music else 'no'} · "
       f"voice {'yes' if has_vo else 'no'} · mix peak normalised to 0.93")

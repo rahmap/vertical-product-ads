@@ -2,7 +2,8 @@
 status: awaiting-approval   # awaiting-approval | approved
 mode: checkpoint            # checkpoint | autopilot
 platform: tiktok            # tiktok | reels | shorts
-duration: 30                # seconds; 15–60; > 34 needs a justification below
+duration: 30                # seconds; 15–60; > 34 needs a justification below (not for objective: affiliate, default 45)
+objective: sales            # sales | traffic | awareness | launch | affiliate
 style: motion               # motion | ugc | hybrid
 look: classic               # classic | luxe-editorial | clean-clinical | bold-streetwear | warm-organic | tech-neon | pop-playful | ugc-native
 language: id
@@ -25,9 +26,9 @@ language: id
 - Duration reason (only if > 34 s):
 
 ## Asset inventory
-| File | Shows | Meets spec? | Use |
-|---|---|---|---|
-| assets/… | | yes / no: why | |
+| File | Shows | Origin (own / listing) | Meets spec? | Use |
+|---|---|---|---|---|
+| assets/… | | | yes / no: why | |
 
 Missing recommended items and what the film loses:
 
@@ -70,6 +71,16 @@ Recipes only from the scene menu (`skills/ad-concept/references/scene-menu.md`).
 | Claim | Source | On-screen footnote | Confirmed by brand? | Conflict with another source? |
 |---|---|---|---|---|
 | | | | | |
+
+## Price and promo (affiliate)
+- Price shown / spoken:
+- Was-price, promo, end date (footnote):
+
+## Post copy (affiliate)
+- Caption (≤ 150 characters):
+- Hashtags (3–5):
+- Pinned comment:
+- Alternative openings (the two hooks not chosen, as full first lines):
 
 ## Audio plan
 - Voice: ElevenLabs (voice, model) | edge-tts (voice, rate) | voice in footage

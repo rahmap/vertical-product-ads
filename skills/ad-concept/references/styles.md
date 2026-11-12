@@ -19,7 +19,7 @@ it (the agent works from transcripts and what you describe).
 - Footage of someone speaking + photos → `hybrid` (human hook, product-led body) or `ugc` (footage
   leads throughout).
 - Footage without speech (b-roll, texture, application) → add to `motion` or `hybrid` as cut-aways;
-  its own sound is muted.
+  its own sound is muted (affiliate films may keep it for a shot: `affiliate.md`).
 - If the user asks for a style the assets cannot carry, say what is missing instead of switching
   silently.
 

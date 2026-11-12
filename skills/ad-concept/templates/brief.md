@@ -10,6 +10,7 @@ look:                     # classic | luxe-editorial | clean-clinical | bold-str
 platform: tiktok          # tiktok | reels | shorts
 duration: 30              # detik; 15–60, standar 30
 language: id              # bahasa suara/dialog
+objective:                # sales | traffic | awareness | launch | affiliate — affiliate: video rekomendasi TikTok Shop (lihat references/affiliate.md)
 ```
 
 ## Product — Produk
@@ -17,6 +18,11 @@ language: id              # bahasa suara/dialog
 - Variants (shades, sizes) — varian:
 - What it is, in one sentence — apa ini:
 - Price and where to buy — harga dan tempat beli:
+- Product link — link produk:
+- Was-price (if any) — harga coret:
+- Promo and its end date — promo dan tanggal berakhir:
+- Have you used it yourself? For how long? — sudah pakai sendiri? berapa lama:
+- One honest limitation — satu kekurangan jujur:
 
 ## Objective and CTA — Tujuan dan ajakan
 - Objective (sales / traffic / awareness / launch) — tujuan:
@@ -44,6 +50,11 @@ language: id              # bahasa suara/dialog
 - [ ] Real ratings / testimonials with source — rating/testimoni asli beserta sumber
 - [ ] Creator footage (ugc/hybrid): 9:16, 1080×1920, 30 fps, clean audio, no music, talent release — footage kreator
 - [ ] Reference ads (links or what you like about them) — iklan referensi
+
+Affiliate briefs list every file with its origin — untuk affiliate, tulis asal tiap file:
+| File | Shows — isi | Origin: own / listing — asal: rekaman sendiri / dari listing |
+|---|---|---|
+| | | |
 
 ## Audio — Suara dan musik
 - Voice: ElevenLabs / free (edge-tts) / voice in footage — suara:

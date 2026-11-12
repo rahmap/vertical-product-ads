@@ -48,7 +48,8 @@ lost if absent. **Optional** items add authenticity.
 | Light | Face and product clearly lit; no heavy filter |
 | Release | Written permission from every person on camera for paid ads, and from the owner of any third-party brand visible |
 
-Limits to tell the user: b-roll (clips without speech) is muted in the mix; the engine does not
+Limits to tell the user: b-roll (clips without speech) is muted in the mix unless a shot is marked to
+keep its own sound (an unboxing, a click); the engine does not
 generate presenters or avatars; the transcript comes from speech recognition and may need
 proofreading (the production skill does this with the user's help). What to ask a creator to
 record, take by take: `templates/creator-shot-list.md`.

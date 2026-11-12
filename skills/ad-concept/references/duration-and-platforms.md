@@ -5,7 +5,8 @@
 |---|---|
 | Default | 30 s |
 | Allowed | 15–60 s |
-| > 34 s | Warn the user and justify in `concept.md` why the story needs it |
+| > 34 s | Warn the user and justify in `concept.md` why the story needs it. Not for `objective: affiliate` (below) |
+| Affiliate | 45 s default; 30, 45 or 60 s by shot count (`affiliate.md`); no justification needed |
 | > 60 s | Refuse; propose a cut |
 | Hook | Visible/audible within the first 3 s |
 | CTA | Holds 3–5 s at the end, inside the safe zone |
@@ -18,6 +19,7 @@ later anyway.
 | Platform | Length | Notes |
 |---|---|---|
 | TikTok | 30 s | Shop ads: "keranjang kuning" CTA |
+| TikTok Shop affiliate | 45 s (30–60) | First-person recommendation, `affiliate.md` |
 | Instagram Reels | 30 s; optionally a 15 s cutdown | The cutdown is its **own project** (own `concept.md`, `scenes.json`, VO/dialogue), not a trim of the 30 s render: keep hook, one benefit, proof, CTA |
 | YouTube Shorts | 30 s | Link in bio / pinned comment style CTA |
 

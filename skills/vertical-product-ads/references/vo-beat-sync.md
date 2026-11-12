@@ -15,6 +15,28 @@ The voice carries the argument; the music carries the energy. Both are measured,
 - **Sales tone:** a question hook, the product name early, one benefit per sentence, the call to
   action last ("Dapatkan sekarang!").
 
+## A voice that sounds like a person (affiliate, ugc-style narration)
+The default settings read like an announcer. For a first-person recommendation:
+- **Pick the voice for the register, not the gender alone.** In `voices.py --lang id` prefer voices
+  described as conversational, casual or social media over narration, news or audiobook.
+- **Settings** (`vo.settings`, ElevenLabs): `stability` 0.30–0.40 (lower = more variation between
+  sentences), `similarity_boost` 0.75, `style` 0.40–0.55, `use_speaker_boost` true, `speed` 1.05–1.12.
+  Below 0.30 stability the delivery becomes erratic; regenerate (`--force`) for another take
+  rather than lowering further.
+- **Punctuation is the direction.** A comma is a short breath, a full stop a longer one, "…" a
+  hesitation, a question mark lifts the pitch. Write "Jujur, awalnya aku ragu. Soalnya murah banget."
+  not one long sentence. Avoid exclamation marks except on the hook.
+- **Write for the mouth:** contractions ("nggak", "udah", "banget"), numbers and prices as words,
+  brand names spelled the way they sound if the voice misreads them (keep the real spelling on
+  screen with `captions.fix`).
+- **Longer films:** the whole script is one request, so tone stays consistent across 60 s. Rate
+  still varies by voice: measure it, then cut words. About 78 words for 45 s and 105 for 60 s at
+  1.9 words/s.
+- **Place by sentence.** One `vo.place` segment per sentence, with 0.25–0.45 s between them, so the
+  pauses are a speaker's, not a reader's. A segment gap over 0.8 s needs a picture reason (a shot
+  with its own sound, a sticker landing).
+- Listen to `audio/vo.mp3` before placing. If you cannot hear audio, say so in the report.
+
 ## Placing sentences on the music (`vo.place`)
 `place_vo.py` cuts the voice into segments in the measured silences and moves each so its `anchor`
 word starts at `at`. Timing inside a segment is untouched, so words stay natural.
@@ -45,6 +67,8 @@ word starts at `at`. Timing inside a segment is untouched, so words stay natural
 - the music sits −15 dB under the voice while she speaks, −8 dB in the gaps (40 ms attack, 350 ms
   release);
 - SFX peaks sit ~10 dB under the voice peaks;
+- clip sound (`footage.<name>.sound`) sits `gainDb` under the voice (default −12 dB) and drops a
+  further 6 dB while she speaks;
 - the mix peaks at 0.93.
 
 `finish.sh` then masters to −14 LUFS integrated: it raises the mix by the missing gain into a
@@ -116,4 +140,5 @@ Used by `ugc` and `hybrid` (`styles.md`).
    with `vo`.
 - Footage music is not allowed (it plays under the speech): ask for clean audio (see the
   ad-concept `intake.md`).
-- Only `speech: true` clips contribute sound; b-roll is muted.
+- Only `speech: true` clips contribute speech; b-roll is muted unless its `footage` entry sets
+  `sound: {gainDb}` (the clip's own audio under the voice, e.g. an unboxing; `styles.md`, Affiliate).

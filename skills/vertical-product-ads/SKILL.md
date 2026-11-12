@@ -27,6 +27,10 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
   `DECISION:`. In checkpoint mode, ask only when something blocks the build.
 - **Duration rule:** 15–60 s; default 30. Over 34 s needs the concept's written justification and a
   warning in your report. Over 60 s: refuse. Hook inside the first 3 s; CTA holds 3–5 s.
+- **Affiliate concepts** (`objective: affiliate`): 45 s default, up to 60 s with no justification
+  (the validator's warning above 34 s is expected); hard cuts between shots instead of the one
+  shape; recipes in `references/styles.md` (Affiliate). The report adds the post copy and the
+  reminders from the concept.
 
 ## Styles
 `style` is `motion`, `ugc` or `hybrid` (`references/styles.md`).
@@ -110,10 +114,12 @@ them (footage in panels for `ugc`/`hybrid`). Catalogue, rules and recipes: `refe
 - **Safe zones:** all text, captions and UI stay inside `format.safe` (1080×1920: x 84–930, y 250–1460).
   `qa_safe` fails the build otherwise. Only photography and footage bleed.
 - **Motion and hybrid product scenes: one shape, never cut.** Footage dialogue edits are the only
-  hard cuts (`cut: true`). See `references/direction.md`.
+  hard cuts (`cut: true`). See `references/direction.md`. Exception: affiliate concepts cut hard
+  between shots throughout (`references/styles.md`, Affiliate).
 - **Claims carry their footnote on screen.** Never invent product claims.
 - **No gate is optional.** A failing gate means fix the scenes, not bypass the gate.
-- **Limits:** you cannot watch footage, only read its transcript and snaps; b-roll sound is muted;
+- **Limits:** you cannot watch footage, only read its transcript and snaps; b-roll sound is muted
+  unless its `footage` entry sets `sound`;
   avatars and generated presenters are not supported.
 - **Credentials stay out of the chat.** Never ask the user to paste an API key into the conversation,
   never put one in a prompt, a command line or a file you write, and never read, print, `cat`,

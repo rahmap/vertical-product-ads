@@ -41,7 +41,10 @@
     "look": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "a preset from the skill's looks/ folder; theme overrides it" },
     "footage": { "type": "object", "additionalProperties": {
       "type": "object", "required": ["file"], "additionalProperties": false,
-      "properties": { "file": { "type": "string" }, "speech": { "type": "boolean" }, "why": { "$ref": "#/$defs/why" } } } },
+      "properties": { "file": { "type": "string" }, "speech": { "type": "boolean" },
+        "sound": { "type": "object", "additionalProperties": false, "description": "b-roll keeps its own audio wherever a video layer shows it",
+          "properties": { "gainDb": { "type": "number", "minimum": -40, "maximum": 0, "description": "level relative to the voice; default -12" } } },
+        "why": { "$ref": "#/$defs/why" } } } },
     "dialogue": {
       "type": "object", "required": ["segments"], "additionalProperties": false,
       "properties": {
@@ -59,6 +62,7 @@
         "y": { "type": "number" }, "size": { "type": "number", "exclusiveMinimum": 0 },
         "maxWords": { "type": "integer", "minimum": 1 }, "maxGap": { "type": "number", "minimum": 0 },
         "case": { "enum": ["upper", "none"] }, "style": { "enum": ["pill", "plain"] },
+        "anim": { "enum": ["none", "pop"], "description": "pop: the spoken word scales up while it is said" },
         "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" },
         "fix": { "type": "object", "additionalProperties": { "type": "string" } }
       }
@@ -147,6 +151,7 @@
         "band": { "enum": [0, 1, 2] },
         "panel": { "type": "string", "description": "draw inside this panel instead of the shape" },
         "mode": { "enum": ["cover", "world"] },
+        "fit": { "enum": ["cover", "contain"], "description": "contain: the whole picture, uncropped, over a blurred copy of itself (img and video, cover mode)" },
         "fx": { "type": "number" }, "fy": { "type": "number" },
         "zoom": { "oneOf": [{ "type": "number" }, { "$ref": "#/$defs/springTo" }, { "type": "array", "items": { "$ref": "#/$defs/springTo" } }] },
         "shift": { "type": "object", "additionalProperties": false,
@@ -180,6 +185,12 @@
       "type": "object", "required": ["text", "x", "y", "side", "tin"], "additionalProperties": false,
       "properties": { "text": { "type": "string" }, "icon": { "type": "string" }, "x": { "type": "number" }, "y": { "type": "number" },
         "side": { "enum": ["left", "right"] }, "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" } } } },
+    "prices": { "type": "array", "items": {
+      "type": "object", "required": ["y", "price", "tin"], "additionalProperties": false,
+      "properties": { "x": { "type": "number", "description": "centre; default the frame centre" }, "y": { "type": "number", "description": "top of the sticker" },
+        "price": { "type": "string" }, "was": { "type": "string" }, "badge": { "type": "string" },
+        "size": { "type": "number", "exclusiveMinimum": 0 }, "rot": { "type": "number", "minimum": -15, "maximum": 15 },
+        "tin": { "$ref": "#/$defs/time" }, "tout": { "$ref": "#/$defs/time" }, "why": { "$ref": "#/$defs/why" } } } },
     "labels": { "type": "array", "items": {
       "type": "object", "required": ["text", "side", "tin"], "additionalProperties": false,
       "properties": { "text": { "type": "string" }, "side": { "enum": ["left", "right"] },

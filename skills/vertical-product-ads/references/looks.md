@@ -120,3 +120,5 @@ Besides the variables in `scenes-format.md`, a look (or your `theme.css`) can se
 | `--cta-ink` | `#fff` | CTA text colour |
 | `--caption-font`, `--caption-weight`, `--caption-radius`, `--caption-stroke` | `--sans`, `800`, `0.42em`, black 85 % | Captions |
 | `--panel-round` … `--mask-stroke` | per element | Panels, phone, callouts, check lists, marquees, masks (`layouts.md`) |
+| `--price-bg`, `--price-ink`, `--price-badge-bg` | `--surface`, `--ui-ink`, `--accent` | Price sticker (`prices`) and its badge |
+| `--backdrop-dim` | `0.62` | Brightness of the blurred backdrop behind a `fit: "contain"` picture |

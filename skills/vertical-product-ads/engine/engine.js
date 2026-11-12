@@ -206,6 +206,7 @@ async function main() {
     id: L.id, kind: L.kind || 'img', band: L.band == null ? 'all' : L.band, mode: L.mode || 'cover', panel: L.panel || null,
     src: L.src && L.kind !== 'video' ? asset(L.src) : null, fill: L.fill, fx: L.fx == null ? 0.5 : L.fx, fy: L.fy == null ? 0.5 : L.fy,
     zoom: zoomFn(L.zoom), shift: shiftFn(L.shift), blend: L.blend || null, clipX: L.clipX || null, wipe: !!L.wipe,
+    fit: L.fit || 'cover', cut: !!L.cut,
     tin: L.tin == null ? -9 : T(L.tin), tout: L.tout == null ? null : T(L.tout), dOut: L.dOut == null ? 0.16 : L.dOut,
     toutBand: L.toutBand ? L.toutBand.map(T) : null,
     t0: L.t0 == null ? null : T(L.t0), t1: L.t1 == null ? null : T(L.t1),
@@ -219,6 +220,8 @@ async function main() {
   for (const L of LAYERS) {
     if (L.kind === 'img' && !L.src) throw new Error(`layer "${L.id}": img layers need "src"`);
     if (L.mode === 'world' && !L.rect) throw new Error(`layer "${L.id}": world layers need "place"`);
+    if (L.fit === 'contain' && (!['img', 'video'].includes(L.kind) || L.mode === 'world' || L.wipe || L.clipX))
+      throw new Error(`layer "${L.id}": fit "contain" is for cover-mode img and video layers without wipe or clipX`);
   }
   for (const L of LAYERS) {
     if (!L.panel) continue;
@@ -243,6 +246,17 @@ async function main() {
     else { L.vin = 0; L.vat = raw.tin == null ? 0 : L.tin; }
     L.cut = !!raw.cut;
   });
+  const SOUNDS = [];
+  (S.layers || []).forEach((raw, i) => {
+    const L = LAYERS[i], f = L.kind === 'video' ? S.footage[raw.src] : null;
+    if (!f || !f.sound || raw.dialogue != null) return;
+    const ends = [L.tout == null ? (L.toutBand ? Math.max(...L.toutBand) : FILM) : L.tout, FILM, L.P && L.P.tout != null ? L.P.tout : FILM];
+    const t0 = Math.max(0, L.tin, L.P ? L.P.tin : 0, L.vat - L.vin), t1 = Math.min(...ends, L.vat + L.man.frames / L.man.fps - L.vin);
+    // one clip shown in several layers at once (bands) sounds once
+    if (t1 - t0 < 0.05 || SOUNDS.some(s => s.src === raw.src && s.t < t1 && s.t + s.dur > t0)) return;
+    SOUNDS.push({ src: raw.src, file: f.file, in: +(L.vin + t0 - L.vat).toFixed(4), t: +t0.toFixed(4), dur: +(t1 - t0).toFixed(4),
+      gainDb: f.sound.gainDb == null ? -12 : f.sound.gainDb });
+  });
 
   const TEXTS = (S.texts || []).map(o => {
     for (const c of o.cls.split(/\s+/)) if (!TEXT_CLASSES.has(c)) throw new Error(`text class "${c}" not in ${[...TEXT_CLASSES]}`);
@@ -250,6 +264,7 @@ async function main() {
       tout: o.tout == null ? null : T(o.tout), lines: o.lines.map(l => l.map(wd => ({ ...wd, at: T(wd.at) }))) };
   });
   const CHIPS = (S.chips || []).map(c => ({ ...c, tin: T(c.tin), tout: c.tout == null ? null : T(c.tout) }));
+  const PRICES = (S.prices || []).map(p => ({ x: CX, rot: -3, ...p, tin: T(p.tin), tout: p.tout == null ? null : T(p.tout) }));
   const LABELS = (S.labels || []).map(l => ({ ...l, tin: T(l.tin), tout: l.tout == null ? null : T(l.tout) }));
   const ODOS = (S.odometers || []).map(o => ({ ...o, t0: T(o.t0), t1: T(o.t1), tout: o.tout == null ? null : T(o.tout) }));
   const ARCS = (S.arcs || []).map(a => ({ ...a, layer: layerById[a.layer], t0: T(a.t0), t1: T(a.t1), tout: T(a.tout) }));
@@ -285,7 +300,7 @@ async function main() {
   });
 
   // captions: word-by-word chunks from audio/words.json (screen space, class "cap" so qa_safe checks them)
-  const CAPCFG = { y: Math.round(H * 0.615), size: 64, maxWords: 3, maxGap: 0.35, case: 'upper', style: 'pill', ...(LOOK && LOOK.captions), ...S.captions };
+  const CAPCFG = { y: Math.round(H * 0.615), size: 64, maxWords: 3, maxGap: 0.35, case: 'upper', style: 'pill', anim: 'none', ...(LOOK && LOOK.captions), ...S.captions };
   const CAPFIX = Object.fromEntries(Object.entries(CAPCFG.fix || {}).map(([k, v]) => [k.toLowerCase(), v]));
   const CAPS = [];
   if (S.captions) {
@@ -359,18 +374,20 @@ async function main() {
     P.pin = el('div', 'pin', P.e);
     if (P.frame === 'phone') P.island = el('div', 'island', P.e);
   }
-  const imgCache = {};
+  const imgCache = {}, BACKDROPS = [];
   for (const L of LAYERS) {
     L.els = [];
     for (const b of L.P ? ['p'] : L.band === 'all' ? [0, 1, 2] : [L.band]) {
       const parent = L.P ? L.P.pin : BANDS[b];
-      let e;
+      let e, bg = null;
+      // fit contain: a blurred, darkened cover copy of the picture sits under the uncropped picture
+      if (L.fit === 'contain') { bg = el('img', 'backdrop', parent); bg.decoding = 'sync'; if (L.kind !== 'video') { bg.src = L.src; BACKDROPS.push(bg); } }
       if (L.kind === 'sheen') e = el('div', 'sheen', parent);
       else if (L.kind === 'fill') { e = el('div', null, parent); e.style.background = L.fill; }
       else if (L.kind === 'video') { e = el('img', null, parent); e.decoding = 'sync'; }
       else { e = el('img', null, parent); e.src = L.src; e.decoding = 'sync'; imgCache[L.src] = imgCache[L.src] || e; }
       if (L.blend) e.style.mixBlendMode = L.blend;
-      L.els.push({ b, e });
+      L.els.push({ b, e, bg });
     }
   }
 
@@ -430,6 +447,15 @@ async function main() {
     el('span', null, c.e).textContent = c.text;
     c.e.style.top = c.y - 46 + 'px';
     if (c.side === 'left') c.e.style.left = c.x + 'px'; else c.e.style.right = W - c.x + 'px';
+  }
+  // price stickers: was-price struck through, the price, an optional badge on the corner
+  for (const p of PRICES) {
+    p.e = el('div', 'price', hud);
+    if (p.was) el('span', 'pr-was', p.e).textContent = p.was;
+    el('span', 'pr-now', p.e).textContent = p.price;
+    if (p.badge) el('span', 'pr-badge', p.e).textContent = p.badge;
+    p.e.style.left = p.x + 'px'; p.e.style.top = p.y + 'px';
+    if (p.size) p.e.style.fontSize = p.size + 'px';
   }
   for (const l of LABELS) { l.e = el('div', 'label sans', hud); l.e.textContent = l.text; }
   const svgEl = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent.appendChild(e); return e; };
@@ -501,7 +527,8 @@ async function main() {
   for (const c of CAPS) {
     c.e = el('div', `cap ${CAPCFG.style}`, hud);
     // centred on the frame, so the widest box is symmetric about CX inside the (asymmetric) safe zone
-    const capW = 2 * Math.min(CX - SAFE.l, SAFE.r - CX);
+    // pop: the spoken word grows a little, so the box keeps that much room to the safe edge
+    const capW = 2 * Math.min(CX - SAFE.l, SAFE.r - CX) * (CAPCFG.anim === 'pop' ? 0.95 : 1);
     Object.assign(c.e.style, { top: CAPCFG.y + 'px', fontSize: CAPCFG.size + 'px', maxWidth: capW + 'px', display: 'none' });
     c.spans = c.words.map((w, k) => { if (k) c.e.appendChild(document.createTextNode(' ')); const s = el('span', 'cw', c.e); s.textContent = w.text; return s; });
   }
@@ -567,7 +594,15 @@ async function main() {
     }
     if (L.kind === 'fill') return { x: R.x, y: R.y, w: R.w, h: R.h };
     const img = L.kind === 'video' ? null : imgCache[L.src];
-    return coverRect(R, L.man ? L.man.width : img.naturalWidth, L.man ? L.man.height : img.naturalHeight, L.fx, L.fy, L.zoom(t));
+    const iw = L.man ? L.man.width : img.naturalWidth, ih = L.man ? L.man.height : img.naturalHeight;
+    if (L.fit !== 'contain') return coverRect(R, iw, ih, L.fx, L.fy, L.zoom(t));
+    const s = Math.min(R.w / iw, R.h / ih) * L.zoom(t), w = iw * s, h = ih * s;
+    return { x: R.x + (R.w - w) / 2, y: R.y + (R.h - h) / 2, w, h };
+  }
+  // the backdrop of a contain layer: the same picture covering the box, overscanned so its blur has no soft edge
+  function backdropRect(L, R) {
+    const img = L.kind === 'video' ? null : imgCache[L.src];
+    return coverRect(R, L.man ? L.man.width : img.naturalWidth, L.man ? L.man.height : img.naturalHeight, 0.5, 0.5, 1.2);
   }
   const camAt = t => ({ z: Math.exp(TR.lz.at(t)), cx: TR.cx.at(t), cy: TR.cy.at(t) });
   const toScreen = (x, y, c) => ({ x: (x - c.cx) * c.z + CX, y: (y - c.cy) * c.z + CY });
@@ -687,12 +722,12 @@ async function main() {
 
     for (const L of LAYERS) {
       const v0 = L.toutBand ? null : layerVis(L, t, L.tout);
-      for (const { b, e } of L.els) {
+      for (const { b, e, bg } of L.els) {
         const v = v0 || layerVis(L, t, L.toutBand[b]);
         // a panel layer draws in the panel's picture box (local coordinates), a band layer in its band
         const B = L.P ? L.P.inner : Bs[b], Sx = L.P ? B : Sh;
         const on = v.o > 0.003 && (L.P ? L.P.on : B.h > 0.5);
-        show(e, on); if (!on) continue;
+        show(e, on); if (bg) show(bg, on); if (!on) continue;
         if (L.kind === 'sheen') {
           const p = smooth((t - L.t0) / (L.t1 - L.t0));
           e.style.left = px(Sx.x - B.x + lerp(-1.1, 1.1, p) * Sx.w); e.style.top = px(Sx.y - B.y);
@@ -701,6 +736,12 @@ async function main() {
         }
         const r = layerRect(L, t, L.band === 'all' || L.P ? Sx : B);
         if (L.kind === 'video') setFrame(L, e, t);
+        if (bg) {
+          if (L.kind === 'video') setFrame(L, bg, t);
+          const q = backdropRect(L, L.band === 'all' || L.P ? Sx : B);
+          bg.style.left = px(q.x - B.x); bg.style.top = px(q.y - B.y); bg.style.width = px(q.w); bg.style.height = px(q.h);
+          bg.style.opacity = v.o.toFixed(3);
+        }
         e.style.left = px(r.x - B.x); e.style.top = px(r.y - B.y); e.style.width = px(r.w); e.style.height = px(r.h);
         e.style.opacity = v.o.toFixed(3);
         e.style.filter = blurOf(v);
@@ -790,6 +831,15 @@ async function main() {
       m.e.style.transform = m.rot ? `rotate(${m.rot}deg)` : '';
       m.e.style.clipPath = ENTER === 'cut' ? '' : revealClip(stepR(t - m.tin, { w: 12, z: 1 }), m.dir === 'left', 0);
       m.track.style.transform = `translateX(${px(m.dir === 'left' ? -off : off - m.seg)})`;
+    }
+
+    for (const p of PRICES) {
+      const v = hudVis(t, p.tin, p.tout, 0.14, 20); show(p.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      p.e.style.opacity = v.o.toFixed(3);
+      p.e.style.filter = blurOf(v);
+      // a sticker lands with a small punch whatever the look's text entrance is; cut looks switch it on
+      const sc = ENTER === 'cut' ? 1 : 0.6 + 0.4 * stepR(t - p.tin, POP);
+      p.e.style.transform = `translate(-50%, 0) rotate(${p.rot}deg) scale(${sc.toFixed(4)})`;
     }
 
     for (const ch of CHIPS) {
@@ -919,6 +969,10 @@ async function main() {
       c.words.forEach((w, k) => {
         const act = t >= w.start && t < w.end + 0.05;
         if (c.spans[k]._act !== act) { c.spans[k]._act = act; c.spans[k].style.color = act ? 'var(--caption-active)' : ''; }
+        if (CAPCFG.anim === 'pop') {   // the spoken word punches up and settles back when the next one starts
+          const u = t - w.start, sc = u <= 0 ? 1 : 1 + 0.09 * stepR(u, POP) * (1 - clamp((t - w.end - 0.05) / 0.08));
+          c.spans[k].style.transform = Math.abs(sc - 1) > 0.0005 ? `scale(${sc.toFixed(4)})` : '';
+        }
       });
     }
 
@@ -930,6 +984,7 @@ async function main() {
   window.seek = seek;
   window.FILM_DURATION = FILM;
   window.CUES = CUES.sort((a, b) => a.t - b.t);
+  window.SOUNDS = SOUNDS;
   window.SCENE_META = { width: W, height: H, safe: SAFE, duration: FILM };
   if (new URLSearchParams(location.search).has('safe')) $('#safe').classList.add('on');
   // self-hosted faces (look and project files) first, then preload every face the theme names
@@ -937,7 +992,7 @@ async function main() {
     { style: f.style || 'normal', weight: String(f.weight || 400) }));
   for (const f of faces) document.fonts.add(f);
   await Promise.all(faces.map(f => f.load()));
-  await Promise.all([...theme.fonts.map(f => document.fonts.load(f)), ...Object.values(imgCache).map(i => i.decode())]);
+  await Promise.all([...theme.fonts.map(f => document.fonts.load(f)), ...Object.values(imgCache).map(i => i.decode()), ...BACKDROPS.map(i => i.decode())]);
   fitCaptions();
   fitLayouts();
   await seek(0);

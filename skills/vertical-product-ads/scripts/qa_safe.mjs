@@ -1,6 +1,6 @@
 // node qa_safe.mjs <project> → layout gate, checked at every output frame (1/render.fps). Exit 1 on any violation
 // (first time each breaks):
-//   safe zone   every visible word, chip, label, odometer digit, caption chunk, mask, callout label, check row and the
+//   safe zone   every visible word, chip, label, odometer digit, caption chunk, mask, callout label, check row, price sticker and the
 //               CTA sits inside format.safe; a marquee band runs edge to edge, so only its height is checked
 //   overlap     no two visible HUD blocks (text block, chip, label, odometer, caption chunk, mask, callout, check row,
 //               marquee, CTA) cover each other: double-printed text is a bug, not a transition
@@ -12,10 +12,14 @@ const dir = projectDir(process.argv[2]);
 const S = readScenes(dir);
 const { server, origin } = await serve(dir);
 const browser = await launch();
-const page = await openPage(browser, origin, { width: S.format.width, height: S.format.height });
 const FPS = (S.render && S.render.fps) || 30;
-const fails = { safe: new Map(), overlap: new Map(), empty: new Map() };
-for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
+const FRAMES = Math.round(S.duration * FPS);
+// frames are independent (seek is random access), so they are split over a few tabs: tab w checks frames w, w+W, …
+const WORKERS = Math.max(1, Math.min(Number(process.env.VPA_WORKERS) || 6, Math.ceil(FRAMES / 60)));
+const fails = { safe: new Map(), overlap: new Map(), empty: new Map() };   // name → [first time it breaks, message]
+async function worker(w) {
+  const page = await openPage(browser, origin, { width: S.format.width, height: S.format.height });
+  for (let f = w; f < FRAMES; f += WORKERS) {
   const t = f / FPS;
   const hits = await page.evaluate(async ([t, Z]) => {
     await window.seek(t);
@@ -41,7 +45,7 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
       const pad = (r.height - parseFloat(getComputedStyle(e).fontSize)) / 2;
       return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad, width: r.width };
     };
-    const HUD_SEL = '#hud .w, #hud .chip, #hud .label, #hud .odo > *, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head';
+    const HUD_SEL = '#hud .w, #hud .chip, #hud .label, #hud .odo > *, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head, #hud .price, #hud .pr-badge';
     for (const e of document.querySelectorAll(HUD_SEL)) {
       if (alpha(e, 'hud') < 0.05) continue;
       const r = rectOf(e);
@@ -74,7 +78,7 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
       const r = union(parts, 0);
       if (r) blocks.push([parts.map(p => (p.classList.contains('slot') ? p.firstChild.textContent : p.textContent)).join('').trim(), r]);
     }
-    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head, #hud .marq')) {
+    for (const e of document.querySelectorAll('#hud .chip, #hud .label, #hud .cap, #cta, #hud .mask, #hud .callout, #hud .ck-row, #hud .ck-head, #hud .marq, #hud .price')) {
       if (alpha(e, 'hud') < 0.25) continue;
       const r = e.getBoundingClientRect();
       if (r.width >= 1) blocks.push([name(e), r]);
@@ -99,15 +103,19 @@ for (let f = 0, n = Math.round(S.duration * FPS); f < n; f++) {
     }
     return { safe, overlap, empty };
   }, [t, S.format.safe]);
-  for (const k of Object.keys(fails)) for (const [n, b] of hits[k]) if (!fails[k].has(n)) fails[k].set(n, `t=${t.toFixed(2)}  ${k === 'overlap' ? n : `"${n}"`} ${b}`);
+  for (const k of Object.keys(fails)) for (const [n, b] of hits[k])
+    if (!fails[k].has(n) || fails[k].get(n)[0] > t) fails[k].set(n, [t, `t=${t.toFixed(2)}  ${k === 'overlap' ? n : `"${n}"`} ${b}`]);
+  }
 }
+await Promise.all(Array.from({ length: WORKERS }, (_, w) => worker(w)));
+const lines = m => [...m.values()].sort((a, b) => a[0] - b[0]).map(v => v[1]).join('\n');
 await browser.close();
 server.close();
 const Z = S.format.safe;
 const report = [];
-if (fails.safe.size) report.push(`SAFE ZONE FAIL (x ${Z.l}–${Z.r}, y ${Z.t}–${Z.b}):\n` + [...fails.safe.values()].join('\n'));
-if (fails.overlap.size) report.push('OVERLAP FAIL (two text/UI blocks on top of each other; end one before the other enters, or move it):\n' + [...fails.overlap.values()].join('\n'));
-if (fails.empty.size) report.push('EMPTY BAND FAIL (a visible band shows no layer: give it a layer, or close the gap between segments):\n' + [...fails.empty.values()].join('\n'));
+if (fails.safe.size) report.push(`SAFE ZONE FAIL (x ${Z.l}–${Z.r}, y ${Z.t}–${Z.b}):\n` + lines(fails.safe));
+if (fails.overlap.size) report.push('OVERLAP FAIL (two text/UI blocks on top of each other; end one before the other enters, or move it):\n' + lines(fails.overlap));
+if (fails.empty.size) report.push('EMPTY BAND FAIL (a visible band shows no layer: give it a layer, or close the gap between segments):\n' + lines(fails.empty));
 if (report.length) { console.log(report.join('\n\n')); process.exit(1); }
-console.log(`layout OK at all ${Math.round(S.duration * FPS)} frames: text/UI inside x ${Z.l}–${Z.r}, y ${Z.t}–${Z.b}; no overlapping blocks; no empty band`);
+console.log(`layout OK at all ${FRAMES} frames: text/UI inside x ${Z.l}–${Z.r}, y ${Z.t}–${Z.b}; no overlapping blocks; no empty band`);
 process.exit(0);

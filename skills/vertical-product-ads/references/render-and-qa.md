@@ -62,7 +62,7 @@ Speed choices:
 | `validate.mjs` (duration) | 15–60 s; over 34 s a warning (justify it in the concept and report); over 60 s is an error; the warning does not fail the build |
 | `place_dialogue.py` | no segment edge cuts inside a transcribed word (it suggests the nearest edge); segments do not overlap in film time and stay inside the film |
 | `place_vo.py` | > 0.2 s between segments, ≥ 0.5 s tail |
-| `qa_safe.mjs` | at every output frame: every visible text/UI element (text, chip, label, odometer, caption, CTA, mask, callout label, check row) inside `format.safe`, a marquee band inside it vertically; no two visible text/UI blocks overlap; every visible band and panel shows a layer (no bare surface, no gap between footage segments) |
+| `qa_safe.mjs` | at every output frame: every visible text/UI element (text, chip, label, odometer, caption, CTA, mask, callout label, check row, price sticker and its badge) inside `format.safe`, a marquee band inside it vertically; no two visible text/UI blocks overlap; every visible band and panel shows a layer (no bare surface, no gap between footage segments) |
 | `finish.sh` | delivered AAC file within ±0.6 LU of target and sample peak ≤ −0.5 dBFS (the limiter targets −1 dBTP; the margin absorbs AAC overshoot) |
 | `qa_video.py` | no spike at a render-chunk seam (Δ > 2 and > 2.5× its neighbours) |
 

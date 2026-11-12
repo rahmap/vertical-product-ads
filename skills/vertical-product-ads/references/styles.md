@@ -10,7 +10,8 @@ recipes the concept's scene menu refers to.
 
 ## Footage basics
 - `footage` names each clip: `"talk": { "file": "assets/talk.mov", "speech": true }`. `speech: true`
-  marks clips whose talking `dialogue` may use. Clips without it are b-roll and are **muted**.
+  marks clips whose talking `dialogue` may use. Clips without it are b-roll and are **muted**, unless
+  `"sound": { "gainDb": -12 }` keeps the clip's own audio under the voice (Affiliate, below).
 - `scripts/footage.py <project>` extracts frames to `build/footage/<name>/` (at `render.fps`, constant
   frame rate, scaled to cover the 9:16 frame) and writes `build/footage.json`. `make.sh` runs it.
   Never edit `build/`.
@@ -133,6 +134,87 @@ grow out of it (`from: "shape"`), so there is never an empty frame. Captions sta
 Three `polaroid` panels, each a different moment of the b-roll (`clip.in`), popping on the words that
 list them; a `masks` entry with `footage` puts a clip inside the hook word. Masks need a calm
 background (a hidden shape or a flat fill), never other footage.
+
+## Affiliate (`objective: affiliate` in the concept)
+A first-person recommendation for TikTok Shop: the creator's own muted b-roll under a `vo`, hard cuts,
+captions on, few graphics. `style` is `hybrid` (or `ugc` with talking footage), `look` is `ugc-native`
+unless the concept says otherwise. Differences from the rules above and in `direction.md`:
+- **Cuts, not morphs.** The shape stays full bleed for the whole film (`shape.initial` as below, an
+  empty `timeline` or camera moves only). Every shot is its own `video` or `img` layer with
+  `"cut": true` on video and `tin`/`tout` on a word.
+- **Cut on words, not beats.** `tin` is `w<i>-0.05` of the word that names what the shot shows. Music
+  is a low bed (`audio.musicDb` −24 to −22); beats `k<n>` are optional.
+- **A new picture every 1.5–3 s.** Reuse a clip with another `clip.in`, or the same picture with another
+  `fx`/`fy`/`zoom`. Alternate wide and close; never two shots with the same framing in a row.
+- **Hand-held feel.** Give each shot a slow push or pull (`zoom` `{ "to": 1.04–1.08, "sp": "slow" }`),
+  alternating direction (start at 1.06 with a number, or push to 1.06). No sheen, no blur swaps.
+- **Graphics are stickers.** At most one text line or chip group on screen besides the captions.
+- Captions: `{ "style": "plain", "case": "none", "anim": "pop", "maxWords": 3, "size": 64 }`, at `y` 1181, or lower
+  (1300) while a sticker sits mid-frame.
+
+### Affiliate hook
+The strongest own shot from second 0, the hook line spoken and captioned, one sticker line naming
+the topic. No title card, no logo.
+```json
+"shape": { "initial": { "x": 540, "y": 960, "w": 1080, "h": 1920, "r": 0 } },
+"timeline": [],
+"layers": [
+  { "id": "h1", "kind": "video", "src": "pakai", "clip": { "in": 3.2, "at": 0 }, "cut": true, "tin": 0, "tout": "w5-0.05",
+    "zoom": { "to": 1.06, "at": 0, "sp": "slow" } }
+],
+"texts": [ { "y": 300, "cls": "sans sub", "lines": [[{ "t": "Nemu di keranjang kuning", "at": 0.1 }]], "tout": "w5-0.05" } ]
+```
+
+### Review b-roll
+The body of the film: own clips cut on the words that describe them.
+```json
+"layers": [
+  { "id": "b1", "kind": "video", "src": "buka",  "clip": { "in": 0.4, "at": "w5-0.05" },  "cut": true, "tin": "w5-0.05",  "tout": "w11-0.05" },
+  { "id": "b2", "kind": "video", "src": "pakai", "clip": { "in": 7.0, "at": "w11-0.05" }, "cut": true, "tin": "w11-0.05", "tout": "w17-0.05", "zoom": 1.15, "fy": 0.6 },
+  { "id": "b3", "kind": "video", "src": "detail","clip": { "in": 1.0, "at": "w17-0.05" }, "cut": true, "tin": "w17-0.05", "tout": "w24-0.05",
+    "zoom": { "to": 1.05, "at": "w17", "sp": "slow" } }
+]
+```
+A clip shorter than its slot holds its last frame: check each clip's length in `build/footage.json`
+and pick `clip.in` so `in + (tout − tin)` stays inside it.
+
+### Listing photo move
+A seller photo as a cut-away. Seller photos are usually square and often carry text, so show them
+**whole**: `"fit": "contain"` draws the picture uncropped over a blurred, darkened copy of itself.
+```json
+"assets": { "varian": "assets/listing-varian.jpg" },
+"layers": [
+  { "id": "p1", "kind": "img", "src": "varian", "fit": "contain", "cut": true, "tin": "w24-0.05", "tout": "w29-0.05",
+    "zoom": { "to": 1.05, "at": "w24", "sp": "slow" } }
+]
+```
+Never more than one third of the film, never the hook (`ad-concept` `references/affiliate.md`).
+
+### Unboxing with its own sound
+B-roll is muted unless the clip asks for its sound. `"sound": { "gainDb": -12 }` on a `footage` entry
+mixes the clip's own audio wherever its `clip` layers show it (tearing tape, a click, a pour), ducked
+under the voice like the music.
+```json
+"footage": { "buka": { "file": "assets/buka.mp4", "sound": { "gainDb": -12 } } }
+```
+Use it for one or two shots where the sound is the point. Clips with talking or music in them stay
+muted.
+
+### Price sticker
+`prices` draws the price as a sticker: the was-price struck through, the price, an optional badge.
+Values come from the concept, never from memory. The promo's end date goes in a footnote.
+```json
+"prices": [ { "x": 507, "y": 760, "price": "Rp79.000", "was": "Rp129.000", "badge": "-39%", "tin": "w61-0.05", "tout": "w70" } ],
+"texts": [ { "y": 1404, "cls": "sans foot", "lines": [[{ "t": "*Harga promo sampai 30 Nov 2026, bisa berubah.", "at": "w61" }]], "tout": "w70" } ]
+```
+
+### Basket CTA
+The last own shot keeps playing; the CTA pill enters on the CTA sentence and is pressed on its last
+word. No end card.
+```json
+"cta": { "text": "Keranjang kuning", "y": 1300, "h": 104, "half": 250, "tin": "w98-0.1", "textIn": "w98+0.15", "press": "w101" }
+```
+End captions at the pill's `tin` (`captions.tout`) or keep them above it (`captions.y` ≤ 1130).
 
 ## Audio by style
 | Style | Speech | Music | Footage sound |

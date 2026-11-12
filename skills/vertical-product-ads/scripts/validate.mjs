@@ -73,6 +73,10 @@ const assets = S.assets || {};
 for (const [k, f] of Object.entries(assets)) if (!fs.existsSync(path.join(dir, f))) problems.push(`asset "${k}": file ${f} not found`);
 const footage = S.footage || {};
 for (const [k, f] of Object.entries(footage)) if (!fs.existsSync(path.join(dir, f.file))) problems.push(`footage "${k}": file ${f.file} not found`);
+for (const [k, f] of Object.entries(footage)) {
+  if (f.sound && f.speech) problems.push(`footage "${k}": sound is for b-roll; a speech clip is heard through dialogue`);
+  if (f.sound && !(S.layers || []).some(L => L.kind === 'video' && L.src === k)) problems.push(`footage "${k}": sound is set but no video layer shows the clip`);
+}
 const dlg = S.dialogue ? S.dialogue.segments : [];
 const ids = new Set();
 for (const L of S.layers || []) {
@@ -91,8 +95,14 @@ for (const L of S.layers || []) {
     }
     if (L.mode === 'world') problems.push(`layer "${L.id}": video layers are cover mode only`);
   } else {
-    for (const k of ['clip', 'dialogue', 'cut']) if (L[k] != null) problems.push(`layer "${L.id}": "${k}" is only for video layers`);
+    for (const k of ['clip', 'dialogue']) if (L[k] != null) problems.push(`layer "${L.id}": "${k}" is only for video layers`);
+    if (L.cut && kind === 'sheen') problems.push(`layer "${L.id}": "cut" does not apply to a sheen`);
     if (L.src && !assets[L.src]) problems.push(`layer "${L.id}": src "${L.src}" is not in assets`);
+  }
+  if (L.fit === 'contain') {
+    if (!['img', 'video'].includes(kind)) problems.push(`layer "${L.id}": fit "contain" is only for img and video layers`);
+    for (const k of ['wipe', 'clipX', 'place']) if (L[k] != null) problems.push(`layer "${L.id}": "${k}" does not combine with fit "contain"`);
+    if (L.mode === 'world') problems.push(`layer "${L.id}": fit "contain" needs cover mode`);
   }
   if (kind === 'fill' && !L.fill) problems.push(`layer "${L.id}": fill layer needs "fill"`);
   if (kind === 'sheen' && (L.t0 == null || L.t1 == null)) problems.push(`layer "${L.id}": sheen needs t0 and t1`);

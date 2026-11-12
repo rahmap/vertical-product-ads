@@ -40,9 +40,9 @@ Hits fire exactly on it (`"k16"`).
 | `anchors` | `NAME → time` |
 | `style` | `"motion"` (default), `"ugc"` or `"hybrid"`. `motion`: no video layers. `ugc`/`hybrid`: at least one video layer. `ugc`: `captions` required (`styles.md`) |
 | `look` | A preset from `looks/` (`classic` when absent): `luxe-editorial`, `clean-clinical`, `bold-streetwear`, `warm-organic`, `tech-neon`, `pop-playful`, `ugc-native`. Sets the theme and the caption defaults; `theme` and `captions` override it (`looks.md`) |
-| `footage` | `name → {file, speech}`, `file` relative to the project (e.g. `assets/talk.mov`). `speech: true` marks clips with talking that `dialogue` may use; other clips are muted b-roll. Frames come from `scripts/footage.py` into `build/footage/<name>/` |
+| `footage` | `name → {file, speech, sound}`, `file` relative to the project (e.g. `assets/talk.mov`). `speech: true` marks clips with talking that `dialogue` may use; other clips are muted b-roll, unless `sound: {gainDb}` keeps the clip's own audio wherever a video layer shows it (`gainDb` relative to the voice, default −12; ducked a further 6 dB under speech; 15 ms fades at the cuts). Frames come from `scripts/footage.py` into `build/footage/<name>/` |
 | `dialogue` | `{transcriber: "auto"\|"elevenlabs"\|"whisper", whisperModel: "small", language: "id", segments:[{footage, in, out, at, why}]}`. Edit list: clip seconds `in`→`out` play from film second `at` (numbers only). Replaces `vo` (mutually exclusive). Segments must not overlap in film time and must use `speech: true` footage. Words land in `audio/words.json` as `w<i>` |
-| `captions` | `{y: 1181, size: 64, maxWords: 3, maxGap: 0.35, case: "upper"\|"none", style: "pill"\|"plain", tin, tout, fix: {"lembab": "lembap"}}`. Word-by-word captions from `audio/words.json`. `y` is the vertical **centre** of the caption block (default round(height × 0.615) = 1181 at 1920 high); a chunk that would need more than two lines shrinks its font until it fits two; needs `vo` or `dialogue`. `fix` maps a transcribed word to the spelling shown |
+| `captions` | `{y: 1181, size: 64, maxWords: 3, maxGap: 0.35, case: "upper"\|"none", style: "pill"\|"plain", anim: "none"\|"pop", tin, tout, fix: {"lembab": "lembap"}}`. Word-by-word captions from `audio/words.json`. `anim: "pop"` scales the spoken word up by 9 % while it is said (the chunk keeps 5 % more room to the safe edge). `y` is the vertical **centre** of the caption block (default round(height × 0.615) = 1181 at 1920 high); a chunk that would need more than two lines shrinks its font until it fits two; needs `vo` or `dialogue`. `fix` maps a transcribed word to the spelling shown |
 
 Theme variables (defaults in `engine/index.html`; the variables a look adds are in `looks.md`):
 - **Surfaces:** `--base`, `--bg`, `--band`.
@@ -97,6 +97,7 @@ Events apply in file order; write them chronologically. `sp` is one of:
 | `band` | omit for the whole shape, or `0`/`1`/`2` for one band |
 | `panel` | draw inside this panel (`panels`) instead of the shape. Cover mode only; no `band`, `toutBand`, `wipe`, `place` or `pivot`; arcs don't draw over panel layers |
 | `mode` | `cover` (default: fills the band or shape, focal point `fx`/`fy` in 0–1) or `world` (fixed placement, for packshots that must not crop) |
+| `fit` | `cover` (default) or `contain`: the whole picture, uncropped and centred, over a blurred and darkened copy of itself that fills the rest. For `img` and `video` in cover mode (square seller photos, landscape clips); `zoom` scales the picture, `fx`/`fy` are ignored. Not with `wipe`, `clipX` or `place`. Dimming: look variable `--backdrop-dim` (default 0.62) |
 | `place` | `world` only: `{size, srcSize, imagePoint, at, srcAspect}`. The image is drawn `size` px wide (height `size × srcAspect`, default square). `imagePoint` is a pixel in the source image measured at `srcSize` width, and it lands on frame point `at` |
 | `pivot` | `world` only: the frame point `zoom` scales around (default: frame centre) |
 | `zoom` | number, `{to, at, sp}` (spring from 1), or an array of those (multiplied) |
@@ -109,9 +110,9 @@ Events apply in file order; write them chronologically. `sp` is one of:
 | `kind: "video"` | A clip from `footage`; `src` is the **footage name**, not an asset. `cover` mode only. Extra keys below |
 | video `clip` | `{in, at}`: clip second `in` plays at film time `at` (`at` is a time expression). Frame at film time `t` = clip second `in + t − at`, clamped to the clip |
 | video `dialogue` | Segment index `i` of `dialogue.segments`: takes `in`/`at` from it; `tin` defaults to `segment.at`, `tout` to `at + out − in` |
-| video `cut` | `true`: hard on/off at `tin`/`tout`, no fade or blur (dialogue cuts) |
+| `cut` | `true`: hard on/off at `tin`/`tout`, no fade, blur or scale. Dialogue cuts, and every shot of an affiliate film (video, img and fill layers; not sheen) |
 
-`src` must match the footage of the `dialogue` segment it points to. `clip`, `dialogue` and `cut` are rejected on non-video layers.
+`src` must match the footage of the `dialogue` segment it points to. `clip` and `dialogue` are rejected on non-video layers.
 
 With neither `clip` nor `dialogue`, the clip plays from its second 0 at `tin`. `fx`, `fy`, `zoom`,
 `shift`, `band`, `blend`, `clipX`, `toutBand` work as for images.
@@ -143,6 +144,11 @@ visible layer fails the empty-band gate, like a band.
 - **`chips`:** `{text, icon, x, y, side, tin, tout}`. `y` is the chip's vertical centre (the pill is
   104 px high, so it spans `y − 46` to `y + 58`). `side: left` anchors the left edge at `x`; `right`
   anchors the right edge.
+- **`prices`:** `{x, y, price, was, badge, size, rot, tin, tout}`. A price sticker: `was` struck through above `price`, `badge`
+  (e.g. `-39%`) on the top-right corner. `x` is the centre (default 540), `y` the top; `size` is the price's font size
+  (default 104; the sticker is about 2.1 × `size` high with `was`, 1.6 × without); `rot` tilts it (default −3°). It lands
+  with a small punch. The badge overhangs the corner by about 0.3 × `size`: keep that much room to the safe edge.
+  Look variables `--price-bg`, `--price-ink`, `--price-badge-bg`.
 - **`labels`:** `{text, side, tin, tout}`, pinned above the shape's bottom corners and clamped to
   the safe zone.
 - **`odometers`:** `{final, t0, t1, y, size, suffix, tout}`. Rolls to `final`; ticks are added to

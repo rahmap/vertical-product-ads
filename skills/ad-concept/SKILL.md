@@ -18,6 +18,13 @@ and refuses to start without it.
   ask. Assume what is missing and log `ASSUMPTION:`; choose the hook and log `DECISION:`; set
   `status: approved` yourself; continue into production in the same run.
 
+## Affiliate briefs
+`objective: affiliate` in `brief.md` (or the prompt asks for a TikTok Shop affiliate / "racun" /
+review video): read `references/affiliate.md` first. It changes the default look (`ugc-native`),
+length (45 s, up to 60 s without a justification), structure, script voice, which pictures may be
+used, and adds price, promo and post copy to the concept. Where it disagrees with the other
+references, it wins.
+
 ## Workflow
 1. **Intake.** Read `<project>/brief.md` (users fill in `templates/brief.md`; if there is none, create it
    from the template, filling what the prompt already says) and list `<project>/assets/`. Build the
@@ -94,6 +101,7 @@ and refuses to start without it.
 | `references/looks.md` | Choosing the visual look, and how to switch |
 | `references/scene-menu.md` | Filling the beat sheet |
 | `references/duration-and-platforms.md` | Choosing platform and length |
+| `references/affiliate.md` | The brief is a TikTok Shop affiliate video (`objective: affiliate`) |
 | `templates/brief.md` | What users fill in |
 | `templates/concept.md` | The file you write |
 | `templates/creator-shot-list.md` | What a creator must record for `ugc`/`hybrid` |

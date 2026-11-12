@@ -31,7 +31,9 @@ def api_key(p, name="ELEVENLABS_API_KEY", required=True):
                 if line.startswith("export "):
                     line = line[7:].lstrip()
                 if line.startswith(name + "="):
-                    return line.split("=", 1)[1].strip().strip('"').strip("'")
+                    value = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    if value:   # an empty line (a fresh copy of .env.example) is "not set": keep looking
+                        return value
     if not required:
         return None
     sys.exit(f"{name} not set. Run scripts/set_key.sh in your own terminal (never paste the key into a chat), "
