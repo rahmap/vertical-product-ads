@@ -18,6 +18,7 @@ An agent skill for producing 9:16 product ads from a declarative `scenes.json`, 
 - `schemas/`: scene JSON schema.
 - `references/`: scene format, direction, timing, safe zones and render/QA details.
 - `examples/minimal/`: asset-free example project.
+- `examples/product-broll/`: hybrid example (b-roll + VO + motion); the footage is not included, its README lists the shots.
 
 ## Development Commands
 

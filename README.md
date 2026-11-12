@@ -158,6 +158,7 @@ below.
 |---|---|---|---|
 | Voice-over | `vo.engine: "elevenlabs"` | `vo.engine: "edge"` (edge-tts, needs network) | edge-tts is an unofficial client of Microsoft's Edge read-aloud service; terms for paid ads are unclear: use it for drafts, or accept the risk |
 | Music | `music.prompt` | `music.synth` (local procedural bed) or a licensed file | The synth bed is generated on your machine: yours |
+| Sound effects | `sfx` prompts (ElevenLabs Sound Effects) | built-in synthesized cues (`tap`, `whoosh`, `chime`…) or your own files | Synthesized cues are generated on your machine: yours |
 | Footage transcription | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Local, no upload. `"auto"` uses ElevenLabs when it can, else whisper |
 
 ElevenLabs output follows your plan's terms.
@@ -294,6 +295,7 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) and every step it runs |
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, the contract `validate.mjs` enforces |
 | `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
+| `skills/vertical-product-ads/examples/product-broll/` | A 20 s hybrid ad (fictional shampoo): product b-roll you shoot, ElevenLabs voice, music and sound effects, ingredient card, split bands, end card |
 
 ---
 

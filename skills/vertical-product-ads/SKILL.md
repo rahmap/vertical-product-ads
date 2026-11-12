@@ -43,11 +43,13 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 |---|---|---|
 | Voice-over | `vo.engine: "elevenlabs"` (default) | `vo.engine: "edge"` (edge-tts; licence caveat in `references/vo-beat-sync.md`) |
 | Music | `music.prompt` | `music.synth` (local synth bed, yours to use) or a licensed `music.file` |
+| Sound effects | `sfx` prompts + `sample` cues (`scripts/sfx.py`) | synthesized cues (`tap`, `whoosh`, `chime`…) |
 | Transcription | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline); `"auto"` picks ElevenLabs when a key exists, else whisper |
 
 ## Workflow
 1. **Project folder:** create `<project>/assets/` and `<project>/scenes.json`, copied from
-   `examples/minimal/scenes.json` (format: `references/scenes-format.md`). `ELEVENLABS_API_KEY` is read
+   `examples/minimal/scenes.json` (format: `references/scenes-format.md`); for muted product b-roll
+   under a voice-over, start from `examples/product-broll/` instead. `ELEVENLABS_API_KEY` is read
    by the tools from the environment or a `.env` in the project or any parent folder; it is needed only
    for ElevenLabs voice, music or transcription. If it is missing, tell the user to run
    `scripts/set_key.sh` **in their own terminal**, or use the free options. `.gitignore` for the

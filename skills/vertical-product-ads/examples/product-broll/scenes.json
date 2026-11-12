@@ -1,0 +1,153 @@
+{
+  "title": "Jahera Ginger Shampoo (fictional) — product b-roll + VO + motion graphics, 9:16, 20 s",
+  "duration": 20.2,
+  "format": { "width": 1080, "height": 1920, "safe": { "l": 84, "r": 930, "t": 250, "b": 1460 } },
+  "render": { "fps": 30 },
+  "style": "hybrid",
+
+  "vo": {
+    "engine": "elevenlabs",
+    "voice": "ffTJE9l3Kt2ipEM32UOc",
+    "model": "eleven_multilingual_v2",
+    "language": "id",
+    "settings": { "stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true, "speed": 1.12 },
+    "script": "Rambut rontok tiap keramas? Kenalan sama Jahera Ginger Shampoo! Dengan ekstrak jahe dan lidah buaya. Bantu kurangi rontok, dan atasi ketombe. Rambut bersih, lembut, halus, dan ternutrisi. Cek keranjang kuning sekarang!",
+    "place": [
+      { "words": [0, 3], "anchor": 0, "at": 0.12, "why": "hook opens the film over the pour" },
+      { "words": [4, 8], "anchor": 7, "at": 3.54, "why": "'Ginger' on k7, right after the drop at k4" },
+      { "words": [9, 14], "anchor": 10, "at": 5.098, "why": "'ekstrak' on k10 as the ingredient card settles" },
+      { "words": [15, 20], "anchor": 15, "at": 8.3, "why": "benefits once the card opens full bleed" },
+      { "words": [21, 26], "anchor": 22, "at": 11.68, "why": "'bersih' on k23 pops the first band" },
+      { "words": [27, 30], "anchor": 27, "at": 15.731, "why": "CTA on k31, end card" }
+    ]
+  },
+  "music": {
+    "file": "audio/music.mp3",
+    "prompt": "Fresh, bright, feel-good organic house instrumental for a natural shampoo ad, 118 BPM, steady four-on-the-floor kick from the very first second, warm marimba and plucked guitar, airy shakers, soft water-drop percussion, clean and sunny, constant energy all the way through, no vocals, no long intro, no fade out",
+    "length_ms": 24000
+  },
+  "sfx": {
+    "pour": { "file": "audio/sfx/pour.mp3", "prompt": "thick creamy shampoo slowly pouring over a plastic bottle, gentle wet glug, close up", "dur": 2.0, "influence": 0.6 },
+    "bubbles": { "file": "audio/sfx/bubbles.mp3", "prompt": "light soap bubbles floating and softly popping, airy and clean", "dur": 1.5, "influence": 0.6 },
+    "riser": { "file": "audio/sfx/riser.mp3", "prompt": "short soft reverse cymbal riser swelling into a beat drop", "dur": 1.5, "influence": 0.6 },
+    "thump": { "file": "audio/sfx/thump.mp3", "prompt": "soft deep cinematic bass impact thump, short", "dur": 0.8, "influence": 0.6 },
+    "whoosh": { "file": "audio/sfx/whoosh.mp3", "prompt": "fast clean airy whoosh transition, short", "dur": 0.6, "influence": 0.6 },
+    "pop": { "file": "audio/sfx/pop.mp3", "prompt": "single soft cute bubble pop for a UI element appearing", "dur": 0.5, "influence": 0.7 },
+    "splash": { "file": "audio/sfx/splash.mp3", "prompt": "small clean water splash onto a glass surface, bright, short", "dur": 0.8, "influence": 0.7 },
+    "pump": { "file": "audio/sfx/pump.mp3", "prompt": "plastic shampoo bottle pump pressed once, soft click and squish", "dur": 0.6, "influence": 0.7 },
+    "sparkle": { "file": "audio/sfx/sparkle.mp3", "prompt": "short bright magical sparkle chime shimmer", "dur": 1.2, "influence": 0.6 },
+    "kaching": { "file": "audio/sfx/kaching.mp3", "prompt": "cash register ka-ching, bright and clean", "dur": 1.0, "influence": 0.7 }
+  },
+  "audio": { "duckSpeechDb": -14, "duckGapDb": -7, "sfxGain": 0.8, "fadeOut": 0.6 },
+
+  "theme": {
+    "css": {
+      "--base": "#FBF4E8",
+      "--bg": "linear-gradient(180deg, #FFF8EC 0%, #FBEBD0 60%, #F6DDB4 100%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #FFFFFF 0%, #FFF6E8 62%, #FBEBD0 100%)",
+      "--ink": "#3B2410",
+      "--accent": "#B45309",
+      "--accent-pressed": "#8F4207",
+      "--muted": "rgba(59, 36, 16, 0.8)",
+      "--surface": "rgba(255, 252, 246, 0.95)",
+      "--surface-label": "rgba(255, 252, 246, 0.9)",
+      "--icon-bg": "#FCEBD2",
+      "--shadow-rgb": "120, 72, 20",
+      "--cta-shadow-rgb": "143, 66, 7",
+      "--dot-shadow-rgb": "90, 50, 10",
+      "--serif": "\"Nunito XB\", system-ui, sans-serif",
+      "--sans": "\"Avenir Next\", system-ui, \"Helvetica Neue\", sans-serif"
+    },
+    "fontFaces": [{ "family": "Nunito XB", "src": "assets/fonts/nunito-800.woff2", "style": "normal", "weight": 400 }],
+    "fonts": ["400 88px \"Nunito XB\""],
+    "pools": [
+      { "color": "rgba(255, 196, 92, 0.55)", "r": 760, "x": [220, 70, 0.31, 0, "sin"], "y": [420, 90, 0.23, 0, "cos"] },
+      { "color": "rgba(150, 190, 90, 0.35)", "r": 820, "x": [900, 60, 0.27, 0, "cos"], "y": [1560, 80, 0.21, 0, "sin"] }
+    ]
+  },
+
+  "icons": {
+    "jahe": "<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\"><path d=\"M6 27c0-5 4-7 8-7 1-4 4-7 8-6 2-4 8-4 9 0 2 3 0 6-3 7 1 4-2 7-6 6-2 3-6 4-9 3-4 2-7 1-7-3z\" fill=\"{accent}\"/></svg>",
+    "daun": "<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\"><path d=\"M7 33C7 17 17 7 33 7c0 16-10 26-26 26z\" fill=\"#5E8A2E\"/><path d=\"M10 30L27 13\" stroke=\"#FCEBD2\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></svg>",
+    "cek": "<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\"><path d=\"M9 21l7 7 15-16\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+  },
+
+  "anchors": { "SPLIT": "w22-0.12", "SWALLOW": "w26-0.12", "CARD": "k30" },
+
+  "footage": {
+    "pour": { "file": "assets/pour.mp4" },
+    "bubbles": { "file": "assets/bubbles.mp4" },
+    "label": { "file": "assets/label.mp4" },
+    "splash": { "file": "assets/splash.mp4" },
+    "pump": { "file": "assets/pump.mp4" },
+    "drip": { "file": "assets/drip.mp4" },
+    "palm": { "file": "assets/palm.mp4" },
+    "hero": { "file": "assets/hero.mp4" }
+  },
+  "shape": { "initial": { "x": 540, "y": 960, "w": 1080, "h": 1920, "r": 0 } },
+  "timeline": [
+    { "at": "k9-0.13", "set": { "x": 540, "y": 700, "w": 860, "h": 900, "r": 56 }, "why": "footage closes into the ingredient card" },
+    { "at": "k16-0.15", "set": "full", "why": "card opens full bleed for the benefits" },
+    { "at": "SPLIT", "set": { "gap": 16, "rin": 30 }, "why": "splits into three texture bands" },
+    { "at": "SWALLOW", "set": { "b0": 0.0001 }, "sp": "trail", "why": "the palm band swallows the others on 'ternutrisi'" },
+    { "at": "SWALLOW", "set": { "b2": 0.0001 }, "sp": "lead" },
+    { "at": "SWALLOW", "set": { "gap": 0, "rin": 0 } },
+    { "at": "CARD-0.13", "set": { "x": 540, "y": 620, "w": 860, "h": 720, "r": 56 }, "why": "footage closes into the end card" }
+  ],
+  "layers": [
+    { "id": "pour", "kind": "video", "src": "pour", "clip": { "in": 0, "at": 0 }, "cut": true, "tin": 0, "tout": "k4", "zoom": { "to": 1.05, "at": 0, "sp": "slow" } },
+    { "id": "bubbles", "kind": "video", "src": "bubbles", "clip": { "in": 0, "at": "k4" }, "cut": true, "tin": "k4", "tout": "k9" },
+    { "id": "scrim", "kind": "fill", "fill": "linear-gradient(180deg, rgba(255,250,240,0.9) 0%, rgba(255,250,240,0.55) 22%, rgba(255,250,240,0) 40%)", "tin": "k4", "tout": "k9-0.2" },
+    { "id": "label", "kind": "video", "src": "label", "clip": { "in": 0, "at": "k9" }, "cut": true, "tin": "k9", "tout": "k14", "fy": 0.45 },
+    { "id": "splash", "kind": "video", "src": "splash", "clip": { "in": 0, "at": "k14" }, "cut": true, "tin": "k14", "tout": "k19" },
+    { "id": "pump", "kind": "video", "src": "pump", "clip": { "in": 0, "at": "k19" }, "cut": true, "tin": "k19", "tout": "k21" },
+    { "id": "drip", "kind": "video", "src": "drip", "clip": { "in": 0, "at": "k21" }, "cut": true, "tin": "k21", "toutBand": ["w22+0.04", "w23+0.04", "w24+0.04"] },
+    { "id": "clean", "kind": "video", "src": "bubbles", "band": 0, "clip": { "in": 0.1, "at": "w22-0.03" }, "tin": "w22-0.03", "tout": "CARD-0.1", "fy": 0.42 },
+    { "id": "soft", "kind": "video", "src": "palm", "band": 1, "clip": { "in": 0, "at": "w23-0.03" }, "tin": "w23-0.03", "tout": "CARD-0.1", "fy": 0.6 },
+    { "id": "silky", "kind": "video", "src": "pour", "band": 2, "clip": { "in": 0.3, "at": "w24-0.03" }, "tin": "w24-0.03", "tout": "CARD-0.1", "fy": 0.4 },
+    { "id": "hero", "kind": "video", "src": "hero", "clip": { "in": 0, "at": "CARD-0.13" }, "tin": "CARD-0.13", "fy": 0.62, "zoom": { "to": 1.08, "at": "CARD", "sp": "slow" } }
+  ],
+  "pops": [
+    { "band": 0, "at": "w22" }, { "band": 1, "at": "w23" }, { "band": 2, "at": "w24" }
+  ],
+
+  "captions": { "y": 1300, "size": 60, "maxWords": 3, "case": "upper", "style": "pill", "tout": "CARD" },
+  "chips": [
+    { "text": "Ekstrak jahe", "icon": "jahe", "x": 100, "y": 1000, "side": "left", "tin": "w10-0.06", "tout": "k16-0.25" },
+    { "text": "Lidah buaya", "icon": "daun", "x": 100, "y": 1120, "side": "left", "tin": "w13-0.06", "tout": "k16-0.25" },
+    { "text": "Kurangi rontok*", "icon": "cek", "x": 100, "y": 1000, "side": "left", "tin": "w16-0.06", "tout": "SPLIT-0.2" },
+    { "text": "Atasi ketombe*", "icon": "cek", "x": 100, "y": 1120, "side": "left", "tin": "w19-0.06", "tout": "SPLIT-0.2" }
+  ],
+  "texts": [
+    { "y": 296, "cls": "sans caps", "lines": [[{ "t": "Jahera", "at": "w6" }]], "tout": "k9-0.2" },
+    { "y": 346, "cls": "serif h1", "lead": 0.02, "lines": [[{ "t": "Ginger ", "at": "w7", "slam": true }, { "t": "Shampoo", "at": "w8", "slam": true }]], "tout": "k9-0.2" },
+    { "y": 1014, "cls": "sans caps", "lines": [[{ "t": "Jahera", "at": "CARD+0.45" }]] },
+    { "y": 1072, "cls": "serif h1", "lead": 0.02, "lines": [[{ "t": "Ginger ", "at": "CARD+0.55", "slam": true }, { "t": "Shampoo", "at": "CARD+0.7", "slam": true }]] },
+    { "y": 1188, "cls": "sans caps", "lines": [[{ "t": "300 ml · ekstrak jahe", "at": "k32", "acc": true }]] },
+    { "y": 1400, "cls": "sans foot", "lines": [[{ "t": "*Produk & klaim fiktif untuk contoh.", "at": "w16" }]] }
+  ],
+  "cta": { "text": "Keranjang kuning", "y": 1300, "h": 104, "half": 250, "tin": "k32", "textIn": "k32+0.25", "press": "w30" },
+
+  "cues": [
+    { "at": 0.05, "kind": "sample", "src": "pour", "gain": 0.3, "align": "start" },
+    { "at": "k4", "kind": "sample", "src": "riser", "gain": 0.28 },
+    { "at": "k4", "kind": "sample", "src": "bubbles", "gain": 0.3, "align": "start" },
+    { "at": "w7", "kind": "sample", "src": "thump", "gain": 0.3 },
+    { "at": "k9-0.13", "kind": "sample", "src": "whoosh", "gain": 0.3 },
+    { "at": "w10-0.06", "kind": "sample", "src": "pop", "gain": 0.34 },
+    { "at": "w13-0.06", "kind": "sample", "src": "pop", "gain": 0.34 },
+    { "at": "k14", "kind": "sample", "src": "splash", "gain": 0.36 },
+    { "at": "k16-0.15", "kind": "sample", "src": "whoosh", "gain": 0.28 },
+    { "at": "w16-0.06", "kind": "sample", "src": "pop", "gain": 0.34 },
+    { "at": "w19-0.06", "kind": "sample", "src": "pop", "gain": 0.34 },
+    { "at": "k19+0.15", "kind": "sample", "src": "pump", "gain": 0.34 },
+    { "at": "w22", "kind": "pluck", "note": 0, "gain": 0.3 },
+    { "at": "w23", "kind": "pluck", "note": 4, "gain": 0.3 },
+    { "at": "w24", "kind": "pluck", "note": 7, "gain": 0.3 },
+    { "at": "SWALLOW", "kind": "sample", "src": "sparkle", "gain": 0.3 },
+    { "at": "CARD-0.13", "kind": "sample", "src": "whoosh", "gain": 0.3 },
+    { "at": "CARD+0.55", "kind": "sample", "src": "thump", "gain": 0.32 },
+    { "at": "w30", "kind": "click", "gain": 0.45 },
+    { "at": "w30+0.08", "kind": "sample", "src": "kaching", "gain": 0.4 }
+  ]
+}

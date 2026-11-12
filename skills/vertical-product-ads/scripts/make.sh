@@ -3,7 +3,7 @@
 # make.sh <project> final <out.mp4>  → the same gates, then the full render and the mastered delivery
 #
 # The two modes exist so a human or agent looks at snaps/sheet.png and renders/draft.mp4 between them.
-# Every step is idempotent; API calls and model runs (vo.py, music.py, transcribe.py, footage.py) are skipped when their output is already current.
+# Every step is idempotent; API calls and model runs (vo.py, music.py, sfx.py, transcribe.py, footage.py) are skipped when their output is already current.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 P="$(cd "${1:?usage: make.sh <project> preview|final [out.mp4]}" && pwd)"
@@ -18,6 +18,7 @@ T0=$(date +%s)
 step "validate";       node "$HERE/validate.mjs" "$P"
 if has footage; then step "footage frames"; "$PYTHON" "$HERE/footage.py" "$P"; fi
 if has music; then step "music";  "$PYTHON" "$HERE/music.py" "$P"; fi
+if has sfx; then step "sound effects"; "$PYTHON" "$HERE/sfx.py" "$P"; fi
 if has dialogue; then
   step "transcribe";   "$PYTHON" "$HERE/transcribe.py" "$P" | tail -3
   step "place dialogue"; "$PYTHON" "$HERE/place_dialogue.py" "$P"

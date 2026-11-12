@@ -100,7 +100,9 @@ def synth(c):
             f = base * 2 ** (n / 12) * (1 + rng.uniform(-0.002, 0.002))
             y += np.sin(2 * np.pi * f * t + rng.uniform(0, 6.28)) * (0.5 + 0.5 * np.sin(2 * np.pi * rng.uniform(5, 11) * t))
         return y * (1 - np.exp(-t * 18)) * np.exp(-t * 2.6) / 4
-    sys.exit(f"unknown SFX kind {k!r} (tap click tick pop glass pluck chime sub swish whoosh shimmer)")
+    if k == "sample":
+        return load_pcm(P / S["sfx"][c["src"]]["file"], SR)
+    sys.exit(f"unknown SFX kind {k!r} (tap click tick pop glass pluck chime sub swish whoosh shimmer sample)")
 
 
 # ── SFX bus: unit-peak sounds placed so their own envelope peak lands on the cue ──────────────────
@@ -109,8 +111,8 @@ worst = 0.0
 for c in ev["cues"]:
     s = synth(c)
     s = s / (np.abs(s).max() + 1e-12)
-    w = int(0.004 * SR)
-    pk = int(np.argmax(np.convolve(np.abs(s), np.ones(w) / w, "same")))
+    w = int(0.004 * SR)   # a sound's own envelope peak lands on the cue; "align": "start" puts its first sample there
+    pk = 0 if c.get("align") == "start" else int(np.argmax(np.convolve(np.abs(s), np.ones(w) / w, "same")))
     start = int(round(c["t"] * SR)) - pk
     a, b = max(0, start), min(N, start + len(s))
     if b > a:

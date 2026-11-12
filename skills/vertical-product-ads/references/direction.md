@@ -48,6 +48,11 @@ The brand's own palette and type come first; never copy a template or a competit
   - `sub` + `chime` under the brand reveal;
   - `shimmer` on a drop or the groove's return;
   - `tick`s come automatically from odometers.
+- **Recorded sounds** (a box opening, footsteps, a cash register) come from `sfx`: ElevenLabs Sound
+  Effects generates each from a prompt (`scripts/sfx.py`, run by `make.sh`), or you point `file` at a
+  sound you hold a licence for. A cue `{ "kind": "sample", "src": "<name>" }` places it; one sample
+  can serve several cues. `"align": "start"` puts the sample's first moment on the cue instead of its
+  peak (for rustles and textures that build).
 - **One cue per event.** Nothing repeats more than a handful of times.
 - **Leave near-silence before a hit:** end the previous motion early.
 - **The voice is always the loudest layer.** The music ducks −15 dB under speech and −8 dB in the

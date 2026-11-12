@@ -1,9 +1,10 @@
 # scenes.json format
 
 `schemas/scenes.schema.json` is the contract. `scripts/validate.mjs` checks it plus cross-references.
-Working reference: `examples/minimal/scenes.json` (no assets, no voice). For the fields behind each
-product-ad beat (before/after wipe, parallax packshot, split bands, chips, odometer, CTA), see the
-recipe table in `direction.md`.
+Working reference: `examples/minimal/scenes.json` (no assets, no voice). A full hybrid film with
+voice-over, sound effects, chips, split bands and an end card: `examples/product-broll/` (bring your
+own footage). For the fields behind each product-ad beat (before/after wipe, parallax packshot,
+split bands, chips, odometer, CTA), see the recipe table in `direction.md`.
 
 ## Time expressions
 Any `at`, `tin`, `tout`, `t0`, `t1`, `press`… accepts a time in one of these forms:
@@ -28,6 +29,7 @@ Hits fire exactly on it (`"k16"`).
 | `render` | `{fps: 30, crf: 19}`; use 60 fps only for fast UI/whip motion |
 | `vo` | `{engine, voice, model, language, settings, script, place:[{words:[first,last], anchor, at, why}]}`. `engine`: `"elevenlabs"` (default) or `"edge"`; with `edge`, `voice` is like `id-ID-GadisNeural` and `settings` is free-form strings `{rate: "+10%", pitch: "+0Hz", volume: "+0%"}`. Write it without `place` before running `vo.py`; then `place` must cover every word in order, and each `anchor` word lands at `at` seconds. Not allowed together with `dialogue` |
 | `music` | `{file, bpm, key, prompt, length_ms, synth}`. An existing track: `file`. A generated one: `file` (where to write it) **and** `prompt`. A free local bed: `file` **and** `synth: {style: "pop"\|"minimal"\|"chill", drop: seconds, end: seconds, seed: int}`, using `bpm` (90–140, default 120) and `key` (default "C major"); `synth` and `prompt` are mutually exclusive. `drop` is where the groove starts (default: first bar line after 20 % of the film). `end` is where the bed falls silent (default: the film's end); the final chord starts on the last bar line at least ¾ bar before `end` and rings out to it, so to keep the full groove under a CTA set `end` past the film's end. The synth bed regenerates whenever these fields change; `tempo.py` takes the key from `music.key`. With no `file` the grid comes from `bpm` and there is no bed |
+| `sfx` | `name → {file, prompt, dur, influence}`: samples for `sample` cues. With `prompt`, `scripts/sfx.py` (run by `make.sh`) generates the sound with ElevenLabs Sound Effects into `file` (`dur` 0.5–30 s, omit to let the model choose; `influence` 0–1, default 0.5, how literally the prompt is followed) and regenerates it when these fields change. Without `prompt`, `file` must exist (a sound you hold a licence for) |
 | `audio` | `{duckSpeechDb:-15, duckGapDb:-8, sfxGain:0.8, fadeOut:0.6, musicDb:-20, lufs:-14}`. With a voice (`vo` or `dialogue`) the music sits `duckSpeechDb` under the voice while it speaks and `duckGapDb` in the gaps; `musicDb` (music RMS in dBFS) applies only to films without a voice |
 | `theme` | `css` (CSS custom properties, see below), `fonts` (CSS font shorthands to preload), `fontFaces` (self-hosted: `{family, src, style, weight}`, `src` relative to the project; `weight` is `400` or a variable font's range `"300 700"`), `pools` (drifting light blobs: `{color, r, x:[base, amp, freq, phase, "sin"|"cos"], y:[…]}`) |
 | `assets` | `name → path` relative to the project |
@@ -127,6 +129,7 @@ With neither `clip` nor `dialogue`, the clip plays from its second 0 at `tin`. `
 - `glass`, `pluck` (`note`: semitones above the song's tonic);
 - `chime` (`notes`), `sub` (`dur`);
 - `swish`, `whoosh` (`dur`, `up`, `rev`, `soft`);
-- `shimmer` (`dur`, `bright`).
+- `shimmer` (`dur`, `bright`);
+- `sample` (`src`: a name from `sfx`; `align`: `"peak"` (default) or `"start"`).
 
-Each sound's own peak lands on `at`.
+Each sound's own peak lands on `at` (with `"align": "start"`, a sample's first moment does).

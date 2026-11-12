@@ -97,6 +97,10 @@
           "properties": { "style": { "enum": ["pop", "minimal", "chill"] }, "drop": { "type": "number", "minimum": 0 },
             "end": { "type": "number", "minimum": 0 }, "seed": { "type": "integer" } } } }
     },
+    "sfx": { "type": "object", "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" }, "additionalProperties": {
+      "type": "object", "required": ["file"], "additionalProperties": false,
+      "properties": { "file": { "type": "string" }, "prompt": { "type": "string" },
+        "dur": { "type": "number", "minimum": 0.5, "maximum": 30 }, "influence": { "type": "number", "minimum": 0, "maximum": 1 } } } },
     "audio": {
       "type": "object", "additionalProperties": false,
       "properties": { "duckSpeechDb": { "type": "number" }, "duckGapDb": { "type": "number" }, "sfxGain": { "type": "number" },
@@ -207,7 +211,8 @@
     "cues": { "type": "array", "items": {
       "type": "object", "required": ["at", "kind", "gain"],
       "properties": { "at": { "$ref": "#/$defs/time" },
-        "kind": { "enum": ["tap", "click", "tick", "pop", "glass", "pluck", "chime", "sub", "swish", "whoosh", "shimmer"] },
+        "kind": { "enum": ["tap", "click", "tick", "pop", "glass", "pluck", "chime", "sub", "swish", "whoosh", "shimmer", "sample"] },
+        "src": { "type": "string" }, "align": { "enum": ["peak", "start"] },
         "gain": { "type": "number", "minimum": 0, "maximum": 1 },
         "f": { "type": "number" }, "dur": { "type": "number" }, "note": { "type": "number" },
         "notes": { "type": "array", "items": { "type": "number" } },

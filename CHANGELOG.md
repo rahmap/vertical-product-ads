@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.0
+
+**ElevenLabs sound effects**
+- New `sfx` block: named samples generated from a prompt with ElevenLabs Sound Effects
+  (`scripts/sfx.py`, run by `make.sh`, cached until the prompt, `dur` or `influence` changes), or
+  your own licensed files.
+- New cue kind `sample` (`src`, optional `align: "start"`) places them in the mix next to the
+  synthesized cues. `validate.mjs` checks that every `src` exists in `sfx`.
+
+**Fix: captions with a voice-over ran across sentences**
+- With `vo`, words carried no punctuation, so a caption chunk could join the end of one sentence and
+  the start of the next ("BANGET DIPAKAI SEHARIAN"). `place_vo.py` now takes each word's trailing
+  punctuation from `vo.script`, and captions break at commas and sentence ends as they already did
+  for `dialogue`.
+
+**Example: `examples/product-broll/`**
+- A 20 s hybrid ad for a fictional shampoo: eight muted product clips (hands only, no faces) under an
+  ElevenLabs voice-over, music and sound effects; ingredient card, benefit chips, three bands that
+  pop on their words, a band that swallows the others, and an end card. Ships `concept.md`,
+  `scenes.json` and the headline font (Nunito, OFL); its README lists the shots to film and what to
+  re-fit after generating a new voice or track.
+- The shot list follows a product UGC video by @shin.ugc on TikTok (credited in the example's
+  README); that video's footage and brand are not included.
+
 ## 0.2.2
 
 **Fix: stray marks on odometer numbers**

@@ -56,6 +56,12 @@ if (M && M.synth) {
   if (M.bpm != null && (M.bpm < 90 || M.bpm > 140)) problems.push(`music.bpm ${M.bpm}: synth supports 90–140`);
 } else if (M && M.file && !fs.existsSync(path.join(dir, M.file)) && !M.prompt)
   problems.push(`music.file ${M.file} is missing and there is no music.prompt (or music.synth) to generate it`);
+for (const [n, x] of Object.entries(S.sfx || {}))
+  if (!x.prompt && !fs.existsSync(path.join(dir, x.file))) problems.push(`sfx.${n}: ${x.file} is missing and there is no prompt to generate it`);
+for (const c of S.cues || []) {
+  if (c.kind === 'sample' && !(S.sfx || {})[c.src]) problems.push(`cue at ${JSON.stringify(c.at)}: sample src "${c.src}" is not in sfx`);
+  if (c.kind !== 'sample' && (c.src != null || c.align != null)) problems.push(`cue at ${JSON.stringify(c.at)}: "src"/"align" are only for kind "sample"`);
+}
 if (S.vo && S.vo.engine === 'edge' && !/^[a-z]{2,3}-[A-Z]{2,4}-\w+Neural$/.test(S.vo.voice))
   problems.push(`vo.voice "${S.vo.voice}": engine edge needs a name like id-ID-GadisNeural (scripts/voices.py lists them)`);
 if (S.vo && S.dialogue) problems.push('vo and dialogue are mutually exclusive (one speech track)');

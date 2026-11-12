@@ -5,9 +5,10 @@ untouched, so every word time stays exact: new = old + shift.
 
 usage: python3 place_vo.py <project>
 reads  scenes.json vo.place, audio/vo.mp3, audio/vo_words.json
-writes audio/vo_placed.wav, audio/words.json (what "w<i>" resolves to)
+writes audio/vo_placed.wav, audio/words.json (what "w<i>" resolves to; "p" is the word's trailing punctuation from
+       vo.script, which captions use to break at clause and sentence ends)
 """
-import json, subprocess, sys
+import json, re, subprocess, sys
 
 import numpy as np
 
@@ -19,6 +20,19 @@ place = (S.get("vo") or {}).get("place")
 if not place:
     sys.exit("scenes.json vo.place is empty: list sentence segments {words:[first,last], anchor, at}")
 W = json.loads((P / "audio/vo_words.json").read_text())["words"]
+# trailing punctuation per word, read from the script: punctuation inside a token ("189.000") does not count
+script = S["vo"]["script"]
+toks = list(re.finditer(r"[\w\-']+", script))
+
+
+def punct(k):
+    gap = script[toks[k].end():toks[k + 1].start() if k + 1 < len(toks) else len(script)]
+    return gap.strip() if k + 1 == len(toks) or any(c.isspace() for c in gap) else ""
+
+
+PUNCT = [punct(k) for k in range(len(toks))] if len(toks) == len(W) else None
+if PUNCT is None:
+    print(f"note: the script has {len(toks)} words but the voice {len(W)}: captions will not break at punctuation")
 SR, FILM = 44100, S["duration"]
 x = load_pcm(P / "audio/vo.mp3", SR)
 out = np.zeros(int(FILM * SR))
@@ -48,7 +62,8 @@ for seg in place:
                         f"raise this segment's 'at' by ≥{need:.2f}s, or lower the previous segment's 'at' by as much")
     print(f"{a:2d}-{b:2d}  {start:6.2f}-{end:6.2f}  gap {gap:5.2f}  shift {shift:+.2f}  {seg.get('why', '')}")
     prev_end = end
-    placed += [{"i": w["i"], "w": w["w"], "start": round(w["start"] + shift, 3), "end": round(w["end"] + shift, 3)}
+    placed += [{"i": w["i"], "w": w["w"], "start": round(w["start"] + shift, 3), "end": round(w["end"] + shift, 3),
+                **({"p": PUNCT[w["i"]]} if PUNCT and PUNCT[w["i"]] else {})}
                for w in W[a:b + 1]]
 
 if placed[-1]["end"] > FILM - 0.5:

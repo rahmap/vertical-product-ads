@@ -159,6 +159,7 @@ Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, 
 |---|---|---|---|
 | Voice-over | `vo.engine: "elevenlabs"` | `vo.engine: "edge"` (edge-tts, perlu internet) | edge-tts adalah klien tidak resmi layanan baca-teks Edge milik Microsoft. Ketentuannya untuk iklan berbayar tidak jelas: pakai untuk draf, atau terima risikonya |
 | Musik | `music.prompt` | `music.synth` (musik prosedural lokal) atau file musik berlisensi | Musik synth dibuat di komputer Anda, sepenuhnya milik Anda |
+| Efek suara | prompt `sfx` (ElevenLabs Sound Effects) | cue sintesis bawaan (`tap`, `whoosh`, `chime`…) atau file Anda sendiri | Cue sintesis dibuat di komputer Anda, sepenuhnya milik Anda |
 | Transkripsi footage | `dialogue.transcriber: "elevenlabs"` | `"whisper"` (faster-whisper, offline) | Lokal, tanpa unggah. `"auto"` memakai ElevenLabs bila bisa, selain itu whisper |
 
 Lisensi ElevenLabs mengikuti ketentuan paket Anda.
@@ -294,6 +295,7 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) dan semua langkahnya |
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, kontrak yang dicek `validate.mjs` |
 | `skills/vertical-product-ads/examples/minimal/` | Film 8,5 detik tanpa aset |
+| `skills/vertical-product-ads/examples/product-broll/` | Iklan hybrid 20 detik (sampo fiktif): b-roll produk yang Anda rekam sendiri, voice, musik dan efek suara ElevenLabs, kartu bahan, layar terbelah tiga, end card |
 
 ---
 
