@@ -14,16 +14,21 @@ dan lainnya.
 
 ## Contoh hasil
 
-<a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="Iklan sampo vertikal 20 detik: b-roll produk dengan caption, kartu bahan, chip manfaat, layar terbelah tiga, dan end card dengan tombol CTA"></a>
+| Motion: Dior Addict Lip Glow (spec ad tidak resmi) | Hybrid: b-roll sampo jahe |
+|---|---|
+| <a href="media/dior-lip-glow.mp4"><img src="media/dior-lip-glow.gif" width="252" alt="Iklan lip balm vertikal 31 detik: satu bentuk membulat berubah melalui wipe sebelum/sesudah, packshot, tiga panel warna bibir, chip bahan, angka 48 jam yang berputar, dan end card"></a> | <a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="Iklan sampo vertikal 20 detik: b-roll produk dengan caption, kartu bahan, chip manfaat, layar terbelah tiga, dan end card dengan tombol CTA"></a> |
+| 31 detik. Semua gambar buatan AI (model, bibir, produk); satu bentuk berubah melalui wipe sebelum/sesudah, packshot parallax, tiga panel warna bibir, chip bahan, odometer, dan end card. Voice dan musik ElevenLabs. [MP4 dengan suara](media/dior-lip-glow.mp4) | Iklan TikTok 20 detik dari b-roll produk tanpa suara: voice, musik dan efek suara ElevenLabs, kartu bahan, chip manfaat, tiga panel yang muncul pada katanya, end card. [MP4 dengan suara](media/ginger-shampoo.mp4) |
 
-Iklan TikTok 20 detik (voice-over bahasa Indonesia) yang dibuat dengan kedua skill dari b-roll produk
-tanpa suara: voice, musik dan efek suara ElevenLabs, kartu bahan, chip manfaat, tiga panel yang muncul
-pada katanya, dan end card. GIF-nya tanpa suara: [MP4 dengan suara](media/ginger-shampoo.mp4).
+Keduanya memakai voice-over bahasa Indonesia; GIF-nya tanpa suara.
 
-Footage: [@shin.ugc di TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086), dipakai
-dengan izin. Produk dan mereknya milik pemiliknya; klaim dibaca dari label kemasan. Film yang sama
-sebagai proyek siap pakai dengan merek fiktif:
-[`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
+- **Dior Addict Lip Glow** adalah spec ad tidak resmi, dibuat untuk memperlihatkan kemampuan skill:
+  tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
+  Lip Glow adalah merek dagang pemiliknya. Klaim hidrasi 48 jam dan catatan kakinya diambil dari
+  halaman produk Dior.
+- **Sampo jahe**: footage [@shin.ugc di TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086),
+  dipakai dengan izin. Produk dan mereknya milik pemiliknya; klaim dibaca dari label kemasan. Film
+  yang sama sebagai proyek siap pakai dengan merek fiktif:
+  [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Daftar isi**
 - Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)

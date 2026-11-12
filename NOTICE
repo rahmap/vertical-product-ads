@@ -31,12 +31,19 @@ blur content swaps, odometer digit math, subframe motion blur) is adapted from p
 
 None of product-launch-motion's sample films, stills or third-party marks are included here.
 
-Showcase film (media/) — not under the MIT licence
---------------------------------------------------
-media/ginger-shampoo.mp4 and media/ginger-shampoo.gif are shown to demonstrate the skills only.
-Footage by @shin.ugc (https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used with
-permission; the product and brand marks belong to their owner. Voice, music and sound effects were
-generated with ElevenLabs under the repository owner's plan. Do not reuse these files.
+Showcase films (media/) — not under the MIT licence
+---------------------------------------------------
+The files in media/ are shown to demonstrate the skills only. Do not reuse them.
+
+media/dior-lip-glow.mp4 and .gif: an unofficial spec ad, not affiliated with, sponsored or endorsed
+by Christian Dior. Dior and Addict Lip Glow are trademarks of their owner. All images are
+AI-generated; the 48-hour hydration claim and its footnote come from Dior's product page. Voice and
+music were generated with ElevenLabs under the repository owner's plan.
+
+media/ginger-shampoo.mp4 and .gif: footage by @shin.ugc
+(https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used with permission; the product and
+brand marks belong to their owner. Voice, music and sound effects were generated with ElevenLabs
+under the repository owner's plan.
 
 Font in examples/product-broll/
 -------------------------------

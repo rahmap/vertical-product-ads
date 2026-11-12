@@ -13,16 +13,20 @@ Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, A
 
 ## Showcase
 
-<a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="20-second vertical shampoo ad: product b-roll with captions, an ingredient card, benefit chips, three split bands and an end card with a CTA button"></a>
+| Motion: Dior Addict Lip Glow (unofficial spec ad) | Hybrid: ginger shampoo b-roll |
+|---|---|
+| <a href="media/dior-lip-glow.mp4"><img src="media/dior-lip-glow.gif" width="252" alt="31-second vertical lip balm ad: one rounded shape morphs through a before/after wipe, a packshot, three lip-tone bands, ingredient chips, a rolling 48-hour number and an end card"></a> | <a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="20-second vertical shampoo ad: product b-roll with captions, an ingredient card, benefit chips, three split bands and an end card with a CTA button"></a> |
+| 31 s. AI-generated images only (model, lips, product); one shape morphs through a before/after wipe, a parallax packshot, three lip-tone bands, ingredient chips, an odometer and the end card. ElevenLabs voice and music. [MP4 with sound](media/dior-lip-glow.mp4) | 20 s TikTok ad from muted product b-roll: ElevenLabs voice, music and sound effects, an ingredient card, benefit chips, three bands that pop on their words, an end card. [MP4 with sound](media/ginger-shampoo.mp4) |
 
-A 20 s TikTok ad (Indonesian voice-over) made with both skills from muted product b-roll:
-ElevenLabs voice, music and sound effects, an ingredient card, benefit chips, three bands that pop on
-their words, and an end card. The GIF is silent: [MP4 with sound](media/ginger-shampoo.mp4).
+Both have Indonesian voice-overs; the GIFs are silent.
 
-Footage: [@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086), used
-with permission. The product and brand belong to their owner; the claims are read from the product
-label. The same film as a reusable project with a fictional brand:
-[`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
+- **Dior Addict Lip Glow** is an unofficial spec ad, made to demonstrate the skills: it is not
+  affiliated with, sponsored or endorsed by Christian Dior. Dior and Addict Lip Glow are trademarks
+  of their owner. The 48-hour hydration claim and its footnote come from Dior's product page.
+- **Ginger shampoo** footage: [@shin.ugc on TikTok](https://www.tiktok.com/@shin.ugc/video/7477264941087608086),
+  used with permission. The product and brand belong to their owner; the claims are read from the
+  product label. The same film as a reusable project with a fictional brand:
+  [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Contents**
 - Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Voice and music](#voice-and-music) · [Duration](#duration)
