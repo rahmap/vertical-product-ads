@@ -1,0 +1,104 @@
+{
+  "summary": "Launch-keynote dark: navy-black grid, Space Grotesk, JetBrains Mono UI, cyan glow, typed-on text.",
+  "theme": {
+    "enter": "type",
+    "css": {
+      "--base": "#07080D",
+      "--bg": "linear-gradient(rgba(124, 92, 255, 0.07) 1px, transparent 1px) 0 0 / 100% 72px, linear-gradient(90deg, rgba(124, 92, 255, 0.07) 1px, transparent 1px) 0 0 / 72px 100%, radial-gradient(120% 80% at 50% 30%, #141A33 0%, #07080D 70%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #1A2140 0%, #0E1224 70%, #0A0C18 100%)",
+      "--ink": "#EEF1FF",
+      "--accent": "#00E0FF",
+      "--accent-pressed": "#00A8C2",
+      "--muted": "rgba(238, 241, 255, 0.66)",
+      "--surface": "rgba(14, 18, 36, 0.9)",
+      "--surface-label": "rgba(14, 18, 36, 0.9)",
+      "--icon-bg": "rgba(0, 224, 255, 0.14)",
+      "--ui-ink": "#EEF1FF",
+      "--shadow-rgb": "0, 0, 0",
+      "--cta-shadow-rgb": "0, 120, 140",
+      "--dot-shadow-rgb": "0, 0, 0",
+      "--serif": "\"Space Grotesk\", system-ui, sans-serif",
+      "--sans": "\"Space Grotesk\", system-ui, sans-serif",
+      "--display-weight": "700",
+      "--text-weight": "500",
+      "--head-tracking": "-0.02em",
+      "--caps-tracking": "0.24em",
+      "--acc-glow": "0 0 22px rgba(0, 224, 255, 0.55)",
+      "--ui-font": "\"JetBrains Mono\", ui-monospace, monospace",
+      "--ui-round": "0.3",
+      "--ui-border": "1.5px solid rgba(0, 224, 255, 0.55)",
+      "--chip-shadow": "0 0 28px rgba(0, 224, 255, 0.22)",
+      "--ui-weight": "600",
+      "--ui-case": "uppercase",
+      "--ui-tracking": "0.02em",
+      "--cta-ink": "#04121A",
+      "--cta-shadow": "0 0 36px rgba(0, 224, 255, 0.45)",
+      "--sheen": "linear-gradient(104deg, rgba(0,224,255,0) 40%, rgba(0,224,255,0.22) 50%, rgba(0,224,255,0) 60%)",
+      "--grain-opacity": "0.035",
+      "--caption-font": "\"Space Grotesk\", system-ui, sans-serif",
+      "--caption-weight": "700",
+      "--caption-radius": "0.2em",
+      "--caption-ink": "#EEF1FF",
+      "--caption-bg": "rgba(7, 8, 13, 0.8)",
+      "--caption-active": "#00E0FF",
+      "--tone-1": "#121A3D",
+      "--tone-2": "#7C5CFF",
+      "--tone-3": "#00E0FF"
+    },
+    "fontFaces": [
+      {
+        "family": "Space Grotesk",
+        "src": "fonts/space-grotesk-var.woff2",
+        "weight": "300 700"
+      },
+      {
+        "family": "JetBrains Mono",
+        "src": "fonts/jetbrains-mono-var.woff2",
+        "weight": "100 800"
+      }
+    ],
+    "pools": [
+      {
+        "color": "rgba(124, 92, 255, 0.32)",
+        "r": 700,
+        "x": [
+          220,
+          60,
+          0.3,
+          0,
+          "sin"
+        ],
+        "y": [
+          480,
+          90,
+          0.24,
+          0,
+          "cos"
+        ]
+      },
+      {
+        "color": "rgba(0, 224, 255, 0.18)",
+        "r": 760,
+        "x": [
+          880,
+          60,
+          0.26,
+          1.4,
+          "cos"
+        ],
+        "y": [
+          1460,
+          80,
+          0.2,
+          0.5,
+          "sin"
+        ]
+      }
+    ]
+  },
+  "captions": {
+    "style": "pill",
+    "case": "upper",
+    "size": 60
+  }
+}

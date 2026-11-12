@@ -1,0 +1,92 @@
+{
+  "summary": "Dermatology-clean: cool white, one geometric sans (Plus Jakarta Sans), teal accent, crisp left-to-right wipes, no grain.",
+  "theme": {
+    "enter": "wipe",
+    "css": {
+      "--base": "#F2F6F7",
+      "--bg": "linear-gradient(180deg, #F8FBFB 0%, #E6EFF1 100%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #FFFFFF 0%, #F3F8F9 62%, #E3EDEF 100%)",
+      "--ink": "#0D1B26",
+      "--accent": "#0B7480",
+      "--accent-pressed": "#08575F",
+      "--muted": "rgba(13, 27, 38, 0.72)",
+      "--surface": "rgba(255, 255, 255, 0.96)",
+      "--surface-label": "rgba(255, 255, 255, 0.94)",
+      "--icon-bg": "#E2F2F3",
+      "--shadow-rgb": "20, 50, 60",
+      "--cta-shadow-rgb": "8, 87, 95",
+      "--dot-shadow-rgb": "20, 50, 60",
+      "--serif": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "--sans": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "--display-weight": "700",
+      "--text-weight": "500",
+      "--head-tracking": "-0.025em",
+      "--caps-tracking": "0.16em",
+      "--caps-weight": "700",
+      "--ui-border": "1.5px solid rgba(11, 116, 128, 0.18)",
+      "--chip-shadow": "0 12px 28px rgba(20, 50, 60, 0.10)",
+      "--ui-weight": "600",
+      "--cta-ink": "#FFFFFF",
+      "--grain-opacity": "0",
+      "--caption-font": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "--caption-weight": "700",
+      "--caption-radius": "0.5em",
+      "--caption-ink": "#FFFFFF",
+      "--caption-bg": "rgba(13, 27, 38, 0.82)",
+      "--caption-active": "#7FE0E8",
+      "--tone-1": "#DDEFF1",
+      "--tone-2": "#8CCBD1",
+      "--tone-3": "#0B7480"
+    },
+    "fontFaces": [
+      {
+        "family": "Plus Jakarta Sans",
+        "src": "fonts/plus-jakarta-sans-var.woff2",
+        "weight": "200 800"
+      }
+    ],
+    "pools": [
+      {
+        "color": "rgba(205, 236, 240, 0.8)",
+        "r": 720,
+        "x": [
+          240,
+          50,
+          0.3,
+          0,
+          "sin"
+        ],
+        "y": [
+          420,
+          70,
+          0.24,
+          0,
+          "cos"
+        ]
+      },
+      {
+        "color": "rgba(226, 240, 255, 0.7)",
+        "r": 760,
+        "x": [
+          880,
+          50,
+          0.26,
+          1.1,
+          "cos"
+        ],
+        "y": [
+          1500,
+          60,
+          0.2,
+          0.3,
+          "sin"
+        ]
+      }
+    ]
+  },
+  "captions": {
+    "style": "pill",
+    "case": "none",
+    "size": 58
+  }
+}

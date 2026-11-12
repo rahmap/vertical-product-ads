@@ -39,6 +39,9 @@ const SPRINGS = {
   trail: { w: 13, z: 0.9 }, jump: { w: 60, z: 1 },
 };
 const TEXT_CLASSES = new Set(['serif', 'sans', 'ital', 'h0', 'h1', 'sub', 'wordmark', 'caps', 'foot']);
+// how HUD text and UI enter (theme.enter, usually from the look): blur (default), rise, cut, pop, wipe, type
+const ENTERS = new Set(['blur', 'rise', 'cut', 'pop', 'wipe', 'type']);
+const POP = { w: 22, z: 0.55 };
 const TRACK_KEYS = ['x', 'y', 'w', 'h', 'r', 'gap', 'rin', 'b0', 'b1', 'b2', 'lz', 'cx', 'cy', 'dx', 'dy'];
 
 async function fetchJSON(path, optional) {
@@ -46,9 +49,16 @@ async function fetchJSON(path, optional) {
   if (!res.ok) { if (optional) return null; throw new Error(`${path}: HTTP ${res.status}`); }
   return res.json();
 }
+// looks/<name>.json from the skill: a preset theme (+ caption defaults) that scenes.json "theme" overrides
+async function fetchLook(name) {
+  const res = await fetch('/looks/' + encodeURIComponent(name) + '.json');
+  if (!res.ok) throw new Error(`look "${name}": no looks/${name}.json in the skill`);
+  return res.json();
+}
 
 async function main() {
   const S = await fetchJSON('scenes.json');
+  const LOOK = S.look ? await fetchLook(S.look) : null;
   const WORDS = await fetchJSON('audio/words.json', true);
   const FOOT = (S.layers || []).some(l => l.kind === 'video') ? await fetchJSON('build/footage.json', true) : null;
   if ((S.layers || []).some(l => l.kind === 'video') && !FOOT) throw new Error('video layers need build/footage.json: run footage.py (make.sh runs it)');
@@ -207,7 +217,7 @@ async function main() {
   const HOLDS = (touch.holds || []).map(h => ({ a: T(h.from), b: T(h.to), wiper: !!h.wiper }));
 
   // captions: word-by-word chunks from audio/words.json (screen space, class "cap" so qa_safe checks them)
-  const CAPCFG = { y: Math.round(H * 0.615), size: 64, maxWords: 3, maxGap: 0.35, case: 'upper', style: 'pill', ...S.captions };
+  const CAPCFG = { y: Math.round(H * 0.615), size: 64, maxWords: 3, maxGap: 0.35, case: 'upper', style: 'pill', ...(LOOK && LOOK.captions), ...S.captions };
   const CAPFIX = Object.fromEntries(Object.entries(CAPCFG.fix || {}).map(([k, v]) => [k.toLowerCase(), v]));
   const CAPS = [];
   if (S.captions) {
@@ -245,12 +255,21 @@ async function main() {
   const el = (tag, cls, parent) => { const e = document.createElement(tag); if (cls) e.className = cls; parent && parent.appendChild(e); return e; };
   const frame = $('#frame'), world = $('#world'), hud = $('#hud'), bandsEl = $('#bands'), grainEl = $('#grain');
   frame.style.width = W + 'px'; frame.style.height = H + 'px';
-  const theme = S.theme || {};
-  for (const [k, v] of Object.entries(theme.css || {})) frame.style.setProperty(k, v);
+  // look first, then the project's own theme on top: css keys and pools override, fonts and faces add up
+  const LT = (LOOK && LOOK.theme) || {}, PT = S.theme || {};
+  const theme = {
+    css: { ...LT.css, ...PT.css }, fonts: [...(LT.fonts || []), ...(PT.fonts || [])], pools: PT.pools || LT.pools || [],
+    faces: [...(LT.fontFaces || []).map(f => ({ ...f, url: '/looks/' + f.src })), ...(PT.fontFaces || []).map(f => ({ ...f, url: PROJECT + f.src }))],
+  };
+  const ENTER = PT.enter || LT.enter || 'blur';
+  if (!ENTERS.has(ENTER)) throw new Error(`theme.enter "${ENTER}" not in ${[...ENTERS]}`);
+  for (const [k, v] of Object.entries(theme.css)) frame.style.setProperty(k, v);
   const cssVar = k => getComputedStyle(frame).getPropertyValue(k).trim();
   const hexRGB = h => { const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(h); if (!m) throw new Error(`theme color "${h}" must be #RRGGBB`); return m.slice(1).map(x => parseInt(x, 16)); };
   const ACC = hexRGB(cssVar('--accent')), ACC2 = hexRGB(cssVar('--accent-pressed'));
   frame.style.setProperty('--accent-rgb', ACC.join(', '));
+  // --ui-round scales the corner radius of chips, labels and the CTA (1 = pill, 0 = square)
+  const UI_ROUND = cssVar('--ui-round') === '' ? 1 : parseFloat(cssVar('--ui-round'));
   const safeBox = $('#safe div');
   Object.assign(safeBox.style, { left: SAFE.l + 'px', top: SAFE.t + 'px', width: SAFE.r - SAFE.l + 'px', height: SAFE.b - SAFE.t + 'px' });
   const overlay = $('#overlay');
@@ -295,8 +314,14 @@ async function main() {
     for (const line of o.lines) {
       const le = el('span', 'line', o.e);
       for (const wd of line) {
-        const s = el('span', 'w' + (wd.acc ? ' acc' : ''), le); s.textContent = wd.t;
-        o.words.push({ s, at: wd.at, slam: !!wd.slam });
+        const s = el('span', 'w' + (wd.acc ? ' acc' : ''), le);
+        const w = { s, at: wd.at, slam: !!wd.slam };
+        // rise: the glyphs (inner span) slide up inside the word's fixed clip, so the measured box never moves
+        if (ENTER === 'rise') { s.style.clipPath = 'inset(-0.4em -0.5em -0.3em -0.5em)'; w.inner = el('span', 'wi', s); w.inner.textContent = wd.t; }
+        // type: one span per character; hidden ones keep their space, so the layout never changes
+        else if (ENTER === 'type') w.chars = [...wd.t].map(ch => { const c = el('span', null, s); c.textContent = ch; return c; });
+        else s.textContent = wd.t;
+        o.words.push(w);
       }
     }
   }
@@ -396,6 +421,22 @@ async function main() {
   const px = v => v.toFixed(2) + 'px';
   const show = (e, on) => { const d = on ? '' : 'none'; if (e.style.display !== d) e.style.display = d; };
   const blurOf = v => (v.b > 0.05 ? `blur(${v.b.toFixed(2)}px)` : '');
+  // non-blur entrances never blur: cut switches on/off on frame boundaries; the others ramp the opacity and give an
+  // entry progress e (critically damped) and an exit progress x
+  function enterVis(t, tin, tout, dOut = 0.16, w = 16) {
+    if (ENTER === 'cut') { const on = t >= frameEdge(tin) && (tout == null || t < frameEdge(tout)); return { o: on ? 1 : 0, b: 0, e: 1, x: 0 }; }
+    const tau = t - tin;
+    if (tau <= 0) return { o: 0, b: 0, e: 0, x: 0 };
+    const x = tout == null ? 0 : clamp((t - tout) / dOut), xo = x * x;
+    return { o: clamp(tau / (ENTER === 'pop' ? 0.05 : 0.09)) * (1 - xo), b: 0, e: stepR(tau, { w, z: 1 }), x: xo };
+  }
+  const hudVis = (t, tin, tout, dOut, w) => (ENTER === 'blur' ? vis(t, tin, tout, dOut, w) : enterVis(t, tin, tout, dOut, w));
+  // reveal from one side; once p reaches 1 the clip leaves `pad` px around the box (glyph overhang, shadows)
+  const revealClip = (p, fromRight, pad) => {
+    if (p >= 0.999) return '';
+    const edge = `calc(${((1 - p) * 100).toFixed(2)}% + ${((1 - p) * 2 * pad - pad).toFixed(2)}px)`;
+    return fromRight ? `inset(-${pad}px -${pad}px -${pad}px ${edge})` : `inset(-${pad}px ${edge} -${pad}px -${pad}px)`;
+  };
 
   // video frames: a changed frame loads in its <img>; seek() hands the decode promises to its caller
   let pending = [];
@@ -496,30 +537,42 @@ async function main() {
     for (const o of TEXTS) {
       let any = false;
       for (const w of o.words) {
-        const v = vis(t, w.at - o.lead, o.tout, o.dOut);
+        const t0 = w.at - o.lead;
+        const v = hudVis(t, t0, o.tout, o.dOut);
         if (v.o <= 0.003) { if (w.s.style.opacity !== '0') w.s.style.opacity = '0'; continue; }
         any = true;
         let sc = 1;
-        if (w.slam) sc = 1 + 0.16 * (1 - stepR(t - (w.at - o.lead), { w: 17, z: 0.74 }));
-        const dy = (1 - v.e) * 20 - v.x * 12;
+        if (w.slam) sc = 1 + 0.16 * (1 - stepR(t - t0, { w: 17, z: 0.74 }));
+        if (ENTER === 'pop') sc *= 0.5 + 0.5 * stepR(t - t0, POP);
+        const dy = ENTER === 'blur' ? (1 - v.e) * 20 - v.x * 12 : ENTER === 'cut' ? 0 : -v.x * 12;
         w.s.style.opacity = v.o.toFixed(3);
         w.s.style.filter = blurOf(v);
         w.s.style.transform = `translateY(${px(dy)})${sc !== 1 ? ` scale(${sc.toFixed(4)})` : ''}`;
+        if (ENTER === 'rise') w.inner.style.transform = `translateY(${((1 - v.e) * 1.4).toFixed(4)}em)`;
+        else if (ENTER === 'wipe') w.s.style.clipPath = revealClip(v.e, false, 60);
+        else if (ENTER === 'type') {
+          // 45 ms per character, but a long piece (a footnote) types within 0.6 s
+          const n = Math.floor((t - t0) / Math.min(0.045, 0.6 / w.chars.length)) + 1;
+          w.chars.forEach((c, k) => { const vv = k < n ? '' : 'hidden'; if (c.style.visibility !== vv) c.style.visibility = vv; });
+        }
       }
       show(o.e, any);
     }
 
     for (const ch of CHIPS) {
-      const v = vis(t, ch.tin, ch.tout, 0.14, 20); show(ch.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      const v = hudVis(t, ch.tin, ch.tout, 0.14, 20); show(ch.e, v.o > 0.003); if (v.o <= 0.003) continue;
       const dir = ch.side === 'left' ? -1 : 1;
       ch.e.style.opacity = v.o.toFixed(3);
       ch.e.style.filter = blurOf(v);
-      // slides in from the shape side, never past the safe edge
-      ch.e.style.transform = `translateX(${px(-dir * (1 - stepR(t - ch.tin, { w: 18, z: 0.8 })) * 90)})`;
+      // blur: slides in from the shape side, never past the safe edge
+      if (ENTER === 'blur') ch.e.style.transform = `translateX(${px(-dir * (1 - stepR(t - ch.tin, { w: 18, z: 0.8 })) * 90)})`;
+      else if (ENTER === 'pop') ch.e.style.transform = `scale(${(0.6 + 0.4 * stepR(t - ch.tin, POP)).toFixed(4)})`;
+      else if (ENTER === 'rise') ch.e.style.transform = `translateY(${px((1 - v.e) * 36)})`;
+      else if (ENTER === 'wipe' || ENTER === 'type') ch.e.style.clipPath = revealClip(v.e, ch.side !== 'left', 80);
     }
 
     for (const l of LABELS) {
-      const v = vis(t, l.tin, l.tout, 0.14); show(l.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      const v = hudVis(t, l.tin, l.tout, 0.14); show(l.e, v.o > 0.003); if (v.o <= 0.003) continue;
       const a = toScreen(Sh.x, Sh.y + Sh.h, c), b = toScreen(Sh.x + Sh.w, Sh.y + Sh.h, c);
       l.e.style.top = px(a.y - 86);
       // pinned to the shape's bottom corners, clamped inside the safe zone
@@ -529,7 +582,7 @@ async function main() {
     }
 
     for (const o of ODOS) {
-      const v = vis(t, o.t0 - 0.08, o.tout, 0.14); show(o.e, v.o > 0.003); if (v.o <= 0.003) continue;
+      const v = hudVis(t, o.t0 - 0.08, o.tout, 0.14); show(o.e, v.o > 0.003); if (v.o <= 0.003) continue;
       o.e.style.opacity = v.o.toFixed(3); o.e.style.filter = blurOf(v);
       const val = odoValue(o, t);
       for (const s of o.slots) {
@@ -578,12 +631,12 @@ async function main() {
         const cx = (L + Rr) / 2;
         const pp = 1 - 0.05 * Math.exp(-Math.pow((t - CTA.press - 0.03) / 0.07, 2));
         cta.style.left = px(cx - wdt / 2); cta.style.top = px(CTA.y - CTA.h / 2);
-        cta.style.width = px(wdt); cta.style.height = px(CTA.h); cta.style.borderRadius = px(CTA.h / 2);
+        cta.style.width = px(wdt); cta.style.height = px(CTA.h); cta.style.borderRadius = px(CTA.h / 2 * UI_ROUND);
         cta.style.opacity = cv.o.toFixed(3);
         cta.style.transform = `scale(${(pp * (0.6 + 0.4 * stepR(t - CTA.tin, { w: 20, z: 0.78 }))).toFixed(4)})`;
         const pr = stepR(t - CTA.press, { w: 14, z: 1 });
         cta.style.background = `rgb(${[0, 1, 2].map(i => Math.round(lerp(ACC[i], ACC2[i], pr))).join(', ')})`;
-        const tv = vis(t, CTA.textIn, null);
+        const tv = hudVis(t, CTA.textIn, null);
         ctaText.style.opacity = tv.o.toFixed(3); ctaText.style.filter = blurOf(tv);
       }
     }
@@ -611,12 +664,12 @@ async function main() {
   window.CUES = CUES.sort((a, b) => a.t - b.t);
   window.SCENE_META = { width: W, height: H, safe: SAFE, duration: FILM };
   if (new URLSearchParams(location.search).has('safe')) $('#safe').classList.add('on');
-  // self-hosted faces (project files) first, then preload every face the theme names
-  const faces = (theme.fontFaces || []).map(f => new FontFace(f.family, `url("${PROJECT + f.src}")`,
+  // self-hosted faces (look and project files) first, then preload every face the theme names
+  const faces = theme.faces.map(f => new FontFace(f.family, `url("${f.url}")`,
     { style: f.style || 'normal', weight: String(f.weight || 400) }));
   for (const f of faces) document.fonts.add(f);
   await Promise.all(faces.map(f => f.load()));
-  await Promise.all([...(theme.fonts || []).map(f => document.fonts.load(f)), ...Object.values(imgCache).map(i => i.decode())]);
+  await Promise.all([...theme.fonts.map(f => document.fonts.load(f)), ...Object.values(imgCache).map(i => i.decode())]);
   fitCaptions();
   await seek(0);
   window.READY = true;

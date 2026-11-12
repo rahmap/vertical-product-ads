@@ -1,0 +1,100 @@
+{
+  "summary": "Kitchen-table natural: cream paper, soft Fraunces serif, DM Sans, terracotta accent, paper grain, gentle blur entrances.",
+  "theme": {
+    "enter": "blur",
+    "css": {
+      "--base": "#EFE5D6",
+      "--bg": "linear-gradient(180deg, #F4ECDF 0%, #E7D9C4 100%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #FBF6EE 0%, #F1E7D8 62%, #E5D5BE 100%)",
+      "--ink": "#2A1E14",
+      "--accent": "#9E4325",
+      "--accent-pressed": "#7C321A",
+      "--muted": "rgba(42, 30, 20, 0.74)",
+      "--surface": "rgba(251, 246, 238, 0.94)",
+      "--surface-label": "rgba(251, 246, 238, 0.9)",
+      "--icon-bg": "#F1DCCB",
+      "--shadow-rgb": "70, 45, 25",
+      "--cta-shadow-rgb": "110, 45, 20",
+      "--dot-shadow-rgb": "70, 45, 25",
+      "--serif": "\"Fraunces\", Georgia, serif",
+      "--sans": "\"DM Sans\", system-ui, sans-serif",
+      "--display-weight": "520",
+      "--text-weight": "500",
+      "--head-tracking": "-0.01em",
+      "--caps-tracking": "0.18em",
+      "--chip-shadow": "0 14px 30px rgba(70, 45, 25, 0.12)",
+      "--cta-ink": "#FFF8EF",
+      "--grain-opacity": "0.05",
+      "--caption-font": "\"DM Sans\", system-ui, sans-serif",
+      "--caption-weight": "700",
+      "--caption-radius": "0.6em",
+      "--caption-ink": "#2A1E14",
+      "--caption-bg": "rgba(251, 246, 238, 0.94)",
+      "--caption-active": "#9E4325",
+      "--tone-1": "#F1DCCB",
+      "--tone-2": "#D99A73",
+      "--tone-3": "#9E4325"
+    },
+    "fontFaces": [
+      {
+        "family": "Fraunces",
+        "src": "fonts/fraunces-var.woff2",
+        "weight": "100 900"
+      },
+      {
+        "family": "Fraunces",
+        "src": "fonts/fraunces-var-italic.woff2",
+        "weight": "100 900",
+        "style": "italic"
+      },
+      {
+        "family": "DM Sans",
+        "src": "fonts/dm-sans-var.woff2",
+        "weight": "100 900"
+      }
+    ],
+    "pools": [
+      {
+        "color": "rgba(240, 200, 160, 0.55)",
+        "r": 720,
+        "x": [
+          250,
+          60,
+          0.24,
+          0,
+          "sin"
+        ],
+        "y": [
+          430,
+          80,
+          0.2,
+          0,
+          "cos"
+        ]
+      },
+      {
+        "color": "rgba(214, 190, 130, 0.45)",
+        "r": 780,
+        "x": [
+          870,
+          50,
+          0.22,
+          1.7,
+          "cos"
+        ],
+        "y": [
+          1500,
+          70,
+          0.17,
+          0.6,
+          "sin"
+        ]
+      }
+    ]
+  },
+  "captions": {
+    "style": "pill",
+    "case": "none",
+    "size": 58
+  }
+}

@@ -6,8 +6,8 @@ Versi Inggris: [README.md](README.md).
 
 | Skill | Tugasnya |
 |---|---|
-| `ad-concept` | Membaca brief dan aset, meriset produk, mengusulkan 3 hook, menulis naskah dan beat sheet ke `concept.md` |
-| `vertical-product-ads` | Memproduksi konsep yang disetujui menjadi MP4: suara, musik, animasi, pengecekan kualitas, render |
+| `ad-concept` | Membaca brief dan aset, meriset produk, mengusulkan 3 hook, memilih gaya dan look, menulis naskah dan beat sheet ke `concept.md` |
+| `vertical-product-ads` | Memproduksi konsep yang disetujui menjadi MP4 dalam salah satu dari delapan look: suara, musik, animasi, pengecekan kualitas, render |
 
 Bisa dipakai di agen apa pun yang membaca skill `SKILL.md`: Claude Code, Codex, Cursor, Amp, Cline,
 dan lainnya.
@@ -19,7 +19,13 @@ dan lainnya.
 | <a href="media/dior-lip-glow.mp4"><img src="media/dior-lip-glow.gif" width="252" alt="Iklan lip balm vertikal 31 detik: satu bentuk membulat berubah melalui wipe sebelum/sesudah, packshot, tiga panel warna bibir, chip bahan, angka 48 jam yang berputar, dan end card"></a> | <a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="Iklan sampo vertikal 20 detik: b-roll produk dengan caption, kartu bahan, chip manfaat, layar terbelah tiga, dan end card dengan tombol CTA"></a> |
 | 31 detik. Semua gambar buatan AI (model, bibir, produk); satu bentuk berubah melalui wipe sebelum/sesudah, packshot parallax, tiga panel warna bibir, chip bahan, odometer, dan end card. Voice dan musik ElevenLabs. [MP4 dengan suara](media/dior-lip-glow.mp4) | Iklan TikTok 20 detik dari b-roll produk tanpa suara: voice, musik dan efek suara ElevenLabs, kartu bahan, chip manfaat, tiga panel yang muncul pada katanya, end card. [MP4 dengan suara](media/ginger-shampoo.mp4) |
 
-Keduanya memakai voice-over bahasa Indonesia; GIF-nya tanpa suara.
+**Satu film, delapan look.** `scenes.json` yang sama dirender delapan kali; yang berubah hanya
+`"look"`. Serum bibir fiktif dengan audio gratis (suara edge-tts, musik synth lokal), tanpa gambar.
+Proyeknya: [`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/).
+
+<a href="media/looks.mp4"><img src="media/looks.gif" width="720" alt="Grid delapan iklan vertikal yang diputar bersamaan, satu per look: classic, luxe-editorial, clean-clinical, bold-streetwear, warm-organic, tech-neon, pop-playful, dan ugc-native. Semua memakai adegan yang sama (kartu hook, merek, angka 24 jam yang berputar dengan chip, tiga panel shade, end card dengan CTA) dengan font, warna, dan cara teks muncul masing-masing"></a>
+
+Ketiga film memakai voice-over bahasa Indonesia; GIF-nya tanpa suara. [Grid delapan look dengan suara](media/looks.mp4).
 
 - **Dior Addict Lip Glow** adalah spec ad tidak resmi, dibuat untuk memperlihatkan kemampuan skill:
   tidak berafiliasi dengan, tidak disponsori, dan tidak didukung oleh Christian Dior. Dior dan Addict
@@ -31,7 +37,7 @@ Keduanya memakai voice-over bahasa Indonesia; GIF-nya tanpa suara.
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Daftar isi**
-- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
+- Memakai: [Contoh hasil](#contoh-hasil) · [Mulai cepat](#mulai-cepat) · [Cara kerja](#cara-kerja) · [Menyiapkan bahan](#menyiapkan-bahan) · [Contoh prompt](#contoh-prompt) · [Gaya video](#gaya-video) · [Look](#look) · [Suara dan musik](#suara-dan-musik) · [Durasi](#durasi)
 - Hasil: [Jaminan kualitas](#jaminan-kualitas) · [Batasan](#batasan) · [Kecepatan terukur](#kecepatan-terukur)
 - Teknis: [Kebutuhan sistem](#kebutuhan-sistem) · [Struktur repo](#struktur-repo) · [Lisensi](#lisensi)
 
@@ -168,6 +174,34 @@ Penjelasan tiap gaya untuk pemula: [`references/styles.md`](skills/ad-concept/re
 
 ---
 
+## Look
+
+`style` menentukan cara film diproduksi; `look` menentukan tampilannya: font, warna, bentuk chip dan
+tombol, caption, dan cara teks muncul. Ada delapan look bawaan, lengkap dengan fontnya (SIL Open Font
+License, tanpa unduh). Semua look bisa dipakai dengan gaya mana pun.
+
+| Look | Cocok untuk | Font | Cara teks muncul |
+|---|---|---|---|
+| `classic` (bawaan) | Apa saja; film Dior di atas | Georgia + sans sistem | blur lembut |
+| `luxe-editorial` | Parfum, perhiasan, kecantikan premium, fashion | Bodoni Moda + Jost | naik dari balik masker |
+| `clean-clinical` | Skincare aktif, apotek, suplemen | Plus Jakarta Sans | wipe |
+| `bold-streetwear` | Sneakers, streetwear, minuman energi, fitness | Anton kapital + Archivo | potong keras dan slam |
+| `warm-organic` | Herbal, jamu, kopi, makanan, perawatan rambut dan tubuh | Fraunces + DM Sans | blur lembut |
+| `tech-neon` | Gadget, audio, aplikasi | Space Grotesk + JetBrains Mono | diketik |
+| `pop-playful` | Snack, minuman, mainan, kecantikan Gen-Z | Bricolage Grotesque + Rubik | pop memantul |
+| `ugc-native` | Footage kreator (`ugc`, `hybrid`) | TikTok Sans | potong, caption bergaris tepi |
+
+Tiap look juga membawa arahan untuk agen: sudut bentuk, tempo, pilihan musik dan efek suara
+([`references/looks.md`](skills/vertical-product-ads/references/looks.md)). Warna brand ditimpakan di
+atas look mana pun.
+
+**Memilih look:** isi `look:` di `brief.md`, atau tulis di prompt (*"Pakai look tech-neon, warna
+brand tetap."*). Kalau kosong, agen memilih dari kategori produk dan menuliskan alasannya di
+`concept.md`. Ganti look belakangan cukup mengubah satu baris di `scenes.json`; suara dan musik
+dipakai ulang. Panduan untuk pemula: [`references/looks.md`](skills/ad-concept/references/looks.md).
+
+---
+
 ## Suara dan musik
 
 Iklan lengkap bisa dibuat **tanpa kunci ElevenLabs**. Untuk memakai ElevenLabs, lihat
@@ -273,6 +307,24 @@ dengan HTML tulisan tangan dan renderer 60 fps.
 | Draf dengan suara | tidak ada | 12 dtk |
 | Menulis film | file JS ~600 baris per iklan | satu `scenes.json` per iklan |
 
+Waktu render gambar per look, film 17 detik yang sama ([`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/)),
+30 fps dengan motion blur:
+
+| Look | Render gambar |
+|---|---|
+| `classic` | 39,8 dtk |
+| `luxe-editorial` | 39,2 dtk |
+| `clean-clinical` | 19,4 dtk |
+| `bold-streetwear` | 39,6 dtk |
+| `warm-organic` | 40,4 dtk |
+| `tech-neon` | 36,4 dtk |
+| `pop-playful` | 19,5 dtk |
+| `ugc-native` | 16,2 dtk |
+
+Yang memakan waktu adalah grain film: tiga look tanpa grain selesai dalam separuh waktu, sisanya
+selisih paling banyak 2 % dari `classic`. Memilih look tidak menambah langkah kerja: fontnya sudah
+ikut terpasang bersama skill.
+
 Uji dengan agen baru (skill dipasang lewat `npx skills add`, tanpa bantuan):
 
 | Mode | Hasil | Prompt → MP4 |
@@ -304,16 +356,18 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 | Path | Isi |
 |---|---|
 | `skills/ad-concept/SKILL.md` | Panduan agen konsep |
-| `skills/ad-concept/references/` | Intake aset, hook dan angle, gaya, menu adegan, durasi |
+| `skills/ad-concept/references/` | Intake aset, hook dan angle, gaya, look, menu adegan, durasi |
 | `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
 | `skills/ad-concept/examples/` | Contoh prompt dan brief terisi per gaya |
 | `skills/vertical-product-ads/SKILL.md` | Panduan agen produksi |
-| `skills/vertical-product-ads/references/` | Arahan, gaya, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
+| `skills/vertical-product-ads/references/` | Arahan, gaya, look, format `scenes.json`, sinkron VO/ketukan, safe zone, render + QA |
+| `skills/vertical-product-ads/looks/` | Delapan look (`<nama>.json`) beserta fontnya (OFL, `fonts/`) |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: renderer `seek(t)` |
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) dan semua langkahnya |
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, kontrak yang dicek `validate.mjs` |
 | `skills/vertical-product-ads/examples/minimal/` | Film 8,5 detik tanpa aset |
 | `skills/vertical-product-ads/examples/product-broll/` | Iklan hybrid 20 detik (sampo fiktif): b-roll produk yang Anda rekam sendiri, voice, musik dan efek suara ElevenLabs, kartu bahan, layar terbelah tiga, end card |
+| `skills/vertical-product-ads/examples/look-sampler/` | Iklan 17 detik tanpa aset yang ditulis agar cocok di semua look; suara dan musik gratis |
 | `media/` | Film contoh hasil (MP4 + pratinjau GIF); tidak ikut terpasang bersama skill |
 
 ---
@@ -323,5 +377,8 @@ dan [`CHANGELOG.md`](CHANGELOG.md).
 MIT, lihat `LICENSE`. Sebagian diturunkan dari
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); lihat `NOTICE`.
 Gambar produk, footage, suara, dan musik yang Anda masukkan tetap memakai lisensinya masing-masing.
+Font di `looks/fonts/` berlisensi SIL Open Font License 1.1 (teks lisensinya ada di samping tiap
+keluarga font).
 Film contoh di `media/` tidak berlisensi MIT: film Dior adalah spec ad tidak resmi yang memuat merek
-milik pemiliknya, dan footage sampo milik @hanie.ugc.creator, dipakai dengan izin (lihat `NOTICE`).
+milik pemiliknya, footage sampo milik @hanie.ugc.creator, dipakai dengan izin, dan grid delapan look
+memakai suara edge-tts (lihat `NOTICE`).

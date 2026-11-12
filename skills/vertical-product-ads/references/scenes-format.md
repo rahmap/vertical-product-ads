@@ -3,8 +3,9 @@
 `schemas/scenes.schema.json` is the contract. `scripts/validate.mjs` checks it plus cross-references.
 Working reference: `examples/minimal/scenes.json` (no assets, no voice). A full hybrid film with
 voice-over, sound effects, chips, split bands and an end card: `examples/product-broll/` (bring your
-own footage). For the fields behind each product-ad beat (before/after wipe, parallax packshot,
-split bands, chips, odometer, CTA), see the recipe table in `direction.md`.
+own footage). A film written to work in every look: `examples/look-sampler/`. For the fields behind
+each product-ad beat (before/after wipe, parallax packshot, split bands, chips, odometer, CTA), see
+the recipe table in `direction.md`.
 
 ## Time expressions
 Any `at`, `tin`, `tout`, `t0`, `t1`, `press`… accepts a time in one of these forms:
@@ -31,18 +32,20 @@ Hits fire exactly on it (`"k16"`).
 | `music` | `{file, bpm, key, prompt, length_ms, synth}`. An existing track: `file`. A generated one: `file` (where to write it) **and** `prompt`. A free local bed: `file` **and** `synth: {style: "pop"\|"minimal"\|"chill", drop: seconds, end: seconds, seed: int}`, using `bpm` (90–140, default 120) and `key` (default "C major"); `synth` and `prompt` are mutually exclusive. `drop` is where the groove starts (default: first bar line after 20 % of the film). `end` is where the bed falls silent (default: the film's end); the final chord starts on the last bar line at least ¾ bar before `end` and rings out to it, so to keep the full groove under a CTA set `end` past the film's end. The synth bed regenerates whenever these fields change; `tempo.py` takes the key from `music.key`. With no `file` the grid comes from `bpm` and there is no bed |
 | `sfx` | `name → {file, prompt, dur, influence}`: samples for `sample` cues. With `prompt`, `scripts/sfx.py` (run by `make.sh`) generates the sound with ElevenLabs Sound Effects into `file` (`dur` 0.5–30 s, omit to let the model choose; `influence` 0–1, default 0.5, how literally the prompt is followed) and regenerates it when these fields change. Without `prompt`, `file` must exist (a sound you hold a licence for) |
 | `audio` | `{duckSpeechDb:-15, duckGapDb:-8, sfxGain:0.8, fadeOut:0.6, musicDb:-20, lufs:-14}`. With a voice (`vo` or `dialogue`) the music sits `duckSpeechDb` under the voice while it speaks and `duckGapDb` in the gaps; `musicDb` (music RMS in dBFS) applies only to films without a voice |
-| `theme` | `css` (CSS custom properties, see below), `fonts` (CSS font shorthands to preload), `fontFaces` (self-hosted: `{family, src, style, weight}`, `src` relative to the project; `weight` is `400` or a variable font's range `"300 700"`), `pools` (drifting light blobs: `{color, r, x:[base, amp, freq, phase, "sin"|"cos"], y:[…]}`) |
+| `theme` | `css` (CSS custom properties, see below), `fonts` (CSS font shorthands to preload), `fontFaces` (self-hosted: `{family, src, style, weight}`, `src` relative to the project; `weight` is `400` or a variable font's range `"300 700"`), `pools` (drifting light blobs: `{color, r, x:[base, amp, freq, phase, "sin"|"cos"], y:[…]}`), `enter` (how text and UI enter: `blur`, `rise`, `cut`, `pop`, `wipe`, `type`; `looks.md`). Overrides the look: `css` key by key, `pools` and `enter` whole, `fonts`/`fontFaces` added |
 | `assets` | `name → path` relative to the project |
 | `icons` | `name → inline SVG`; `{accent}` is replaced by the accent colour |
 | `anchors` | `NAME → time` |
 | `style` | `"motion"` (default), `"ugc"` or `"hybrid"`. `motion`: no video layers. `ugc`/`hybrid`: at least one video layer. `ugc`: `captions` required (`styles.md`) |
+| `look` | A preset from `looks/` (`classic` when absent): `luxe-editorial`, `clean-clinical`, `bold-streetwear`, `warm-organic`, `tech-neon`, `pop-playful`, `ugc-native`. Sets the theme and the caption defaults; `theme` and `captions` override it (`looks.md`) |
 | `footage` | `name → {file, speech}`, `file` relative to the project (e.g. `assets/talk.mov`). `speech: true` marks clips with talking that `dialogue` may use; other clips are muted b-roll. Frames come from `scripts/footage.py` into `build/footage/<name>/` |
 | `dialogue` | `{transcriber: "auto"\|"elevenlabs"\|"whisper", whisperModel: "small", language: "id", segments:[{footage, in, out, at, why}]}`. Edit list: clip seconds `in`→`out` play from film second `at` (numbers only). Replaces `vo` (mutually exclusive). Segments must not overlap in film time and must use `speech: true` footage. Words land in `audio/words.json` as `w<i>` |
 | `captions` | `{y: 1181, size: 64, maxWords: 3, maxGap: 0.35, case: "upper"\|"none", style: "pill"\|"plain", tin, tout, fix: {"lembab": "lembap"}}`. Word-by-word captions from `audio/words.json`. `y` is the vertical **centre** of the caption block (default round(height × 0.615) = 1181 at 1920 high); a chunk that would need more than two lines shrinks its font until it fits two; needs `vo` or `dialogue`. `fix` maps a transcribed word to the spelling shown |
 
-Theme variables (defaults in `engine/index.html`):
+Theme variables (defaults in `engine/index.html`; the variables a look adds are in `looks.md`):
 - **Surfaces:** `--base`, `--bg`, `--band`.
-- **Colours:** `--ink`, `--accent`, `--accent-pressed` (both `#RRGGBB`), `--muted`.
+- **Colours:** `--ink`, `--accent`, `--accent-pressed` (both `#RRGGBB`), `--muted`, and
+  `--tone-1`…`--tone-3` (palette tones, soft → strong, for fill layers).
 - **UI fills:** `--surface`, `--surface-label`, `--icon-bg`.
 - **Shadows:** `--shadow-rgb`, `--cta-shadow-rgb`, `--dot-shadow-rgb` (as `r, g, b`).
 - **Fonts and finish:** `--serif`, `--sans`, `--sheen`, `--grain-opacity`.

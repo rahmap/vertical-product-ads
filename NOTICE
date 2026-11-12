@@ -45,10 +45,23 @@ media/ginger-shampoo.mp4 and .gif: footage by @hanie.ugc.creator
 brand marks belong to their owner. Voice, music and sound effects were generated with ElevenLabs
 under the repository owner's plan.
 
+media/looks.mp4 and .gif: the look-sampler example rendered in each look. The product, claim and
+footnote are invented. The voice comes from Microsoft's Edge read-aloud service through edge-tts,
+whose terms for reuse are unclear; the music is the skill's own local synth; the type is the OFL
+fonts listed below.
+
 Font in examples/product-broll/
 -------------------------------
 assets/fonts/nunito-800.woff2 is Nunito (Copyright 2014 The Nunito Project Authors), under the SIL
 Open Font License 1.1; the licence text is beside it in OFL.txt.
+
+Fonts in skills/vertical-product-ads/looks/fonts/
+-------------------------------------------------
+Bodoni Moda, Jost, Plus Jakarta Sans, Anton, Archivo, Fraunces, DM Sans, Space Grotesk, JetBrains
+Mono, Bricolage Grotesque, Rubik and TikTok Sans, each under the SIL Open Font License 1.1 and
+copyright its project authors (TikTok Sans: TikTok Inc.). The Latin subsets come from Fontsource
+(https://fontsource.org); each family's licence text with its copyright line is beside it as
+<family>-OFL.txt. None declares a Reserved Font Name.
 
 What this repository does not ship
 ----------------------------------

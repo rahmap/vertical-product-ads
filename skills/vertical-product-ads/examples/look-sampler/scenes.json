@@ -1,0 +1,617 @@
+{
+  "title": "Look sampler: one film for every look (17 s, fictional product, free voice and music). Change \"look\" and render again.",
+  "duration": 17,
+  "style": "motion",
+  "look": "luxe-editorial",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "safe": {
+      "l": 84,
+      "r": 930,
+      "t": 250,
+      "b": 1460
+    }
+  },
+  "render": {
+    "fps": 30
+  },
+  "vo": {
+    "engine": "edge",
+    "voice": "id-ID-GadisNeural",
+    "language": "id",
+    "settings": {
+      "rate": "+12%",
+      "pitch": "+0Hz",
+      "volume": "+0%"
+    },
+    "script": "Bibir kering dan pecah-pecah? Kenalan sama Glowa Lip Serum. Lembap sampai dua puluh empat jam. Tiga shade: Rose, Peach, Berry. Cek keranjang kuning sekarang!",
+    "place": [
+      {
+        "words": [
+          0,
+          3
+        ],
+        "anchor": 0,
+        "at": 0.15,
+        "why": "hook from the first frame"
+      },
+      {
+        "words": [
+          4,
+          8
+        ],
+        "anchor": 6,
+        "at": 3.499,
+        "why": "'Glowa' on k6, two beats after the drop"
+      },
+      {
+        "words": [
+          9,
+          14
+        ],
+        "anchor": 9,
+        "at": 5.498,
+        "why": "'Lembap' on k10 as the circle settles"
+      },
+      {
+        "words": [
+          15,
+          19
+        ],
+        "anchor": 17,
+        "at": 9.495,
+        "why": "'Rose' on k18, the first band"
+      },
+      {
+        "words": [
+          20,
+          23
+        ],
+        "anchor": 20,
+        "at": 12.493,
+        "why": "'Cek' on k24, after the end card lands on k23"
+      }
+    ]
+  },
+  "music": {
+    "file": "audio/music.wav",
+    "bpm": 120,
+    "key": "A minor",
+    "synth": {
+      "style": "pop",
+      "drop": 2.0,
+      "end": 19,
+      "seed": 7
+    }
+  },
+  "audio": {
+    "duckSpeechDb": -14,
+    "duckGapDb": -7,
+    "sfxGain": 0.8,
+    "fadeOut": 0.6
+  },
+  "captions": {
+    "y": 1385,
+    "maxWords": 3,
+    "tin": "w15-0.08",
+    "tout": "we19+0.3"
+  },
+  "anchors": {
+    "DROP": "k3",
+    "CLAIM": "k9.5",
+    "SHADES": "w15-0.1",
+    "SPLIT": "w17-0.12",
+    "MERGE": "we19+0.2",
+    "END": "k23",
+    "BRAND": "k4"
+  },
+  "shape": {
+    "initial": {
+      "x": 540,
+      "y": 1010,
+      "w": 520,
+      "h": 520,
+      "r": 260
+    }
+  },
+  "timeline": [
+    {
+      "at": 0.1,
+      "set": {
+        "w": 860,
+        "h": 860,
+        "r": 64
+      },
+      "why": "the circle opens into the hook card"
+    },
+    {
+      "at": "DROP-0.13",
+      "set": {
+        "w": 900,
+        "h": 900,
+        "r": 450
+      },
+      "sp": "snap",
+      "why": "the card snaps into a circle on the drop"
+    },
+    {
+      "at": "DROP-0.13",
+      "set": {
+        "zoom": 1.05
+      },
+      "sp": "jump"
+    },
+    {
+      "at": "DROP",
+      "set": {
+        "zoom": 1
+      },
+      "sp": "settle",
+      "why": "camera punch settles"
+    },
+    {
+      "at": "BRAND-0.13",
+      "set": "full",
+      "why": "opens full bleed for the brand"
+    },
+    {
+      "at": "CLAIM-0.13",
+      "set": {
+        "x": 540,
+        "y": 920,
+        "w": 680,
+        "h": 680,
+        "r": 340
+      },
+      "why": "closes to a circle for the number"
+    },
+    {
+      "at": "SHADES",
+      "set": {
+        "y": 850,
+        "w": 860,
+        "h": 880,
+        "r": 48
+      },
+      "why": "opens to a tall card"
+    },
+    {
+      "at": "SPLIT",
+      "set": {
+        "gap": 16,
+        "rin": 28
+      },
+      "sp": "snap",
+      "why": "three bands for three shades"
+    },
+    {
+      "at": "MERGE",
+      "set": {
+        "gap": 0,
+        "rin": 0
+      },
+      "why": "bands merge"
+    },
+    {
+      "at": "END-0.13",
+      "set": "full",
+      "sp": "snap",
+      "why": "end card"
+    },
+    {
+      "at": "w21-0.45",
+      "set": {
+        "dx": 760,
+        "dy": 1640
+      },
+      "sp": "jump"
+    },
+    {
+      "at": "w21-0.4",
+      "set": {
+        "dx": 640,
+        "dy": 1150
+      },
+      "sp": "move",
+      "why": "finger travels to the button"
+    }
+  ],
+  "layers": [
+    {
+      "id": "hook",
+      "kind": "fill",
+      "fill": "radial-gradient(90% 70% at 50% 30%, color-mix(in srgb, var(--tone-3) 75%, var(--tone-1)) 0%, var(--tone-1) 78%)",
+      "tout": "BRAND-0.05"
+    },
+    {
+      "id": "brand",
+      "kind": "fill",
+      "fill": "var(--band)",
+      "tin": "BRAND-0.1",
+      "tout": "CLAIM-0.1"
+    },
+    {
+      "id": "brandSheen",
+      "kind": "sheen",
+      "t0": "w6",
+      "t1": "w6+0.9",
+      "tin": "w6-0.05",
+      "tout": "w6+1.0"
+    },
+    {
+      "id": "claim",
+      "kind": "fill",
+      "fill": "var(--tone-1)",
+      "tin": "CLAIM-0.1",
+      "tout": "SHADES"
+    },
+    {
+      "id": "shade",
+      "kind": "fill",
+      "fill": "var(--tone-1)",
+      "tin": "SHADES",
+      "tout": "w19+0.05",
+      "why": "under the bands until all three have their own fill"
+    },
+    {
+      "id": "rose",
+      "kind": "fill",
+      "band": 0,
+      "fill": "var(--tone-1)",
+      "tin": "w17-0.04",
+      "tout": "MERGE"
+    },
+    {
+      "id": "peach",
+      "kind": "fill",
+      "band": 1,
+      "fill": "var(--tone-2)",
+      "tin": "w18-0.04",
+      "tout": "MERGE"
+    },
+    {
+      "id": "berry",
+      "kind": "fill",
+      "band": 2,
+      "fill": "var(--tone-3)",
+      "tin": "w19-0.04",
+      "tout": "MERGE"
+    },
+    {
+      "id": "merged",
+      "kind": "fill",
+      "fill": "linear-gradient(180deg, var(--tone-1) 0%, var(--tone-3) 100%)",
+      "tin": "MERGE-0.05",
+      "tout": "END-0.1"
+    },
+    {
+      "id": "end",
+      "kind": "fill",
+      "fill": "var(--band)",
+      "tin": "END-0.1"
+    },
+    {
+      "id": "endSheen",
+      "kind": "sheen",
+      "t0": "END+0.1",
+      "t1": "END+1.0",
+      "tin": "END",
+      "tout": "END+1.1"
+    }
+  ],
+  "texts": [
+    {
+      "y": 300,
+      "cls": "serif h1",
+      "tout": "DROP-0.12",
+      "lines": [
+        [
+          {
+            "t": "Bibir ",
+            "at": "w0"
+          },
+          {
+            "t": "kering",
+            "at": "w1",
+            "acc": true
+          }
+        ],
+        [
+          {
+            "t": "pecah-pecah?",
+            "at": "w3",
+            "slam": true
+          }
+        ]
+      ]
+    },
+    {
+      "y": 560,
+      "cls": "sans caps",
+      "tout": "CLAIM-0.2",
+      "lines": [
+        [
+          {
+            "t": "Kenalan sama",
+            "at": "w4"
+          }
+        ]
+      ]
+    },
+    {
+      "y": 700,
+      "cls": "serif wordmark",
+      "lead": 0.02,
+      "tout": "CLAIM-0.2",
+      "lines": [
+        [
+          {
+            "t": "Glowa",
+            "at": "w6",
+            "slam": true
+          }
+        ]
+      ]
+    },
+    {
+      "y": 920,
+      "cls": "sans caps",
+      "tout": "CLAIM-0.2",
+      "lines": [
+        [
+          {
+            "t": "Lip Serum",
+            "at": "w7"
+          }
+        ]
+      ]
+    },
+    {
+      "y": 300,
+      "cls": "sans caps",
+      "tout": "SHADES-0.15",
+      "lines": [
+        [
+          {
+            "t": "Lembap sampai",
+            "at": "w9"
+          }
+        ]
+      ]
+    },
+    {
+      "y": 1404,
+      "cls": "sans foot",
+      "tout": "SHADES-0.15",
+      "lines": [
+        [
+          {
+            "t": "*Produk dan klaim fiktif, contoh untuk look.",
+            "at": "w13"
+          }
+        ]
+      ]
+    },
+    {
+      "y": 270,
+      "cls": "serif h1",
+      "tout": "END-0.2",
+      "lines": [
+        [
+          {
+            "t": "Tiga ",
+            "at": "w15"
+          },
+          {
+            "t": "shade",
+            "at": "w16",
+            "acc": true
+          }
+        ]
+      ]
+    },
+    {
+      "y": 560,
+      "cls": "serif wordmark",
+      "lead": 0.02,
+      "lines": [
+        [
+          {
+            "t": "Glowa",
+            "at": "END+0.05",
+            "slam": true
+          }
+        ]
+      ]
+    },
+    {
+      "y": 770,
+      "cls": "sans caps",
+      "lines": [
+        [
+          {
+            "t": "Lip Serum · 4 ml",
+            "at": "END+0.3"
+          }
+        ]
+      ]
+    }
+  ],
+  "odometers": [
+    {
+      "final": 24,
+      "t0": "w11",
+      "t1": "we14",
+      "y": 800,
+      "size": 220,
+      "suffix": "jam",
+      "tout": "SHADES-0.15"
+    }
+  ],
+  "pops": [
+    {
+      "band": 0,
+      "at": "w17"
+    },
+    {
+      "band": 1,
+      "at": "w18"
+    },
+    {
+      "band": 2,
+      "at": "w19"
+    }
+  ],
+  "touch": {
+    "start": [
+      760,
+      1640
+    ],
+    "windows": [
+      {
+        "tin": "w21-0.45",
+        "tout": "w22+0.5"
+      }
+    ]
+  },
+  "cta": {
+    "text": "Cek keranjang kuning",
+    "y": 1150,
+    "h": 108,
+    "half": 250,
+    "tin": "END+0.45",
+    "textIn": "END+0.7",
+    "press": "w22"
+  },
+  "cues": [
+    {
+      "at": 0.12,
+      "kind": "whoosh",
+      "gain": 0.3,
+      "dur": 0.4,
+      "up": true
+    },
+    {
+      "at": "w3",
+      "kind": "pop",
+      "gain": 0.22,
+      "f": 520
+    },
+    {
+      "at": "DROP",
+      "kind": "sub",
+      "gain": 0.42,
+      "dur": 1.2
+    },
+    {
+      "at": "BRAND-0.1",
+      "kind": "whoosh",
+      "gain": 0.26,
+      "dur": 0.4,
+      "up": true
+    },
+    {
+      "at": "w6",
+      "kind": "chime",
+      "gain": 0.26,
+      "notes": [
+        0,
+        4,
+        7,
+        12
+      ]
+    },
+    {
+      "at": "w6+0.1",
+      "kind": "shimmer",
+      "gain": 0.32,
+      "dur": 1.1,
+      "bright": true
+    },
+    {
+      "at": "CLAIM-0.1",
+      "kind": "whoosh",
+      "gain": 0.26,
+      "dur": 0.45,
+      "rev": true
+    },
+    {
+      "at": "SHADES",
+      "kind": "swish",
+      "gain": 0.22,
+      "dur": 0.35
+    },
+    {
+      "at": "w17",
+      "kind": "glass",
+      "gain": 0.34,
+      "note": 0
+    },
+    {
+      "at": "w18",
+      "kind": "glass",
+      "gain": 0.34,
+      "note": 3
+    },
+    {
+      "at": "w19",
+      "kind": "glass",
+      "gain": 0.34,
+      "note": 7
+    },
+    {
+      "at": "END",
+      "kind": "sub",
+      "gain": 0.36,
+      "dur": 1.0
+    },
+    {
+      "at": "END+0.45",
+      "kind": "pop",
+      "gain": 0.24,
+      "f": 660
+    },
+    {
+      "at": "w22",
+      "kind": "click",
+      "gain": 0.5
+    },
+    {
+      "at": "k12",
+      "kind": "pluck",
+      "gain": 0.26,
+      "note": 7
+    },
+    {
+      "at": "k13",
+      "kind": "pluck",
+      "gain": 0.26,
+      "note": 12
+    }
+  ],
+  "icons": {
+    "drop": "<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\"><path d=\"M20 5c6 8 11 14 11 20a11 11 0 0 1-22 0c0-6 5-12 11-20z\" fill=\"{accent}\"/></svg>",
+    "cek": "<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\"><path d=\"M9 21l7 7 15-16\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+  },
+  "chips": [
+    {
+      "text": "Hyaluronic acid",
+      "icon": "drop",
+      "x": 100,
+      "y": 1180,
+      "side": "left",
+      "tin": "k12",
+      "tout": "SHADES-0.15"
+    },
+    {
+      "text": "Tanpa lengket",
+      "icon": "cek",
+      "x": 905,
+      "y": 1300,
+      "side": "right",
+      "tin": "k13",
+      "tout": "SHADES-0.15"
+    }
+  ]
+}

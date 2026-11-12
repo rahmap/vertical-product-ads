@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { projectDir, readScenes } from './lib/stage.mjs';
+import { projectDir, readScenes, LOOKS } from './lib/stage.mjs';
 
 const dir = projectDir(process.argv[2]);
 const S = readScenes(dir);
@@ -13,6 +13,23 @@ const schema = JSON.parse(fs.readFileSync(path.resolve(path.dirname(fileURLToPat
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const problems = [];
 if (!ajv.validate(schema, S)) for (const e of ajv.errors) problems.push(`schema: ${e.instancePath || '/'} ${e.message}${e.params && e.params.additionalProperty ? ` (${e.params.additionalProperty})` : ''}`);
+
+// look: the preset must exist, its theme and caption defaults must pass the same schema, its fonts must be there
+if (S.look) {
+  const file = path.join(LOOKS, S.look + '.json');
+  if (!fs.existsSync(file)) {
+    const names = fs.readdirSync(LOOKS).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5));
+    problems.push(`look "${S.look}" does not exist; looks: ${names.join(', ')}`);
+  } else {
+    const L = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const k of ['theme', 'captions']) {
+      if (L[k] && !ajv.validate({ $defs: schema.$defs, ...schema.properties[k] }, L[k]))
+        for (const e of ajv.errors) problems.push(`look "${S.look}": ${k}${e.instancePath} ${e.message}`);
+    }
+    for (const f of (L.theme && L.theme.fontFaces) || [])
+      if (!fs.existsSync(path.join(LOOKS, f.src))) problems.push(`look "${S.look}": font ${f.src} is missing from looks/`);
+  }
+}
 
 const assets = S.assets || {};
 for (const [k, f] of Object.entries(assets)) if (!fs.existsSync(path.join(dir, f))) problems.push(`asset "${k}": file ${f} not found`);

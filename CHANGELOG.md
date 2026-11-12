@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.4.0
+
+**Looks**
+- New `"look"` in `scenes.json`: a ready-made visual direction, independent of the style. Eight
+  ship in `looks/`: `classic` (the default, unchanged), `luxe-editorial`, `clean-clinical`,
+  `bold-streetwear`, `warm-organic`, `tech-neon`, `pop-playful`, `ugc-native`. Each sets fonts,
+  palette, three fill tones, chip/label/CTA shape, caption defaults and how text enters.
+- `theme` overrides the look (css key by key; `pools` and `enter` whole; fonts added), so brand
+  colours go over any look. `captions` fields override the look's caption defaults.
+- Twelve OFL font families ship with the skill (`looks/fonts/`, Latin subsets from Fontsource, 520 KB
+  with their licences): no download, no network.
+- New `theme.enter`: `blur` (as before), `rise` (glyphs slide up out of a mask), `cut` (on and off
+  on frame boundaries), `pop` (scale with overshoot), `wipe` (left-to-right reveal), `type` (typed
+  on, at most 0.6 s per piece). Texts, chips, labels, odometers and the CTA text follow it. `rise`
+  and `wipe` never move the box the layout gate measures.
+- New theme variables, each falling back to the built-in value: `--tone-1…3`, `--display-weight`,
+  `--text-weight`, `--head-case`, `--head-tracking`, `--head-leading`, `--caps-tracking`,
+  `--caps-weight`, `--text-shadow`, `--acc-glow`, `--ui-font`, `--ui-ink`, `--ui-weight`, `--ui-case`,
+  `--ui-tracking`, `--ui-round`, `--ui-border`, `--chip-shadow`, `--cta-shadow`, `--cta-ink`,
+  `--caption-font`, `--caption-weight`, `--caption-radius`, `--caption-stroke`.
+- Films without a look render pixel-identical to 0.3.0 (checked on the minimal example, the Dior,
+  ginger shampoo and flat-shoes films).
+- `validate.mjs` checks that the look exists, that its theme and caption defaults pass the schema,
+  and that its fonts are present.
+- `references/looks.md`: the catalogue, per-look direction (shape, pace, music, sound effects,
+  voice), brand overrides, and how to write scenes that work in every look. `ad-concept` picks a
+  look (`look:` in `brief.md` and `concept.md`) from the category and brand tone, or takes the
+  user's; `references/looks.md` there explains the choice in plain language.
+
+**Example and showcase**
+- `examples/look-sampler/`: a 17 s asset-free ad with free voice and music whose fills use only
+  the look's tones; change `"look"` and render again.
+- `media/looks.mp4` and `.gif`: that film in all eight looks, side by side.
+
+**Measured** (17 s film, M3 Pro, picture render): 16–40 s per look. Film grain is the cost: the
+three looks without grain render in half the time of `classic`; the others are within 2 %. Grain
+in `bold-streetwear` and `warm-organic` was lowered from 0.08/0.07 to 0.05 after it measured 15 %
+slower and made files twice as large.
+
 ## 0.3.0
 
 **ElevenLabs sound effects**

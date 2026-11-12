@@ -1,6 +1,6 @@
 ---
 name: vertical-product-ads
-description: Use when asked to build or render a vertical 9:16 product ad (TikTok, Instagram Reels, YouTube Shorts commercial, e-commerce promo, beauty/skincare video) from an approved concept or storyboard, product photos, creator footage or a voice-over script. Styles are motion graphics, UGC footage with captions, or hybrid. Needs an approved concept.md, use the ad-concept skill first if there is none.
+description: Use when asked to build or render a vertical 9:16 product ad (TikTok, Instagram Reels, YouTube Shorts commercial, e-commerce promo, beauty/skincare video) from an approved concept or storyboard, product photos, creator footage or a voice-over script. Styles are motion graphics, UGC footage with captions, or hybrid, in one of eight looks (luxe editorial, clean clinical, bold streetwear, warm organic, tech neon, pop playful, UGC native, classic). Needs an approved concept.md, use the ad-concept skill first if there is none.
 ---
 
 # Vertical product ads
@@ -20,8 +20,8 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 - Missing, or `awaiting-approval`: run the **ad-concept** skill first (if it is not installed, tell the
   user: `npx skills add tomimandalaputra/vertical-product-ads --skill ad-concept`). Do not guess a
   concept from a bare prompt.
-- Take from it: `style`, `platform`, `duration`, the chosen hook, script, beat sheet, claims, audio
-  plan, permissions. The beat sheet's recipes are the scenes; do not add or swap them without
+- Take from it: `style`, `look`, `platform`, `duration`, the chosen hook, script, beat sheet, claims,
+  audio plan, permissions. The beat sheet's recipes are the scenes; do not add or swap them without
   updating the concept.
 - If the concept's `mode` is autopilot, never stop to ask: assume, log `ASSUMPTION:`, decide, log
   `DECISION:`. In checkpoint mode, ask only when something blocks the build.
@@ -38,6 +38,13 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 `ugc` and `hybrid` need at least one video layer; `ugc` needs `captions`. Switching styles:
 `references/styles.md`.
 
+## Looks
+`look` is the visual direction, independent of the style: `classic` (default), `luxe-editorial`,
+`clean-clinical`, `bold-streetwear`, `warm-organic`, `tech-neon`, `pop-playful`, `ugc-native`. One line,
+`"look": "<name>"`, sets fonts (bundled, OFL), palette, chip and CTA shape, captions and how text
+enters. Brand colours go over it in `theme.css`. Each look also has its own shape, pace, music and
+sound direction: `references/looks.md`.
+
 ## Free vs paid options
 | Part | ElevenLabs (key in env or `.env`) | Free |
 |---|---|---|
@@ -49,7 +56,8 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 ## Workflow
 1. **Project folder:** create `<project>/assets/` and `<project>/scenes.json`, copied from
    `examples/minimal/scenes.json` (format: `references/scenes-format.md`); for muted product b-roll
-   under a voice-over, start from `examples/product-broll/` instead. `ELEVENLABS_API_KEY` is read
+   under a voice-over, start from `examples/product-broll/`; for fills that follow any look, see
+   `examples/look-sampler/`. `ELEVENLABS_API_KEY` is read
    by the tools from the environment or a `.env` in the project or any parent folder; it is needed only
    for ElevenLabs voice, music or transcription. If it is missing, tell the user to run
    `scripts/set_key.sh` **in their own terminal**, or use the free options. `.gitignore` for the
@@ -69,9 +77,11 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
    `scripts/py scripts/tempo.py <project>`. The per-second loudness list shows where the drop is and where
    the track ends. If a generated track fades before your CTA, regenerate with `--force`. Kick-peak
    beats are `k<n>`.
-4. **Direct:** fill in `vo.place` (when using `vo`), `timeline`, `layers`, `texts`, `captions`, `cues` and
-   the rest from the concept's beat sheet, following `references/direction.md` (motion recipes) and
-   `references/styles.md` (footage recipes). Every reveal is cued to a word or a beat, never to a guess.
+4. **Direct:** set `look` from the concept, then fill in `vo.place` (when using `vo`), `timeline`,
+   `layers`, `texts`, `captions`, `cues` and the rest from the concept's beat sheet, following
+   `references/direction.md` (motion recipes), `references/looks.md` (the look's shape, pace and
+   sound) and `references/styles.md` (footage recipes). Every reveal is cued to a word or a beat,
+   never to a guess.
 5. **Preview:** `scripts/make.sh <project> preview`. It validates the scenes (including style and
    duration rules), builds footage frames, mixes audio, runs the layout gate (safe zone, overlapping text, empty bands), and writes a beat
    contact sheet plus a half-size draft with sound.
@@ -107,6 +117,7 @@ Read `<project>/concept.md`. Build only if its frontmatter says `status: approve
 | File | Read when |
 |---|---|
 | `references/direction.md` | Planning motion scenes: rules, recipes, sound design |
+| `references/looks.md` | Choosing or applying a look; brand colours over it; entrances and look variables |
 | `references/styles.md` | ugc and hybrid recipes, dialogue editing, switching styles |
 | `references/scenes-format.md` | Writing `scenes.json`: every field, time expressions |
 | `references/vo-beat-sync.md` | Script, voice engines, transcription, placing on the music |

@@ -6,6 +6,7 @@ English field names; the hints after `—` are in Indonesian.
 ```yaml
 mode: checkpoint          # checkpoint | autopilot — checkpoint: agent berhenti minta persetujuan; autopilot: jalan sendiri
 style:                    # motion | ugc | hybrid — kosong = agent memilih dari aset
+look:                     # classic | luxe-editorial | clean-clinical | bold-streetwear | warm-organic | tech-neon | pop-playful | ugc-native — kosong = agent memilih dari kategori produk
 platform: tiktok          # tiktok | reels | shorts
 duration: 30              # detik; 15–60, standar 30
 language: id              # bahasa suara/dialog

@@ -38,6 +38,7 @@
     "title": { "type": "string" },
     "duration": { "type": "number", "exclusiveMinimum": 0 },
     "style": { "enum": ["motion", "ugc", "hybrid"] },
+    "look": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "a preset from the skill's looks/ folder; theme overrides it" },
     "footage": { "type": "object", "additionalProperties": {
       "type": "object", "required": ["file"], "additionalProperties": false,
       "properties": { "file": { "type": "string" }, "speech": { "type": "boolean" }, "why": { "$ref": "#/$defs/why" } } } },
@@ -111,6 +112,7 @@
       "properties": {
         "css": { "type": "object", "propertyNames": { "pattern": "^--[a-z0-9-]+$" }, "additionalProperties": { "type": "string" } },
         "fonts": { "type": "array", "items": { "type": "string" } },
+        "enter": { "enum": ["blur", "rise", "cut", "pop", "wipe", "type"], "description": "how texts, chips, labels, odometers and the CTA text enter" },
         "fontFaces": { "type": "array", "items": {
           "type": "object", "required": ["family", "src"], "additionalProperties": false,
           "properties": { "family": { "type": "string" }, "src": { "type": "string" },

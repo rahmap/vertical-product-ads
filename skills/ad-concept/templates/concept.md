@@ -4,6 +4,7 @@ mode: checkpoint            # checkpoint | autopilot
 platform: tiktok            # tiktok | reels | shorts
 duration: 30                # seconds; 15–60; > 34 needs a justification below
 style: motion               # motion | ugc | hybrid
+look: classic               # classic | luxe-editorial | clean-clinical | bold-streetwear | warm-organic | tech-neon | pop-playful | ugc-native
 language: id
 ---
 
@@ -17,9 +18,10 @@ language: id
 - Audience:
 - Insight (the one reason they care, with the review wording it comes from):
 
-## Style and reason
+## Style, look and reason
 - Style: <motion | ugc | hybrid>
 - Why (which assets make it possible):
+- Look: <name> — why (category, brand tone; brand colours over it):
 - Duration reason (only if > 34 s):
 
 ## Asset inventory

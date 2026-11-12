@@ -1,6 +1,6 @@
 ---
 name: ad-concept
-description: Use when asked for an ad concept, hooks, creative angle, ad script, storyboard or creative brief for a vertical product ad (TikTok, Instagram Reels, YouTube Shorts, TikTok Shop, e-commerce or beauty/skincare promo), or when a product ad has no approved concept yet. Reads the brief and assets, researches the product, proposes 3 hooks, writes the script and a beat sheet into concept.md, then hands off to the vertical-product-ads skill.
+description: Use when asked for an ad concept, hooks, creative angle, ad script, storyboard or creative brief for a vertical product ad (TikTok, Instagram Reels, YouTube Shorts, TikTok Shop, e-commerce or beauty/skincare promo), or when a product ad has no approved concept yet. Reads the brief and assets, researches the product, proposes 3 hooks, picks a style and a visual look, writes the script and a beat sheet into concept.md, then hands off to the vertical-product-ads skill.
 ---
 
 # Ad concept
@@ -43,6 +43,8 @@ and refuses to start without it.
    - **Style:** `motion`, `ugc` or `hybrid` (`references/styles.md`). `ugc` and `hybrid` need
      creator footage in the inventory; without it, `motion`. Never promise a style the assets cannot
      carry.
+   - **Look:** the visual direction (`references/looks.md`): the user's or the brief's choice,
+     otherwise one that fits the category and the brand's tone. Say why.
    - **Platform and duration** by `references/duration-and-platforms.md`.
    - **3 hooks with 3 different angles** and types (`references/hooks-and-angles.md`). Each is one
      line plus the first 3 seconds described. Pick one and say why.
@@ -57,8 +59,8 @@ and refuses to start without it.
    - **Risks and permissions:** people's likeness, third-party marks, regulated claims.
 4. **Write `<project>/concept.md`** from `templates/concept.md`, with `status: awaiting-approval`.
 5. **Approval.**
-   - **Checkpoint:** stop. Show the user the 3 hooks, your pick, style, platform/duration and any
-     warning (e.g. duration > 34 s). Wait. On approval (with edits applied to the file) set
+   - **Checkpoint:** stop. Show the user the 3 hooks, your pick, style, look, platform/duration and
+     any warning (e.g. duration > 34 s). Wait. On approval (with edits applied to the file) set
      `status: approved`.
    - **Autopilot:** set `status: approved`, log `DECISION:`s in the file.
 6. **Hand off** to the `vertical-product-ads` skill (read its `SKILL.md`, start at its step 0) with the
@@ -86,6 +88,7 @@ and refuses to start without it.
 | `references/intake.md` | Deciding which assets and answers are required, recommended, optional |
 | `references/hooks-and-angles.md` | Writing hooks, angle, script, CTA, claims |
 | `references/styles.md` | Choosing or explaining motion / ugc / hybrid, and how to switch |
+| `references/looks.md` | Choosing the visual look, and how to switch |
 | `references/scene-menu.md` | Filling the beat sheet |
 | `references/duration-and-platforms.md` | Choosing platform and length |
 | `templates/brief.md` | What users fill in |

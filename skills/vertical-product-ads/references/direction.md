@@ -16,7 +16,7 @@ The brand's own palette and type come first; never copy a template or a competit
    overlap.
 3. **Springs, a tiny overshoot at most.** Use the named springs: `morph` for shape changes, `snap`
    for a hit, `settle`/`drift`/`slow` for Ken Burns, `lead`/`trail` for edges that should stretch.
-   No bouncy easing.
+   No bouncy easing. The one exception is the `pop` entrance of the `pop-playful` look.
 4. **Something happens on every beat.** Fill holds with secondary motion: Ken Burns `zoom`,
    parallax `shift`, band `pops`, a `sheen` sweep. Never fill a hold with dead time.
 5. **Every reveal is motivated.**
@@ -59,11 +59,14 @@ The brand's own palette and type come first; never copy a template or a competit
   gaps.
 
 ## Look
-- **Palette, type, shadows and pools come from `theme.css`.** Use the brand's colours. When the
-  brand font isn't available, self-host an OFL font in the project: download it (Google Fonts,
-  needs network) into `assets/fonts/`, declare it in `theme.fontFaces` and name it in
-  `--serif`/`--sans`. Fonts with a small x-height (e.g. Cormorant) read small at `h1`; use `h0` for
-  headlines or pick a sturdier face.
+- **Start from the concept's look** (`"look"` in `scenes.json`, catalogue and per-look direction in
+  `looks.md`): it sets fonts, palette, chip/CTA shape, captions and how text enters. Then put the
+  brand's colours over it in `theme.css`. When the brand font isn't available, keep the look's fonts,
+  or self-host an OFL font in the project: download it (Google Fonts, needs network) into
+  `assets/fonts/`, declare it in `theme.fontFaces` and name it in `--serif`/`--sans`. Fonts with a
+  small x-height (e.g. Cormorant) read small at `h1`; use `h0` for headlines or pick a sturdier face.
+- **Write fills with theme colours** (`var(--tone-1)` … `var(--tone-3)`, `var(--band)`) so the
+  scenes stay right when the look or the brand colours change.
 - **Product photos on white:** use `"blend": "multiply"` so they sit on the shape. Measure the
   corner first (step 1); if it already reads 255, 255, 255 skip the rest. A background that isn't
   pure white shows as a grey box, so normalise it to 255:

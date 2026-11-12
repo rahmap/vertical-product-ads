@@ -1,0 +1,57 @@
+{
+  "summary": "Looks like it was made in the app: TikTok Sans, white text with a shadow, outlined captions with a yellow active word, white sticker chips, instant cuts. For footage.",
+  "theme": {
+    "enter": "cut",
+    "css": {
+      "--base": "#111111",
+      "--bg": "#111111",
+      "--band": "#1C1C1C",
+      "--ink": "#FFFFFF",
+      "--accent": "#FFD60A",
+      "--accent-pressed": "#E6BE00",
+      "--muted": "rgba(255, 255, 255, 0.86)",
+      "--text-shadow": "0 2px 12px rgba(0, 0, 0, 0.55)",
+      "--surface": "#FFFFFF",
+      "--surface-label": "#FFFFFF",
+      "--icon-bg": "#111111",
+      "--ui-ink": "#111111",
+      "--shadow-rgb": "0, 0, 0",
+      "--cta-shadow-rgb": "0, 0, 0",
+      "--dot-shadow-rgb": "0, 0, 0",
+      "--serif": "\"TikTok Sans\", system-ui, sans-serif",
+      "--sans": "\"TikTok Sans\", system-ui, sans-serif",
+      "--display-weight": "800",
+      "--text-weight": "600",
+      "--head-tracking": "-0.01em",
+      "--caps-tracking": "0.06em",
+      "--caps-weight": "800",
+      "--ui-round": "0.32",
+      "--chip-shadow": "0 6px 18px rgba(0, 0, 0, 0.25)",
+      "--ui-weight": "700",
+      "--cta-ink": "#111111",
+      "--cta-shadow": "0 10px 24px rgba(0, 0, 0, 0.35)",
+      "--grain-opacity": "0",
+      "--caption-font": "\"TikTok Sans\", system-ui, sans-serif",
+      "--caption-weight": "800",
+      "--caption-ink": "#FFFFFF",
+      "--caption-active": "#FFD60A",
+      "--caption-stroke": "rgba(0, 0, 0, 0.9)",
+      "--tone-1": "#262626",
+      "--tone-2": "#FFFFFF",
+      "--tone-3": "#FFD60A"
+    },
+    "fontFaces": [
+      {
+        "family": "TikTok Sans",
+        "src": "fonts/tiktok-sans-var.woff2",
+        "weight": "300 900"
+      }
+    ],
+    "pools": []
+  },
+  "captions": {
+    "style": "plain",
+    "case": "none",
+    "size": 64
+  }
+}

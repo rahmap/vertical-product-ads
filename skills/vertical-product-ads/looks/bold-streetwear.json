@@ -1,0 +1,67 @@
+{
+  "summary": "Drop-day energy: black, Anton capitals, acid-lime accent, square outlined chips, hard cuts and slams, heavy grain.",
+  "theme": {
+    "enter": "cut",
+    "css": {
+      "--base": "#0C0C0C",
+      "--bg": "linear-gradient(180deg, #141414 0%, #0A0A0A 100%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #2A2A2A 0%, #181818 70%, #111111 100%)",
+      "--ink": "#F4F4F0",
+      "--accent": "#D4FF3A",
+      "--accent-pressed": "#A9D21A",
+      "--muted": "rgba(244, 244, 240, 0.7)",
+      "--surface": "#0C0C0C",
+      "--surface-label": "#0C0C0C",
+      "--icon-bg": "#262626",
+      "--ui-ink": "#F4F4F0",
+      "--shadow-rgb": "0, 0, 0",
+      "--cta-shadow-rgb": "0, 0, 0",
+      "--dot-shadow-rgb": "0, 0, 0",
+      "--serif": "\"Anton\", Impact, sans-serif",
+      "--sans": "\"Archivo\", system-ui, sans-serif",
+      "--display-weight": "400",
+      "--text-weight": "600",
+      "--head-case": "uppercase",
+      "--head-leading": "0.92",
+      "--head-tracking": "0.01em",
+      "--caps-tracking": "0.12em",
+      "--caps-weight": "800",
+      "--ui-round": "0",
+      "--ui-border": "3px solid #F4F4F0",
+      "--chip-shadow": "none",
+      "--ui-weight": "800",
+      "--ui-case": "uppercase",
+      "--ui-tracking": "0.04em",
+      "--cta-ink": "#0C0C0C",
+      "--cta-shadow": "8px 8px 0 #F4F4F0",
+      "--sheen": "linear-gradient(104deg, rgba(212,255,58,0) 40%, rgba(212,255,58,0.26) 50%, rgba(212,255,58,0) 60%)",
+      "--grain-opacity": "0.05",
+      "--caption-font": "\"Archivo\", system-ui, sans-serif",
+      "--caption-weight": "900",
+      "--caption-ink": "#FFFFFF",
+      "--caption-active": "#D4FF3A",
+      "--caption-stroke": "rgba(0, 0, 0, 0.9)",
+      "--tone-1": "#1E1E1E",
+      "--tone-2": "#F4F4F0",
+      "--tone-3": "#D4FF3A"
+    },
+    "fontFaces": [
+      {
+        "family": "Anton",
+        "src": "fonts/anton-400.woff2",
+        "weight": 400
+      },
+      {
+        "family": "Archivo",
+        "src": "fonts/archivo-var.woff2",
+        "weight": "100 900"
+      }
+    ],
+    "pools": []
+  },
+  "captions": {
+    "style": "plain",
+    "case": "upper",
+    "size": 70
+  }
+}

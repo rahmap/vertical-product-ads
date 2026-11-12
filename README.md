@@ -6,8 +6,8 @@ Indonesian version: [README.id.md](README.id.md).
 
 | Skill | Does |
 |---|---|
-| `ad-concept` | Reads the brief and assets, researches the product, proposes 3 hooks, writes the script and a beat sheet into `concept.md` |
-| `vertical-product-ads` | Produces the approved concept as an MP4: voice, music, animation, quality gates, render |
+| `ad-concept` | Reads the brief and assets, researches the product, proposes 3 hooks, picks a style and a look, writes the script and a beat sheet into `concept.md` |
+| `vertical-product-ads` | Produces the approved concept as an MP4 in one of eight looks: voice, music, animation, quality gates, render |
 
 Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, Amp, Cline and others.
 
@@ -18,7 +18,13 @@ Works with any agent that reads `SKILL.md` skills: Claude Code, Codex, Cursor, A
 | <a href="media/dior-lip-glow.mp4"><img src="media/dior-lip-glow.gif" width="252" alt="31-second vertical lip balm ad: one rounded shape morphs through a before/after wipe, a packshot, three lip-tone bands, ingredient chips, a rolling 48-hour number and an end card"></a> | <a href="media/ginger-shampoo.mp4"><img src="media/ginger-shampoo.gif" width="252" alt="20-second vertical shampoo ad: product b-roll with captions, an ingredient card, benefit chips, three split bands and an end card with a CTA button"></a> |
 | 31 s. AI-generated images only (model, lips, product); one shape morphs through a before/after wipe, a parallax packshot, three lip-tone bands, ingredient chips, an odometer and the end card. ElevenLabs voice and music. [MP4 with sound](media/dior-lip-glow.mp4) | 20 s TikTok ad from muted product b-roll: ElevenLabs voice, music and sound effects, an ingredient card, benefit chips, three bands that pop on their words, an end card. [MP4 with sound](media/ginger-shampoo.mp4) |
 
-Both have Indonesian voice-overs; the GIFs are silent.
+**One film, eight looks.** The same `scenes.json` rendered eight times; only `"look"` changes. A
+fictional lip serum with free audio (edge-tts voice, local synth bed), no images. The project is
+[`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/).
+
+<a href="media/looks.mp4"><img src="media/looks.gif" width="720" alt="Grid of eight vertical ads playing in sync, one per look: classic, luxe-editorial, clean-clinical, bold-streetwear, warm-organic, tech-neon, pop-playful and ugc-native. Each shows the same scenes (hook card, brand, a rolling 24-hour number with chips, three shade bands, end card with a CTA) in its own fonts, colours and text entrances"></a>
+
+All three films have Indonesian voice-overs; the GIFs are silent. [Eight-look grid with sound](media/looks.mp4).
 
 - **Dior Addict Lip Glow** is an unofficial spec ad, made to demonstrate the skills: it is not
   affiliated with, sponsored or endorsed by Christian Dior. Dior and Addict Lip Glow are trademarks
@@ -29,7 +35,7 @@ Both have Indonesian voice-overs; the GIFs are silent.
   [`examples/product-broll/`](skills/vertical-product-ads/examples/product-broll/).
 
 **Contents**
-- Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Voice and music](#voice-and-music) · [Duration](#duration)
+- Using it: [Showcase](#showcase) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Preparing material](#preparing-material) · [Example prompts](#example-prompts) · [Video styles](#video-styles) · [Looks](#looks) · [Voice and music](#voice-and-music) · [Duration](#duration)
 - Results: [Quality gates](#quality-gates) · [Limits](#limits) · [Measured speed](#measured-speed)
 - Technical: [Requirements](#requirements) · [Repo layout](#repo-layout) · [Licence](#licence)
 
@@ -166,6 +172,34 @@ Plain-language guide to each style: [`references/styles.md`](skills/ad-concept/r
 
 ---
 
+## Looks
+
+`style` decides how the film is produced; `look` decides how it looks: fonts, palette, chip and button
+shape, captions and how text enters. Eight looks ship with the skill, fonts included (SIL Open Font
+License, no download). Any look works with any style.
+
+| Look | For | Type | Text enters |
+|---|---|---|---|
+| `classic` (default) | Anything; the Dior film above | Georgia + system sans | soft blur |
+| `luxe-editorial` | Fragrance, jewellery, premium beauty, fashion | Bodoni Moda + Jost | rising from a mask |
+| `clean-clinical` | Skincare actives, pharmacy, supplements | Plus Jakarta Sans | wipe |
+| `bold-streetwear` | Sneakers, streetwear, energy drinks, fitness | Anton capitals + Archivo | hard cut and slam |
+| `warm-organic` | Herbal, jamu, coffee, food, hair and body care | Fraunces + DM Sans | soft blur |
+| `tech-neon` | Gadgets, audio, apps | Space Grotesk + JetBrains Mono | typed on |
+| `pop-playful` | Snacks, drinks, toys, Gen-Z beauty | Bricolage Grotesque + Rubik | bouncy pop |
+| `ugc-native` | Creator footage (`ugc`, `hybrid`) | TikTok Sans | cut, outlined captions |
+
+Each look also comes with direction for the agent: corner radius, pace, music and sound-effect
+choices ([`references/looks.md`](skills/vertical-product-ads/references/looks.md)). Brand colours
+go over any look.
+
+**Choosing a look:** set `look:` in `brief.md`, or say it (*"Use the tech-neon look, keep the brand
+colours."*). Left blank, the agent picks one from the product category and writes why in
+`concept.md`. Switching later changes one line in `scenes.json`; the voice and music are reused.
+Plain-language guide: [`references/looks.md`](skills/ad-concept/references/looks.md).
+
+---
+
 ## Voice and music
 
 A full ad needs **no ElevenLabs key**. To use ElevenLabs, see [ElevenLabs API key](#elevenlabs-api-key)
@@ -272,6 +306,23 @@ HTML film with a 60 fps renderer.
 | Draft with sound | none | 12 s |
 | Writing the film | a ~600-line JS file per ad | a `scenes.json` per ad |
 
+Picture render per look, the same 17 s film ([`examples/look-sampler/`](skills/vertical-product-ads/examples/look-sampler/)),
+30 fps with motion blur:
+
+| Look | Picture render |
+|---|---|
+| `classic` | 39.8 s |
+| `luxe-editorial` | 39.2 s |
+| `clean-clinical` | 19.4 s |
+| `bold-streetwear` | 39.6 s |
+| `warm-organic` | 40.4 s |
+| `tech-neon` | 36.4 s |
+| `pop-playful` | 19.5 s |
+| `ugc-native` | 16.2 s |
+
+Film grain is the cost: the three looks without grain render in half the time, and the others stay
+within 2 % of `classic`. Choosing a look adds no step to the workflow: its fonts ship with the skill.
+
 Fresh agents (skills installed with `npx skills add`, no help):
 
 | Mode | Result | Prompt → MP4 |
@@ -303,16 +354,18 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 | Path | Contents |
 |---|---|
 | `skills/ad-concept/SKILL.md` | What the concept agent follows |
-| `skills/ad-concept/references/` | Asset intake, hooks and angles, styles, scene menu, durations |
+| `skills/ad-concept/references/` | Asset intake, hooks and angles, styles, looks, scene menu, durations |
 | `skills/ad-concept/templates/` | `brief.md`, `concept.md`, `creator-shot-list.md` |
 | `skills/ad-concept/examples/` | Example prompts and filled briefs per style |
 | `skills/vertical-product-ads/SKILL.md` | What the production agent follows |
-| `skills/vertical-product-ads/references/` | Direction, styles, `scenes.json` format, VO/beat sync, safe zones, render + QA |
+| `skills/vertical-product-ads/references/` | Direction, styles, looks, `scenes.json` format, VO/beat sync, safe zones, render + QA |
+| `skills/vertical-product-ads/looks/` | The eight looks (`<name>.json`) and their fonts (OFL, `fonts/`) |
 | `skills/vertical-product-ads/engine/` | `index.html` + `engine.js`: the pure `seek(t)` renderer |
 | `skills/vertical-product-ads/scripts/` | `make.sh` (preview/final) and every step it runs |
 | `skills/vertical-product-ads/schemas/` | `scenes.schema.json`, the contract `validate.mjs` enforces |
 | `skills/vertical-product-ads/examples/minimal/` | An asset-free 8.5 s film |
 | `skills/vertical-product-ads/examples/product-broll/` | A 20 s hybrid ad (fictional shampoo): product b-roll you shoot, ElevenLabs voice, music and sound effects, ingredient card, split bands, end card |
+| `skills/vertical-product-ads/examples/look-sampler/` | A 17 s asset-free ad written to work in every look; free voice and music |
 | `media/` | The showcase films (MP4 + GIF previews); not part of the installed skills |
 
 ---
@@ -321,6 +374,8 @@ and [`CHANGELOG.md`](CHANGELOG.md).
 
 MIT, see `LICENSE`. Portions are derived from
 [product-launch-motion](https://github.com/AbubakrChan/product-launch-motion) (MIT); see `NOTICE`.
-Product images, footage, voices and music you put into a film keep their own licences.
+Product images, footage, voices and music you put into a film keep their own licences. The fonts in
+`looks/fonts/` are under the SIL Open Font License 1.1 (licence beside each family).
 The showcase films in `media/` are not under the MIT licence: the Dior film is an unofficial spec ad
-with marks of their owner, and the shampoo footage is by @hanie.ugc.creator, used with permission (see `NOTICE`).
+with marks of their owner, the shampoo footage is by @hanie.ugc.creator, used with permission, and
+the eight-look grid uses an edge-tts voice (see `NOTICE`).

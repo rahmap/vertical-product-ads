@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
 const ENGINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../engine');
+export const LOOKS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../looks');
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2',
   '.woff': 'font/woff', '.ttf': 'font/ttf', '.otf': 'font/otf' };
@@ -20,12 +21,13 @@ export function projectDir(arg) {
 
 export function readScenes(dir) { return JSON.parse(fs.readFileSync(path.join(dir, 'scenes.json'), 'utf8')); }
 
-// Serves /engine/* from the skill and /project/* from the ad project on a free localhost port.
+// Serves /engine/* and /looks/* from the skill and /project/* from the ad project on a free localhost port.
 export function serve(project) {
   const server = http.createServer((req, res) => {
     const url = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     let root, rel;
     if (url.startsWith('/engine/')) { root = ENGINE; rel = url.slice(8); }
+    else if (url.startsWith('/looks/')) { root = LOOKS; rel = url.slice(7); }
     else if (url.startsWith('/project/')) { root = project; rel = url.slice(9); }
     else { res.writeHead(404).end(); return; }
     const file = path.resolve(root, rel);

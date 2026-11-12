@@ -1,0 +1,116 @@
+{
+  "summary": "Snack-aisle loud: peach and pink, chunky Bricolage Grotesque, sticker chips with hard offset shadows, bouncy pops.",
+  "theme": {
+    "enter": "pop",
+    "css": {
+      "--base": "#FFF1DC",
+      "--bg": "linear-gradient(180deg, #FFF4E2 0%, #FFE3EC 100%)",
+      "--band": "radial-gradient(130% 70% at 50% 38%, #FFFFFF 0%, #FFF6EA 62%, #FFE9D6 100%)",
+      "--ink": "#1E1446",
+      "--accent": "#F2286E",
+      "--accent-pressed": "#C9105A",
+      "--muted": "rgba(30, 20, 70, 0.74)",
+      "--surface": "#FFFFFF",
+      "--surface-label": "#FFFFFF",
+      "--icon-bg": "#FFE14D",
+      "--shadow-rgb": "30, 20, 70",
+      "--cta-shadow-rgb": "30, 20, 70",
+      "--dot-shadow-rgb": "30, 20, 70",
+      "--serif": "\"Bricolage Grotesque\", system-ui, sans-serif",
+      "--sans": "\"Rubik\", system-ui, sans-serif",
+      "--display-weight": "800",
+      "--text-weight": "500",
+      "--head-tracking": "-0.02em",
+      "--caps-tracking": "0.14em",
+      "--caps-weight": "700",
+      "--ui-border": "3px solid #1E1446",
+      "--chip-shadow": "6px 6px 0 #1E1446",
+      "--ui-weight": "700",
+      "--cta-ink": "#FFFFFF",
+      "--cta-shadow": "6px 6px 0 #1E1446",
+      "--grain-opacity": "0",
+      "--caption-font": "\"Bricolage Grotesque\", system-ui, sans-serif",
+      "--caption-weight": "800",
+      "--caption-radius": "0.3em",
+      "--caption-ink": "#1E1446",
+      "--caption-bg": "#FFE14D",
+      "--caption-active": "#C2004F",
+      "--tone-1": "#FFD1E0",
+      "--tone-2": "#FFE14D",
+      "--tone-3": "#F2286E"
+    },
+    "fontFaces": [
+      {
+        "family": "Bricolage Grotesque",
+        "src": "fonts/bricolage-grotesque-var.woff2",
+        "weight": "200 800"
+      },
+      {
+        "family": "Rubik",
+        "src": "fonts/rubik-var.woff2",
+        "weight": "300 900"
+      }
+    ],
+    "pools": [
+      {
+        "color": "rgba(255, 120, 170, 0.45)",
+        "r": 640,
+        "x": [
+          230,
+          80,
+          0.4,
+          0,
+          "sin"
+        ],
+        "y": [
+          460,
+          90,
+          0.33,
+          0,
+          "cos"
+        ]
+      },
+      {
+        "color": "rgba(255, 225, 77, 0.5)",
+        "r": 600,
+        "x": [
+          880,
+          70,
+          0.36,
+          1.2,
+          "cos"
+        ],
+        "y": [
+          1000,
+          90,
+          0.3,
+          0.4,
+          "sin"
+        ]
+      },
+      {
+        "color": "rgba(120, 200, 255, 0.4)",
+        "r": 680,
+        "x": [
+          300,
+          60,
+          0.3,
+          2.1,
+          "sin"
+        ],
+        "y": [
+          1560,
+          70,
+          0.27,
+          1.0,
+          "cos"
+        ]
+      }
+    ]
+  },
+  "captions": {
+    "style": "pill",
+    "case": "none",
+    "size": 62
+  }
+}

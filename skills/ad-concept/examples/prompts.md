@@ -20,6 +20,14 @@ akan menanyakannya sekali; mode autopilot akan mengasumsikannya (dicatat sebagai
 | **Suara** | VO: ElevenLabs atau gratis (edge-tts) | Suara kreator di footage | Suara kreator |
 | **Izin** | Foto model, jika ada | Izin tampil kreator | Keduanya |
 
+## Look
+Gaya (`motion`/`ugc`/`hybrid`) menentukan cara produksi; **look** menentukan tampilannya: font, warna,
+bentuk chip dan tombol, caption, dan cara teks muncul. Pilihan: `classic`, `luxe-editorial`,
+`clean-clinical`, `bold-streetwear`, `warm-organic`, `tech-neon`, `pop-playful`, `ugc-native`
+(penjelasan di [`references/looks.md`](../references/looks.md)). Sebut di prompt ("pakai look
+bold-streetwear") atau di `brief.md` (`look:`). Kosong: agent memilih dari kategori produk dan nada
+brand, lalu menuliskan alasannya di konsep.
+
 ## `motion`
 **Pendek (dengan brief):**
 > Buatkan iklan dari folder `iklan/glowa`. Brief ada di `brief.md`.
@@ -79,6 +87,8 @@ akan menanyakannya sekali; mode autopilot akan mengasumsikannya (dicatat sebagai
 | Menyetujui konsep | *Setuju hook #2, lanjut produksi.* |
 | Mengubah konsep | *Hook #1 tapi kalimatnya lebih pendek, dan jangan tampilkan harga. Tunjukkan lagi sebelum produksi.* |
 | Ganti gaya | *Ubah iklan `iklan/[nama]` jadi hybrid, pakai `review.mp4` untuk hook.* |
+| Ganti look | *Render ulang iklan `iklan/[nama]` dengan look tech-neon, warna brand tetap.* |
+| Bandingkan look | *Buat 3 versi iklan `iklan/[nama]`: luxe-editorial, clean-clinical, pop-playful, masing-masing di proyek terpisah.* |
 | Revisi setelah jadi | *Teks klaim di detik 18 terlalu kecil, dan CTA muncul terlalu cepat. Perbaiki lalu render ulang.* |
 | Ganti suara | *Ganti voice-over ke suara laki-laki, sisanya sama.* |
 | Versi pendek | *Buat versi 15 detik dari iklan `iklan/[nama]` untuk Reels, sebagai proyek terpisah `iklan/[nama]-15s`.* |
