@@ -72,6 +72,18 @@ ElevenLabs bersifat opsional. Musik dan efek suara bisa dibuat lokal; suara grat
 edge-tts, yang ketentuan penggunaan komersialnya belum jelas.
 Lihat [pilihan audio](docs/guide.id.md#suara-dan-musik).
 
+## Studio (aplikasi web lokal)
+
+Aplikasi web untuk antrean video affiliate TikTok Shop: produk, aset, review preview, dan file jadi.
+Butuh Node.js 22.5+. Jalankan dari root repo:
+
+```bash
+node studio/server.mjs              # http://127.0.0.1:4173
+node studio/server.mjs --port 4174  # bila port 4173 sudah dipakai
+```
+
+[Cara pakai Studio](docs/guide.id.md#studio-aplikasi-web-lokal)
+
 ## Dokumentasi
 
 | Halaman | Isinya |

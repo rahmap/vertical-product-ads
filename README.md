@@ -71,6 +71,18 @@ The [gallery](docs/showcase.md#looks-and-layouts) shows the differences.
 ElevenLabs is optional. Local music and sound effects are available; free voice uses edge-tts,
 whose commercial-use terms are unclear. See [audio options](docs/guide.md#voice-and-music).
 
+## Studio (local web app)
+
+A web app for the TikTok Shop affiliate video queue: products, assets, preview review and finished files.
+Needs Node.js 22.5+. Run it from the repository root:
+
+```bash
+node studio/server.mjs              # http://127.0.0.1:4173
+node studio/server.mjs --port 4174  # if port 4173 is already in use
+```
+
+[Using the Studio](docs/guide.md#studio-local-web-app)
+
 ## Documentation
 
 | Read | For |
